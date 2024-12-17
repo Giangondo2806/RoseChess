@@ -1,0 +1,3 @@
+/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/u6m457b1/x86_64/CMakeFiles/rose.dir
+/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/u6m457b1/x86_64/CMakeFiles/edit_cache.dir
+/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/u6m457b1/x86_64/CMakeFiles/rebuild_cache.dir

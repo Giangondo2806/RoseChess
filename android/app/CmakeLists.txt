@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 3.8)
+project(rose)
+
+set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_CXX_STANDARD 17)
+
+# Include rose NNUE
+
+
+
+
+# Add source files
+file(GLOB_RECURSE roseCppPaths "./libs/*.cpp")
+
+add_library(rose
+            SHARED
+            ${roseCppPaths}
+)
+
+
+# Link libraries
+# target_link_libraries(rose
+#     android
+#     log
+#     # Other libraries if needed
+# )
+
