@@ -1,0 +1,21 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme_provider.dart';
+import '../themes/light_theme.dart';
+
+class ThemeToggleButton extends StatelessWidget {
+  const ThemeToggleButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return IconButton(
+      icon: Icon(themeProvider.currentTheme == lightTheme
+          ? Icons.dark_mode
+          : Icons.light_mode),
+      onPressed: () {
+        themeProvider.toggleTheme();
+      },
+    );
+  }
+}

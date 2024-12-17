@@ -1,171 +1,171 @@
 [
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/benchmark.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/benchmark.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/benchmark.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/bitboard.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/bitboard.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/bitboard.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/engine.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/engine.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/engine.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/evaluate.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/evaluate.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/evaluate.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/common/debug.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/debug.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/debug.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/common/entropy_common.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/entropy_common.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/entropy_common.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/common/error_private.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/error_private.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/error_private.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/common/fse_decompress.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/fse_decompress.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/fse_decompress.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/common/pool.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/pool.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/pool.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/common/threading.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/threading.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/threading.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/common/xxhash.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/xxhash.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/xxhash.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/common/zstd_common.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/zstd_common.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/common/zstd_common.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/decompress/huf_decompress.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/decompress/huf_decompress.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/decompress/huf_decompress.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/decompress/zstd_ddict.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/decompress/zstd_ddict.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/decompress/zstd_ddict.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/decompress/zstd_decompress.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/decompress/zstd_decompress.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/decompress/zstd_decompress.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/external/decompress/zstd_decompress_block.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/decompress/zstd_decompress_block.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/external/decompress/zstd_decompress_block.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/main.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/main.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/main.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/memory.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/memory.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/memory.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/misc.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/misc.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/misc.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/movegen.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/movegen.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/movegen.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/movepick.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/movepick.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/movepick.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/nnue/features/half_ka_v2_hm.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/nnue/features/half_ka_v2_hm.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/nnue/features/half_ka_v2_hm.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/nnue/network.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/nnue/network.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/nnue/network.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/nnue/nnue_misc.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/nnue/nnue_misc.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/nnue/nnue_misc.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/position.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/position.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/position.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/score.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/score.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/score.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/search.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/search.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/search.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/thread.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/thread.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/thread.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/timeman.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/timeman.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/timeman.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/tt.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/tt.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/tt.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/tune.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/tune.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/tune.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/uci.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/uci.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/uci.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/pikafish/ucioption.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/ucioption.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/pikafish/ucioption.cpp"
 },
 {
-  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/1w6kv1z1/x86_64",
+  "directory": "/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/Debug/271i522g/x86_64",
   "command": "/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android21 --sysroot=/Users/trangiang/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Drose_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/rose.dir/libs/rose_engine.cpp.o -c /Users/trangiang/Desktop/game/rose_flutter/android/app/libs/rose_engine.cpp",
   "file": "/Users/trangiang/Desktop/game/rose_flutter/android/app/libs/rose_engine.cpp"
 }
