@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../utils/engine_utils.dart';
-import 'game_screen.dart';
+import 'software_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class EngineLoaderScreen extends StatefulWidget {
@@ -47,7 +47,7 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
         _engineExists = true;
         _message = 'Engine đã sẵn sàng!';
       });
-      _navigateToGameScreen();
+      _navigateToSoftwareScreen();
     } else {
       setState(() {
         _message = 'Engine chưa có. Bắt đầu tải...';
@@ -149,7 +149,7 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
         _engineExists = true;
         _message = 'Tải engine thành công!';
       });
-      _navigateToGameScreen();
+      _navigateToSoftwareScreen();
     } catch (e) {
       setState(() {
         _message = 'Lỗi khi tải engine: $e';
@@ -162,10 +162,10 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
     }
   }
 
-  void _navigateToGameScreen() {
+  void _navigateToSoftwareScreen() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => GameScreen(engineFileName: engineFileName),
+        builder: (context) => SoftwareScreen(engineFileName: engineFileName),
       ),
     );
   }
