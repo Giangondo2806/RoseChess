@@ -14,14 +14,15 @@ class ChessBoardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        final board = Provider.of<BoardState>(context, listen: false);
         final boardWidth = constraints.maxWidth;
         final squareSize =
-            boardWidth / Provider.of<BoardState>(context, listen: false).cols;
+            boardWidth / board.cols;
 
         return Center(
           child: AspectRatio(
-            aspectRatio: Provider.of<BoardState>(context, listen: false).cols /
-                Provider.of<BoardState>(context, listen: false).rows,
+            aspectRatio: board.cols /
+                board.rows,
             child: Consumer<BoardState>(
               builder: (context, boardState, child) {
                 return Stack(
@@ -73,7 +74,7 @@ class ChessBoardWidget extends StatelessWidget {
       double squareSize, BoardState boardState, BoardPosition position) {
     return Positioned(
       left: position.col * squareSize,
-      top: (9 - position.row) * squareSize,
+      top: position.row * squareSize,
       width: squareSize,
       height: squareSize,
       child: GestureDetector(
@@ -93,10 +94,10 @@ class ChessBoardWidget extends StatelessWidget {
       BoardState boardState, BoardPosition position) {
     return AnimatedPositioned(
       key: ValueKey(piece.id),
-      duration: const Duration(milliseconds: 120), // Increased duration
-      curve: Curves.linear, // Using Curves.easeInOut
+      duration: const Duration(milliseconds: 200), // Increased duration
+      curve: Curves.ease, // Using Curves.easeInOut
       left: position.col * squareSize,
-      top: (9 - position.row) * squareSize,
+      top:  position.row * squareSize,
       width: squareSize,
       height: squareSize,
       child: PieceWidget(
