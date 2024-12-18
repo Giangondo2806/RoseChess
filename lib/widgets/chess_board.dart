@@ -15,8 +15,8 @@ class ChessBoardWidget extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final boardWidth = constraints.maxWidth;
-        final squareSize = boardWidth /
-            Provider.of<BoardState>(context, listen: false).cols;
+        final squareSize =
+            boardWidth / Provider.of<BoardState>(context, listen: false).cols;
 
         return Center(
           child: AspectRatio(
@@ -31,12 +31,12 @@ class ChessBoardWidget extends StatelessWidget {
                       child: SvgPicture.asset(
                         boardAsset,
                         width: boardWidth,
-                        height: boardWidth *
-                            (boardState.rows / boardState.cols),
+                        height:
+                            boardWidth * (boardState.rows / boardState.cols),
                       ),
                     ),
                     // Pieces and Empty Squares
-                   ..._buildBoardSquares(squareSize, boardState),
+                    ..._buildBoardSquares(squareSize, boardState),
                   ],
                 );
               },
@@ -50,32 +50,33 @@ class ChessBoardWidget extends StatelessWidget {
   List<Widget> _buildBoardSquares(double squareSize, BoardState boardState) {
     List<Widget> squares = [];
 
-     for (int i = 0; i < boardState.rows; i++) {
+    for (int i = 0; i < boardState.rows; i++) {
       for (int j = 0; j < boardState.cols; j++) {
         final position = BoardPosition(
             String.fromCharCode('a'.codeUnitAt(0) + j) + (9 - i).toString());
-          squares.add(_buildSquare(squareSize,boardState,position));
+        squares.add(_buildSquare(squareSize, boardState, position));
       }
     }
-      return squares;
+    return squares;
   }
 
-
- Widget _buildSquare(double squareSize, BoardState boardState, BoardPosition position){
-     final piece = boardState.board[position];
-    if(piece != null){
+  Widget _buildSquare(
+      double squareSize, BoardState boardState, BoardPosition position) {
+    final piece = boardState.board[position];
+    if (piece != null) {
       return _buildAnimatedPiece(piece, squareSize, boardState, position);
     }
-    return  _buildEmptySquare(squareSize, boardState, position);
- }
+    return _buildEmptySquare(squareSize, boardState, position);
+  }
 
-   Widget _buildEmptySquare(double squareSize, BoardState boardState, BoardPosition position){
-    return  Positioned(
+  Widget _buildEmptySquare(
+      double squareSize, BoardState boardState, BoardPosition position) {
+    return Positioned(
       left: position.col * squareSize,
       top: (9 - position.row) * squareSize,
       width: squareSize,
       height: squareSize,
-     child: GestureDetector(
+      child: GestureDetector(
         onTap: () => boardState.onPieceTapped(position),
         child: Container(
           decoration: BoxDecoration(
@@ -88,21 +89,22 @@ class ChessBoardWidget extends StatelessWidget {
     );
   }
 
-   Widget _buildAnimatedPiece(Piece piece, double squareSize, BoardState boardState, BoardPosition position) {
-       return AnimatedPositioned(
-        key: ValueKey(piece.id),
-         duration: const Duration(milliseconds: 100), // Increased duration
-         curve: Curves.linear, // Using Curves.easeInOut
-         left: position.col * squareSize,
-         top: (9 - position.row) * squareSize,
-         width: squareSize,
-         height: squareSize,
-      child:  PieceWidget(
-             piece: piece,
-             squareSize: squareSize,
-             isSelected: boardState.selectedPosition == position,
-             onTap: () => boardState.onPieceTapped(position),
-         ),
-      );
-   }
+  Widget _buildAnimatedPiece(Piece piece, double squareSize,
+      BoardState boardState, BoardPosition position) {
+    return AnimatedPositioned(
+      key: ValueKey(piece.id),
+      duration: const Duration(milliseconds: 120), // Increased duration
+      curve: Curves.linear, // Using Curves.easeInOut
+      left: position.col * squareSize,
+      top: (9 - position.row) * squareSize,
+      width: squareSize,
+      height: squareSize,
+      child: PieceWidget(
+        piece: piece,
+        squareSize: squareSize,
+        isSelected: boardState.selectedPosition == position,
+        onTap: () => boardState.onPieceTapped(position),
+      ),
+    );
+  }
 }

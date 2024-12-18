@@ -18,18 +18,20 @@ class PieceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pieceSize = squareSize-3; // Điều chỉnh kích thước quân cờ
     return InkWell(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            border: isSelected ? Border.all(color: Colors.blue, width: 2) : null,
-          ),
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          border: isSelected ? Border.all(color: Colors.blue, width: 2) : null,
+        ),
+        alignment: Alignment.center, // Căn giữa quân cờ
         child: SvgPicture.asset(
           piece.assetPath,
-          width: squareSize,
-          height: squareSize,
-         ),
-       ),
-     );
+          width: pieceSize,
+          height: pieceSize,
+        ),
+      ),
+    );
   }
 }
