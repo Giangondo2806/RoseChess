@@ -997,9 +997,10 @@ class Xiangqi {
 
     final int moveFrom = Xiangqi.SQUARES[_stringToEnumMap[from]]!;
     final int moveTo = Xiangqi.SQUARES[_stringToEnumMap[to]]!;
+    print(board[moveFrom]?.type);
 
     push(history, move);
-    if (board[moveFrom] != null && board[moveTo]!.type == Xiangqi.KING) {
+    if (board[moveFrom] != null && board[moveTo]?.type == Xiangqi.KING) {
       kings[board[moveTo]!.color] = Xiangqi.EMPTY;
     }
 
