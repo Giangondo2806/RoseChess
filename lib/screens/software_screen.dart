@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/board_state.dart';
 import '../utils/engine_utils.dart';
-import '../widgets/ches_board.dart';
+import '../widgets/chess_board.dart';
 
 class SoftwareScreen extends StatefulWidget {
   final String engineFileName;
@@ -13,7 +15,7 @@ class SoftwareScreen extends StatefulWidget {
   State<SoftwareScreen> createState() => _SoftwareScreenState();
 }
 
-class _SoftwareScreenState extends State<SoftwareScreen> {
+class _SoftwareScreenState extends State<SoftwareScreen> with TickerProviderStateMixin {
   // Hàm xử lý sự kiện từ MenuBarWidget
   void _handleMenuAction(String action) {
     print('Menu action received: $action');
@@ -37,18 +39,21 @@ class _SoftwareScreenState extends State<SoftwareScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          // Truyền callback function _handleMenuAction vào MenuBarWidget
-          Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-            child: MenuBarWidget(onMenuAction: _handleMenuAction),
-          ),
-          Expanded(
-            child: ChessBoardWidget(),
-          ),
-          AnalysisWidget(),
-        ],
+      body: ChangeNotifierProvider(
+        create: (context) => BoardState(), // Truyền this vào BoardState
+        child: Column(
+          children: [
+            // Truyền callback function _handleMenuAction vào MenuBarWidget
+            Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              child: MenuBarWidget(onMenuAction: _handleMenuAction),
+            ),
+            Expanded(
+              child: ChessBoardWidget(), // Truyền this vào ChessBoardWidget
+            ),
+            const AnalysisWidget(),
+          ],
+        ),
       ),
     );
   }
