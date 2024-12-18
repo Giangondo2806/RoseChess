@@ -13,8 +13,11 @@ class BoardState with ChangeNotifier {
 
   // Currently selected piece position
   BoardPosition? selectedPosition;
+  // Map to track the location of the pieces by ID.
+  late Map<String, BoardPosition> piecePositions;
 
   BoardState() {
+    piecePositions = {}; // Khởi tạo ở đây
     initializeBoard();
   }
 
@@ -29,11 +32,13 @@ class BoardState with ChangeNotifier {
           final type = _getPieceType(pieceData['type']);
           final color = _getPieceColor(pieceData['color']);
           final assetPath = _getAssetPath(type, color);
-          board[BoardPosition(notation)] = Piece(
+          final piece = Piece(
               id: 'piece_$idCounter',
               type: type,
               color: color,
               assetPath: assetPath); // Gán ID
+          board[BoardPosition(notation)] = piece;
+          piecePositions[piece.id] = BoardPosition(notation);
           idCounter++;
         }
       }
@@ -101,16 +106,25 @@ class BoardState with ChangeNotifier {
     } else {
       if (position != selectedPosition) {
         if (board[position] == null ||
-            board[position]!.color != board[selectedPosition!]!.color) {
-          // Di chuyển quân cờ
-          board[position] = board[selectedPosition];
-          board[selectedPosition!] = null;
-          selectedPosition = null;
+            (board[selectedPosition] != null && board[position]!.color != board[selectedPosition]!.color)) {
+            if(board[selectedPosition] == null){
+                  selectedPosition = null;
+                  notifyListeners();
+                  return;
+                }
+            final piece = board[selectedPosition]!;
+
+            board[position] = piece;
+            board[selectedPosition!] = null;
+
+            piecePositions[piece.id] = position;
+
+            selectedPosition = null;
         } else {
-          selectedPosition = position;
+            selectedPosition = position;
         }
       } else {
-        selectedPosition = null;
+         selectedPosition = null;
       }
     }
     notifyListeners();

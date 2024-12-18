@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import '../models/piece.dart';
 import '../providers/board_state.dart';
 import '../constants.dart';
 import 'piece_widget.dart';
@@ -48,42 +49,61 @@ class ChessBoardWidget extends StatelessWidget {
 
   List<Widget> _buildSquares(double squareSize, BoardState boardState) {
     List<Widget> squares = [];
+
     for (int i = 0; i < boardState.rows; i++) {
-      for (int j = 0; j < boardState.cols; j++) {
+        for (int j = 0; j < boardState.cols; j++) {
         final position = BoardPosition(
             String.fromCharCode('a'.codeUnitAt(0) + j) + (9 - i).toString());
-        final piece = boardState.board[position];
-
-        squares.add(
-          AnimatedPositioned(
-             key: ValueKey('$position-${piece?.type}-${piece?.color}-$i-$j'),
-            duration: Duration(milliseconds: 1000),
-            curve: Curves.linear,
-            left: j * squareSize,
-            top: i * squareSize,
-            width: squareSize,
-            height: squareSize,
-            child: piece != null
-                ? PieceWidget(
-                    piece: piece,
-                    squareSize: squareSize,
-                    isSelected: boardState.selectedPosition == position,
-                    onTap: () => boardState.onPieceTapped(position),
-                  )
-                : GestureDetector(
-                    onTap: () => boardState.onPieceTapped(position),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: boardState.selectedPosition == position
-                            ? Border.all(color: Colors.blue, width: 2)
-                            : null,
-                      ),
-                    ),
-                  ),
-          ),
-        );
+        
+          final piece = boardState.board[position];
+          if (piece != null) {
+            squares.add(
+              _buildAnimatedPiece(piece, squareSize, boardState,position)
+            );
+          }else{
+             squares.add(
+              _buildEmptySquare(squareSize, boardState,position)
+             );
+          }
       }
     }
+
     return squares;
   }
+ Widget _buildEmptySquare(double squareSize, BoardState boardState, BoardPosition position){
+    return  Positioned(
+      left: position.col * squareSize,
+      top: (9 - position.row) * squareSize,
+      width: squareSize,
+      height: squareSize,
+     child: GestureDetector(
+        onTap: () => boardState.onPieceTapped(position),
+        child: Container(
+          decoration: BoxDecoration(
+            border: boardState.selectedPosition == position
+                ? Border.all(color: Colors.blue, width: 2)
+                : null,
+          ),
+        ),
+      ),
+    );
+  }
+
+   Widget _buildAnimatedPiece(Piece piece, double squareSize, BoardState boardState, BoardPosition position) {
+       return AnimatedPositioned(
+        key: ValueKey(piece.id),
+         duration: Duration(milliseconds: 150), // Increased duration
+         curve: Curves.linear, // Using Curves.easeInOut
+         left: position.col * squareSize,
+         top: (9 - position.row) * squareSize,
+         width: squareSize,
+         height: squareSize,
+      child:  PieceWidget(
+             piece: piece,
+             squareSize: squareSize,
+             isSelected: boardState.selectedPosition == position,
+             onTap: () => boardState.onPieceTapped(position),
+         ),
+      );
+   }
 }
