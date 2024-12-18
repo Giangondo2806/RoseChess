@@ -55,7 +55,10 @@ class ChessBoardWidget extends StatelessWidget {
         final piece = boardState.board[position];
 
         squares.add(
-          Positioned(
+          AnimatedPositioned(
+             key: ValueKey('$position-${piece?.type}-${piece?.color}-$i-$j'),
+            duration: Duration(milliseconds: 1000),
+            curve: Curves.linear,
             left: j * squareSize,
             top: i * squareSize,
             width: squareSize,
@@ -76,7 +79,7 @@ class ChessBoardWidget extends StatelessWidget {
                             : null,
                       ),
                     ),
-                  ), // Empty square with gesture detection
+                  ),
           ),
         );
       }

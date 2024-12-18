@@ -20,6 +20,7 @@ class BoardState with ChangeNotifier {
 
   void initializeBoard() {
     board = {};
+    int idCounter = 0; // Bắt đầu từ 0
     for (int i = 0; i < initialBoard.length; i++) {
       for (int j = 0; j < initialBoard[i].length; j++) {
         final pieceData = initialBoard[i][j];
@@ -28,8 +29,12 @@ class BoardState with ChangeNotifier {
           final type = _getPieceType(pieceData['type']);
           final color = _getPieceColor(pieceData['color']);
           final assetPath = _getAssetPath(type, color);
-          board[BoardPosition(notation)] =
-              Piece(type: type, color: color, assetPath: assetPath);
+          board[BoardPosition(notation)] = Piece(
+              id: 'piece_$idCounter',
+              type: type,
+              color: color,
+              assetPath: assetPath); // Gán ID
+          idCounter++;
         }
       }
     }
@@ -97,10 +102,10 @@ class BoardState with ChangeNotifier {
       if (position != selectedPosition) {
         if (board[position] == null ||
             board[position]!.color != board[selectedPosition!]!.color) {
+          // Di chuyển quân cờ
           board[position] = board[selectedPosition];
           board[selectedPosition!] = null;
           selectedPosition = null;
-
         } else {
           selectedPosition = position;
         }

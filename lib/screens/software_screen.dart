@@ -49,7 +49,7 @@ class _SoftwareScreenState extends State<SoftwareScreen> with TickerProviderStat
               child: MenuBarWidget(onMenuAction: _handleMenuAction),
             ),
             Expanded(
-              child: ChessBoardWidget(), // Truyền this vào ChessBoardWidget
+              child: ChessBoardWidget(),
             ),
             const AnalysisWidget(),
           ],
