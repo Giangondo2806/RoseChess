@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../utils/engine_utils.dart';
+import '../widgets/ches_board.dart';
 
 class SoftwareScreen extends StatefulWidget {
   final String engineFileName;
@@ -44,7 +45,7 @@ class _SoftwareScreenState extends State<SoftwareScreen> {
             child: MenuBarWidget(onMenuAction: _handleMenuAction),
           ),
           Expanded(
-            child: ChessBoardWidget(engineFileName: widget.engineFileName),
+            child: ChessBoardWidget(),
           ),
           AnalysisWidget(),
         ],
@@ -102,43 +103,7 @@ class MenuBarWidget extends StatelessWidget {
   }
 }
 
-// Widget cho bàn cờ
-class ChessBoardWidget extends StatefulWidget {
-  final String engineFileName;
 
-  const ChessBoardWidget({Key? key, required this.engineFileName})
-      : super(key: key);
-
-  @override
-  State<ChessBoardWidget> createState() => _ChessBoardWidgetState();
-}
-
-class _ChessBoardWidgetState extends State<ChessBoardWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: FutureBuilder<File>(
-        future: EngineUtils.getEngineFile(widget.engineFileName),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              return Container(
-                // Thêm code vẽ bàn cờ ở đây, sử dụng snapshot.data!.path nếu cần
-                child: const Text("Bàn cờ"),
-              );
-            } else if (snapshot.hasError) {
-              return Text(
-                'Error: ${snapshot.error}',
-                style: Theme.of(context).textTheme.bodyLarge,
-              );
-            }
-          }
-          return const CircularProgressIndicator();
-        },
-      ),
-    );
-  }
-}
 
 // Widget cho phần phân tích và hướng dẫn
 class AnalysisWidget extends StatefulWidget {
