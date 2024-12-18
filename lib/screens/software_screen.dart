@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../engine/rose.dart';
+import '../engine/rose_state.dart';
 import '../providers/board_state.dart';
-import '../utils/engine_utils.dart';
+import '../widgets/analysis_widget.dart';
 import '../widgets/chess_board.dart';
+import '../widgets/menu_bar_widget.dart';
 
 class SoftwareScreen extends StatefulWidget {
   final String engineFileName;
@@ -15,14 +18,23 @@ class SoftwareScreen extends StatefulWidget {
   State<SoftwareScreen> createState() => _SoftwareScreenState();
 }
 
-class _SoftwareScreenState extends State<SoftwareScreen> with TickerProviderStateMixin {
-  // Hàm xử lý sự kiện từ MenuBarWidget
+class _SoftwareScreenState extends State<SoftwareScreen>
+    with TickerProviderStateMixin {
+  Rose? _roseEngine;
+  bool _engineReady = false;
+  bool _gameStarted = false;
+  bool _isSettingEngine = false;
+  bool _readyOkReceived = false;
+
+  final String _testFen =
+      "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w";
+
+
   void _handleMenuAction(String action) {
     print('Menu action received: $action');
-    // Xử lý các sự kiện tương ứng
     switch (action) {
       case 'new_game':
-        // Xử lý New Game
+        _startGame();
         break;
       case 'detect_image':
         // Xử lý Detect Image
@@ -37,107 +49,153 @@ class _SoftwareScreenState extends State<SoftwareScreen> with TickerProviderStat
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ChangeNotifierProvider(
-        create: (context) => BoardState(), // Truyền this vào BoardState
-        child: Column(
-          children: [
-            // Truyền callback function _handleMenuAction vào MenuBarWidget
-            Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: MenuBarWidget(onMenuAction: _handleMenuAction),
-            ),
-            Expanded(
-              child: ChessBoardWidget(),
-            ),
-            const AnalysisWidget(),
-          ],
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    print('init engine');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initEngine();
+    });
   }
-}
-
-// Widget cho thanh công cụ MenuBar
-class MenuBarWidget extends StatelessWidget {
-  // Thêm callback function onMenuAction
-  final Function(String) onMenuAction;
-
-  const MenuBarWidget({Key? key, required this.onMenuAction}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.play_arrow),
-          tooltip: 'New Game',
-          onPressed: () {
-            // Gọi callback function để emit event 'new_game'
-            onMenuAction('new_game');
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.image_search),
-          tooltip: 'Detect Image',
-          onPressed: () {
-            // Gọi callback function để emit event 'detect_image'
-            onMenuAction('detect_image');
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.flip),
-          tooltip: 'Flip Board',
-          onPressed: () {
-            // Gọi callback function để emit event 'flip_board'
-            onMenuAction('flip_board');
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.settings),
-          tooltip: 'Settings',
-          onPressed: () {
-            // Gọi callback function để emit event 'settings'
-            onMenuAction('settings');
-          },
-        ),
-        // Thêm các icon khác nếu cần
-      ],
-    );
+  void dispose() {
+    _pauseGame();
+    _roseEngine?.dispose();
+    super.dispose();
   }
-}
+
+  void _pauseGame() {
+    if (_gameStarted == false) return;
+    _roseEngine?.stdin = 'stop\n';
+    setState(() {
+      _gameStarted = false;
+    });
+    print("Game paused.");
+  }
+
+  void _startGame() {
+      if (_gameStarted == true) return;
+      setState(() {
+        _gameStarted = true;
+      });
+    print("Game started.");
+  }
 
 
+  Future<void> _initEngine() async {
+    try {
+      _roseEngine = await roseAsync();
+      print('start engine');
+      if (_roseEngine != null) {
+        _roseEngine?.stdout.listen((line) {
+          print('[Engine Out]: $line');
+          if (line.trim() == 'readyok') {
+            if (mounted) {
+              setState(() {
+                _readyOkReceived = true;
+              });
+            }
+          }
+        });
+        if (_roseEngine!.state.value == RoseState.ready) {
+          if (mounted) {
+            setState(() {
+              _engineReady = true;
+            });
+          }
+          if (!_isSettingEngine) {
+            _settingEngine();
+          }
+        } else {
+          _roseEngine?.state.addListener(_engineStateListener);
+        }
+      }
+    } catch (error) {
+      print('Error init engine: $error');
+    }
+  }
 
-// Widget cho phần phân tích và hướng dẫn
-class AnalysisWidget extends StatefulWidget {
-  const AnalysisWidget({Key? key}) : super(key: key);
+  void _engineStateListener() {
+    if (_roseEngine?.state.value == RoseState.ready) {
+      print("Engine is ready");
+      if (mounted) {
+        setState(() {
+          _engineReady = true;
+        });
+      }
+      if (!_isSettingEngine && _engineReady) {
+        _settingEngine();
+      }
+    } else if (_roseEngine?.state.value == RoseState.error) {
+      print("Engine has error");
+      if (mounted) {
+        setState(() {
+          _engineReady = false;
+        });
+      }
+    } else {
+      print('Engine state update to ${_roseEngine?.state.value}');
+    }
+  }
 
-  @override
-  State<AnalysisWidget> createState() => _AnalysisWidgetState();
-}
+  Future<void> _settingEngine() async {
+    if (_isSettingEngine) return;
+    _isSettingEngine = true;
+    print('setting engine');
+    print('engine${widget.engineFileName}');
 
-class _AnalysisWidgetState extends State<AnalysisWidget> {
+    _roseEngine?.stdin = 'uci\n';
+    _roseEngine?.stdin = 'setoption name Threads value 2\n';
+    _roseEngine?.stdin = 'setoption name Hash value 300\n';
+    _roseEngine?.stdin =
+        'setoption name Evalfile value ${widget.engineFileName} \n';
+    _roseEngine?.stdin = 'isready\n';
+    if(mounted){
+      setState(() {
+        _isSettingEngine = false;
+      });
+    }
+  }
+
+  void _move(String fen) {
+    if (!_engineReady || !_gameStarted || !_readyOkReceived) return;
+    print('sent $fen');
+    _roseEngine?.stdin = 'position fen $fen\n';
+    _roseEngine?.stdin = 'go\n';
+    print('Sent Move $fen');
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-      ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Phân tích ván cờ",
-            style: TextStyle(fontWeight: FontWeight.bold),
+    // Kiểm tra state và gửi lệnh move ở đây
+    if (_engineReady && _gameStarted && _readyOkReceived) {
+       WidgetsBinding.instance.addPostFrameCallback((_) {
+          _move(_testFen);
+       });
+    }
+
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => BoardState(),
           ),
-          SizedBox(height: 8),
-          // Thêm nội dung phân tích và hướng dẫn ở đây
-          Text("Hướng dẫn nước đi..."),
+          Provider.value(value: _move),
         ],
-      ),
-    );
+        child: Scaffold(
+          body: Column(
+            children: [
+              Padding(
+                padding:
+                    EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                child: MenuBarWidget(onMenuAction: _handleMenuAction),
+              ),
+              Expanded(
+                child: ChessBoardWidget(),
+              ),
+              AnalysisWidget(),
+            ],
+          ),
+        ));
   }
 }

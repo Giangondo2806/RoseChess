@@ -25,6 +25,7 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
   bool _isDownloading = false;
   double _downloadProgress = 0.0;
   String _message = 'Đang kiểm tra engine...';
+  late String engineFilePath; 
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
     final engineFile = await EngineUtils.getEngineFile(engineFileName);
 
     if (await engineFile.exists()) {
+      engineFilePath = engineFile.path;
       setState(() {
         _engineExists = true;
         _message = 'Engine đã sẵn sàng!';
@@ -123,12 +125,13 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
     });
 
     final engineFile = await EngineUtils.getEngineFile(engineFileName);
+    engineFilePath = engineFile.path;
     final dio = Dio();
 
     try {
       await dio.download(
         engineDownloadUrl,
-        engineFile.path,
+        engineFilePath,
         onReceiveProgress: (received, total) {
           if (total != -1) {
             setState(() {
@@ -165,7 +168,7 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
   void _navigateToSoftwareScreen() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => SoftwareScreen(engineFileName: engineFileName),
+        builder: (context) => SoftwareScreen(engineFileName: engineFilePath),
       ),
     );
   }
