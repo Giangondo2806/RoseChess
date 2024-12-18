@@ -36,7 +36,7 @@ class ChessBoardWidget extends StatelessWidget {
                       ),
                     ),
                     // Pieces and Empty Squares
-                    ..._buildSquares(squareSize, boardState),
+                   ..._buildBoardSquares(squareSize, boardState),
                   ],
                 );
               },
@@ -47,30 +47,29 @@ class ChessBoardWidget extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildSquares(double squareSize, BoardState boardState) {
+  List<Widget> _buildBoardSquares(double squareSize, BoardState boardState) {
     List<Widget> squares = [];
 
-    for (int i = 0; i < boardState.rows; i++) {
-        for (int j = 0; j < boardState.cols; j++) {
+     for (int i = 0; i < boardState.rows; i++) {
+      for (int j = 0; j < boardState.cols; j++) {
         final position = BoardPosition(
             String.fromCharCode('a'.codeUnitAt(0) + j) + (9 - i).toString());
-        
-          final piece = boardState.board[position];
-          if (piece != null) {
-            squares.add(
-              _buildAnimatedPiece(piece, squareSize, boardState,position)
-            );
-          }else{
-             squares.add(
-              _buildEmptySquare(squareSize, boardState,position)
-             );
-          }
+          squares.add(_buildSquare(squareSize,boardState,position));
       }
     }
-
-    return squares;
+      return squares;
   }
- Widget _buildEmptySquare(double squareSize, BoardState boardState, BoardPosition position){
+
+
+ Widget _buildSquare(double squareSize, BoardState boardState, BoardPosition position){
+     final piece = boardState.board[position];
+    if(piece != null){
+      return _buildAnimatedPiece(piece, squareSize, boardState, position);
+    }
+    return  _buildEmptySquare(squareSize, boardState, position);
+ }
+
+   Widget _buildEmptySquare(double squareSize, BoardState boardState, BoardPosition position){
     return  Positioned(
       left: position.col * squareSize,
       top: (9 - position.row) * squareSize,
@@ -92,7 +91,7 @@ class ChessBoardWidget extends StatelessWidget {
    Widget _buildAnimatedPiece(Piece piece, double squareSize, BoardState boardState, BoardPosition position) {
        return AnimatedPositioned(
         key: ValueKey(piece.id),
-         duration: Duration(milliseconds: 150), // Increased duration
+         duration: const Duration(milliseconds: 100), // Increased duration
          curve: Curves.linear, // Using Curves.easeInOut
          left: position.col * squareSize,
          top: (9 - position.row) * squareSize,

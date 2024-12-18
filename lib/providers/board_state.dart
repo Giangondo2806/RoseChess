@@ -17,33 +17,38 @@ class BoardState with ChangeNotifier {
   late Map<String, BoardPosition> piecePositions;
 
   BoardState() {
-    piecePositions = {}; // Khởi tạo ở đây
-    initializeBoard();
+    piecePositions = {}; // Initialize here
+    _initializeBoard();
   }
 
-  void initializeBoard() {
-    board = {};
-    int idCounter = 0; // Bắt đầu từ 0
-    for (int i = 0; i < initialBoard.length; i++) {
-      for (int j = 0; j < initialBoard[i].length; j++) {
-        final pieceData = initialBoard[i][j];
-        if (pieceData != null) {
-          final notation = pieceData['notion'];
-          final type = _getPieceType(pieceData['type']);
-          final color = _getPieceColor(pieceData['color']);
-          final assetPath = _getAssetPath(type, color);
-          final piece = Piece(
-              id: 'piece_$idCounter',
-              type: type,
-              color: color,
-              assetPath: assetPath); // Gán ID
-          board[BoardPosition(notation)] = piece;
-          piecePositions[piece.id] = BoardPosition(notation);
-          idCounter++;
-        }
+  void _initializeBoard() {
+      board = {};
+      int idCounter = 0;
+      for (int i = 0; i < initialBoard.length; i++) {
+          for (int j = 0; j < initialBoard[i].length; j++) {
+              final pieceData = initialBoard[i][j];
+              if (pieceData != null) {
+                final piece = _createPieceFromData(pieceData, idCounter);
+                  board[BoardPosition(pieceData['notion']!)] = piece;
+                  piecePositions[piece.id] = BoardPosition(pieceData['notion']!);
+                idCounter++;
+              }
+          }
       }
-    }
   }
+
+Piece _createPieceFromData(Map<String, dynamic> pieceData, int idCounter) {
+    final type = _getPieceType(pieceData['type'] as String);
+    final color = _getPieceColor(pieceData['color'] as String);
+    final assetPath = _getAssetPath(type, color);
+    return Piece(
+      id: 'piece_$idCounter',
+      type: type,
+      color: color,
+      assetPath: assetPath,
+    );
+  }
+
 
   PieceType _getPieceType(String type) {
     switch (type) {
@@ -99,34 +104,32 @@ class BoardState with ChangeNotifier {
   }
 
   void onPieceTapped(BoardPosition position) {
-    if (selectedPosition == null) {
-      if (board[position] != null) {
-        selectedPosition = position;
-      }
-    } else {
-      if (position != selectedPosition) {
-        if (board[position] == null ||
-            (board[selectedPosition] != null && board[position]!.color != board[selectedPosition]!.color)) {
-            if(board[selectedPosition] == null){
-                  selectedPosition = null;
-                  notifyListeners();
-                  return;
-                }
-            final piece = board[selectedPosition]!;
-
-            board[position] = piece;
-            board[selectedPosition!] = null;
-
-            piecePositions[piece.id] = position;
-
-            selectedPosition = null;
-        } else {
-            selectedPosition = position;
-        }
+      if (selectedPosition == null) {
+          if (board[position] != null) {
+              selectedPosition = position;
+          }
       } else {
-         selectedPosition = null;
+          if (position != selectedPosition) {
+               final selectedPiece = board[selectedPosition];
+              final targetPiece = board[position];
+
+              if (selectedPiece != null && (targetPiece == null || targetPiece.color != selectedPiece.color)) {
+                  _movePiece(selectedPosition!, position,selectedPiece);
+              } else {
+                  selectedPosition = position;
+              }
+          } else {
+              selectedPosition = null;
+          }
       }
-    }
-    notifyListeners();
+      notifyListeners();
+  }
+
+
+  void _movePiece(BoardPosition from, BoardPosition to, Piece piece) {
+    board[to] = piece;
+    board[from] = null;
+    piecePositions[piece.id] = to;
+    selectedPosition = null;
   }
 }

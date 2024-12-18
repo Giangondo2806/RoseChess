@@ -18,18 +18,18 @@ class PieceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          border: isSelected ? Border.all(color: Colors.blue, width: 2) : null,
-        ),
+    return InkWell(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            border: isSelected ? Border.all(color: Colors.blue, width: 2) : null,
+          ),
         child: SvgPicture.asset(
           piece.assetPath,
           width: squareSize,
           height: squareSize,
-        ),
-      ),
-    );
+         ),
+       ),
+     );
   }
 }
