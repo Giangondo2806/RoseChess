@@ -1,6 +1,6 @@
 
 // Assets paths
-const String boardAsset = 'assets/images/xiangqiboards/wikimedia.svg';
+const String boardAsset = 'assets/images/xiangqiboards/simple.svg';
 const String RR = 'assets/images/xiangqipieces/wikipedia/rr.svg';
 const String RN = 'assets/images/xiangqipieces/wikipedia/rn.svg';
 const String RB = 'assets/images/xiangqipieces/wikipedia/rb.svg';

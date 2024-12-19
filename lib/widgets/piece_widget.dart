@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:rose_flutter/providers/board_state.dart';
 import '../models/piece.dart';
 
 class PieceWidget extends StatelessWidget {
@@ -18,12 +20,13 @@ class PieceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pieceSize = squareSize-3; // Điều chỉnh kích thước quân cờ
+    final boardState = Provider.of<BoardState>(context, listen: false);
+    final pieceSize = squareSize - 3; // Điều chỉnh kích thước quân cờ
     return InkWell(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          border: isSelected ? Border.all(color: Colors.blue, width: 2) : null,
+          border: isSelected && piece.color.name== boardState.xiangqi.turn?  Border.all(color: Colors.blue, width: 2) : null,
         ),
         alignment: Alignment.center, // Căn giữa quân cờ
         child: SvgPicture.asset(

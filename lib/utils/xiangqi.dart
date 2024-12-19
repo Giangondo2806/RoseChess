@@ -223,7 +223,10 @@ class Xiangqi {
   };
 
   List<XiangqiPiece?> board = List.filled(256, null);
-  Map<String, int> kings = {XiangqiColor.r: Xiangqi.EMPTY, XiangqiColor.b: Xiangqi.EMPTY};
+  Map<String, int> kings = {
+    XiangqiColor.r: Xiangqi.EMPTY,
+    XiangqiColor.b: Xiangqi.EMPTY
+  };
   String turn = Xiangqi.RED;
   List<dynamic> history = [];
   List<Move> futures = [];
@@ -278,7 +281,8 @@ class Xiangqi {
         final color = piece.codeUnitAt(0) < 'a'.codeUnitAt(0)
             ? Xiangqi.RED
             : Xiangqi.BLACK;
-        put(XiangqiPiece(type: piece.toLowerCase(), color: color), algebraic(square));
+        put(XiangqiPiece(type: piece.toLowerCase(), color: color),
+            algebraic(square));
         square++;
       }
     }
@@ -504,7 +508,9 @@ class Xiangqi {
 
   XiangqiPiece? get(Square square) {
     final piece = board[Xiangqi.SQUARES[square]!];
-    return piece != null ? XiangqiPiece(type: piece.type, color: piece.color) : null;
+    return piece != null
+        ? XiangqiPiece(type: piece.type, color: piece.color)
+        : null;
   }
 
   bool put(XiangqiPiece piece, Square square) {
@@ -570,8 +576,8 @@ class Xiangqi {
 
   List<Move> generateMoves(
       {bool legal = true, Square? square, bool opponent = false}) {
-    void addMove(
-        List<XiangqiPiece?> board, List<Move> moves, int from, int to, int flags) {
+    void addMove(List<XiangqiPiece?> board, List<Move> moves, int from, int to,
+        int flags) {
       moves.add(buildMove(board, from, to, flags));
     }
 
@@ -849,7 +855,8 @@ class Xiangqi {
 
     if ((move.flags & Xiangqi.BITS[FlagKeys.CAPTURE]!) > 0 && undo) {
       // No need for int.parse anymore
-      board[move.to] = XiangqiPiece(type: move.captured!, color: swapXiangqiColor(turn));
+      board[move.to] =
+          XiangqiPiece(type: move.captured!, color: swapXiangqiColor(turn));
     }
 
     return move;
@@ -1142,7 +1149,10 @@ class Xiangqi {
       if (board[i] == null) {
         row.add(null);
       } else {
-        row.add(XiangqiPiece(type: board[i]!.type, color: board[i]!.color, notion: algebraic(i)));
+        row.add(XiangqiPiece(
+            type: board[i]!.type,
+            color: board[i]!.color,
+            notion: algebraic(i)));
       }
       if ((i & 0x08) != 0) {
         output.add(row);
@@ -1556,8 +1566,9 @@ class Xiangqi {
       int c = 0;
       int cc = 0;
       // Xác định s1 dựa trên vị trí các quân cờ cùng loại trên cùng cột
-      List<int> sameColXiangqiPieces =
-          sameXiangqiPieces.where((piece) => file(piece) == file(move.from)).toList();
+      List<int> sameColXiangqiPieces = sameXiangqiPieces
+          .where((piece) => file(piece) == file(move.from))
+          .toList();
       sameColXiangqiPieces.add(move.from);
       sameColXiangqiPieces.sort((a, b) {
         // Sắp xếp: rank lớn hơn ở trước (đỏ), rank nhỏ hơn ở trước (đen)

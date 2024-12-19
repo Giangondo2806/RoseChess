@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:rose_flutter/utils/xiangqi.dart';
 import '../models/piece.dart';
 import '../providers/board_state.dart';
 import '../constants.dart';
@@ -81,11 +80,11 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final boardWidth = constraints.maxWidth; // Sử dụng chiều rộng tối đa
+        final boardWidth = constraints.maxWidth-5; 
         final boardState = Provider.of<BoardState>(context, listen: false);
         final squareSize = boardWidth / boardState.cols;
         final boardHeight = boardWidth *
-            (boardState.rows / boardState.cols); // Tính toán chiều cao
+            (boardState.rows / boardState.cols);
 
         return Center(
           child: SizedBox(

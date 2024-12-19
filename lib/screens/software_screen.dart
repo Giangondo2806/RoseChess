@@ -17,7 +17,6 @@ class SoftwareScreen extends StatefulWidget {
 
 class _SoftwareScreenState extends State<SoftwareScreen>
     with TickerProviderStateMixin {
-
   bool _initialized = false;
 
   @override
@@ -28,7 +27,8 @@ class _SoftwareScreenState extends State<SoftwareScreen>
           create: (context) => BoardState(widget.engineFileName),
         ),
       ],
-      child: Consumer<BoardState>( // Sử dụng Consumer
+      child: Consumer<BoardState>(
+        // Sử dụng Consumer
         builder: (context, boardState, child) {
           // Sử dụng addPostFrameCallback bên trong Consumer
           if (!_initialized) {
@@ -39,22 +39,19 @@ class _SoftwareScreenState extends State<SoftwareScreen>
           }
 
           return Scaffold(
-            body: Column(
-              children: [
-                Padding(
-                  padding:
-                      EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                  child: MenuBarWidget(
+            body: Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              child: Column(
+                children: [
+                  MenuBarWidget(
                     onMenuAction: boardState.handleMenuAction,
                   ),
-                ),
-                Expanded(
-                  child: ChessBoardWidget(boardState: boardState,),
-                ),
-                AnalysisWidget(),
-                Text("Engine Ready: ${boardState.engineReady}"),
-                Text("Game Started: ${boardState.gameStarted}"),
-              ],
+                  ChessBoardWidget(boardState: boardState),
+                  AnalysisWidget(),
+                  Text("Engine Ready: ${boardState.engineReady}"),
+                  Text("Game Started: ${boardState.gameStarted}"),
+                ],
+              ),
             ),
           );
         },
