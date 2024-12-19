@@ -1,10 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:rose_flutter/engine/rose.dart';
-import 'package:rose_flutter/engine/rose_state.dart';
-import 'package:rose_flutter/utils/xiangqi.dart';
+
+import 'package:flutter/foundation.dart';
+
+import '../engine/rose.dart';
+import '../engine/rose_state.dart';
 import '../models/piece.dart';
 import '../models/board_position.dart';
 import '../constants.dart';
+import '../utils/xiangqi.dart';
 import '../widgets/chess_board.dart';
 
 class BoardState with ChangeNotifier {
@@ -34,6 +36,7 @@ class BoardState with ChangeNotifier {
   Rose? get roseEngine => _roseEngine;
   bool get engineReady => _engineReady;
   bool get gameStarted => _gameStarted;
+  
 
   BoardState(this.engineFileName) {
     _initializeBoard();
@@ -147,7 +150,6 @@ class BoardState with ChangeNotifier {
         final targetPiece = board[position];
 
         if (selectedPiece != null &&
-            canMoves != null &&
             (targetPiece == null || targetPiece.color != selectedPiece.color) &&
             selectedPosition != null) {
           if (canMoves!

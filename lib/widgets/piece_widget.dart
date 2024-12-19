@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:rose_flutter/providers/board_state.dart';
 import '../models/piece.dart';
+import '../providers/board_state.dart';
 
 class PieceWidget extends StatelessWidget {
   final Piece piece;

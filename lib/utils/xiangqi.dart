@@ -489,10 +489,8 @@ class Xiangqi {
 
   Map<String, String> setHeader(List<String> args) {
     for (int i = 0; i < args.length; i += 2) {
-      if (args[i + 1] is String) {
-        header[args[i]] = args[i + 1];
-      }
-    }
+      header[args[i]] = args[i + 1];
+        }
     return header;
   }
 
