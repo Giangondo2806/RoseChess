@@ -17,38 +17,37 @@ class BoardState with ChangeNotifier {
   late Map<String, BoardPosition> piecePositions;
 
   BoardState() {
-    piecePositions = {}; // Initialize here
     _initializeBoard();
   }
 
   void _initializeBoard() {
-      board = {};
-      int idCounter = 0;
-      for (int i = 0; i < initialBoard.length; i++) {
-          for (int j = 0; j < initialBoard[i].length; j++) {
-              final pieceData = initialBoard[i][j];
-              if (pieceData != null) {
-                final piece = _createPieceFromData(pieceData, idCounter);
-                  board[BoardPosition(pieceData['notion']!)] = piece;
-                  piecePositions[piece.id] = BoardPosition(pieceData['notion']!);
-                idCounter++;
-              }
-          }
+    board = {};
+    int idCounter = 0;
+    for (int i = 0; i < initialBoard.length; i++) {
+      for (int j = 0; j < initialBoard[i].length; j++) {
+        final pieceData = initialBoard[i][j];
+        if (pieceData != null) {
+          final piece = _createPieceFromData(pieceData, idCounter);
+          board[BoardPosition(pieceData['notion']!)] = piece;
+          piecePositions[piece.id!] = BoardPosition(pieceData['notion']!);
+          idCounter++;
+        }
       }
+    }
   }
 
-Piece _createPieceFromData(Map<String, dynamic> pieceData, int idCounter) {
-    final type = _getPieceType(pieceData['type'] as String);
-    final color = _getPieceColor(pieceData['color'] as String);
+  Piece _createPieceFromData(Map<String, dynamic> pieceData, int idCounter) {
+    final type = _getPieceType(pieceData['type']);
+    final color = _getPieceColor(pieceData['color']);
     final assetPath = _getAssetPath(type, color);
-    return Piece(
-      id: 'piece_$idCounter',
+    final piece = Piece(
+      id: "piece_$idCounter",
       type: type,
       color: color,
       assetPath: assetPath,
     );
+    return piece;
   }
-
 
   PieceType _getPieceType(String type) {
     switch (type) {
@@ -104,32 +103,32 @@ Piece _createPieceFromData(Map<String, dynamic> pieceData, int idCounter) {
   }
 
   void onPieceTapped(BoardPosition position) {
-      if (selectedPosition == null) {
-          if (board[position] != null) {
-              selectedPosition = position;
-          }
-      } else {
-          if (position != selectedPosition) {
-               final selectedPiece = board[selectedPosition];
-              final targetPiece = board[position];
-
-              if (selectedPiece != null && (targetPiece == null || targetPiece.color != selectedPiece.color)) {
-                  _movePiece(selectedPosition!, position,selectedPiece);
-              } else {
-                  selectedPosition = position;
-              }
-          } else {
-              selectedPosition = null;
-          }
+    if (selectedPosition == null) {
+      if (board[position] != null) {
+        selectedPosition = position;
       }
-      notifyListeners();
-  }
+    } else {
+      if (position != selectedPosition) {
+        final selectedPiece = board[selectedPosition];
+        final targetPiece = board[position];
 
+        if (selectedPiece != null &&
+            (targetPiece == null || targetPiece.color != selectedPiece.color)) {
+          _movePiece(selectedPosition!, position, selectedPiece);
+        } else {
+          selectedPosition = position;
+        }
+      } else {
+        selectedPosition = null;
+      }
+    }
+    notifyListeners();
+  }
 
   void _movePiece(BoardPosition from, BoardPosition to, Piece piece) {
     board[to] = piece;
     board[from] = null;
-    piecePositions[piece.id] = to;
+    piecePositions[piece.id!] = to;
     selectedPosition = null;
   }
 }

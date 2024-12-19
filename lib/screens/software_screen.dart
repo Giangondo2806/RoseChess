@@ -11,6 +11,7 @@ import '../widgets/menu_bar_widget.dart';
 class SoftwareScreen extends StatefulWidget {
   final String engineFileName;
 
+
   const SoftwareScreen({Key? key, required this.engineFileName})
       : super(key: key);
 
@@ -51,7 +52,6 @@ class _SoftwareScreenState extends State<SoftwareScreen>
   @override
   void initState() {
     super.initState();
-    print('init engine');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initEngine();
     });

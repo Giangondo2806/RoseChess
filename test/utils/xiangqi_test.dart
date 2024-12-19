@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rose_flutter/utils/xiangqi2.dart';
+import 'package:rose_flutter/utils/xiangqi.dart';
 
 void main() {
   group('Xiangqi', () {
@@ -25,6 +25,7 @@ void main() {
       xiangqi.move({'from': 'h2', 'to': 'e2'});
       xiangqi.move({'from': 'h9', 'to': 'g7'});
       xiangqi.move({'from': 'h0', 'to': 'g2'});
+
       expect(xiangqi, isNotNull);
       expect(
           xiangqi.fen(),
@@ -85,8 +86,31 @@ void main() {
       xiangqi.move({'from': 'h2', 'to': 'e2'});
       xiangqi.move({'from': 'h9', 'to': 'g7'});
       xiangqi.move({'from': 'h0', 'to': 'g2'});
+      xiangqi.move({'from': 'i9', 'to': 'h9'});
+      xiangqi.move({'from': 'e2', 'to': 'e1'});
+      xiangqi.move({'from': 'b7', 'to': 'e7'});
+      xiangqi.move({'from': 'b2', 'to': 'e2'});
+      xiangqi.move({'from': 'b9', 'to': 'c7'});
+      xiangqi.move({'from': 'b9', 'to': 'c7'});
+      xiangqi.move({'from': 'e2', 'to': 'e6'});
 
-      expect(xiangqi.getHistory(), equals(['h2e2', 'h9g7', 'h0g2']));
+      final expectSan = [
+        'P2-5',
+        'M8.7',
+        'M2.3',
+        'X9-8',
+        'P5/1',
+        'P2-5',
+        'P8-5',
+        'M2.3',
+        '前P.4',
+      ];
+
+      // expect(xiangqi.getHistory(), equals(['h2e2', 'h9g7', 'h0g2','i9h9']));
+      final moves = xiangqi.getHistory(verbose: true);
+      for (int i = 0; i < moves.length; i++) {
+        expect(moves[i].san, equals(expectSan[i]));
+      }
     });
 
     test('history fromload', () {
@@ -106,6 +130,7 @@ void main() {
           "piece": 'b',
           "move_number": 1,
           "iccs": 'c9e7',
+          "san": 'V3.5',
           "fen":
               'rnbakabnr/9/1c7/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R b'
         },
@@ -117,6 +142,7 @@ void main() {
           "piece": 'P',
           "move_number": 2,
           "iccs": 'c3c4',
+          "san": 'B7.1',
           "fen":
               'rn1akabnr/9/1c2b4/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R w'
         }
@@ -124,7 +150,10 @@ void main() {
 
       for (int i = 0; i < moves.length; i++) {
         expect(moves[i].fen, contains(expected[i]['fen']));
+        expect(
+            (moves[i] as Move).moveNumber, equals(expected[i]['move_number']));
         expect(moves[i].iccs, contains(expected[i]['iccs']));
+        expect(moves[i].san, contains(expected[i]['san']));
       }
     });
   });

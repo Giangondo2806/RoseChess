@@ -45,6 +45,7 @@ class Move {
   String? fen;
   String? iccs;
   String? flagsDisplay;
+  String? san;
 
   Move({
     this.moveNumber,
@@ -1024,16 +1025,18 @@ class Xiangqi {
         : move.piece.toLowerCase();
     move.fen = generateFen();
     move.moveNumber = uglyMove.moveNumber;
+    move.san = uglyMove.san;
 
     String flags = '';
 
     for (String flag in Xiangqi.FLAGS.keys) {
       if ((uglyMove.flags & Xiangqi.BITS[flag]!) > 0) {
-          flags += Xiangqi.FLAGS[flag]!;
+        flags += Xiangqi.FLAGS[flag]!;
       }
     }
     // Gán flags mới cho move.flags để hiển thị, không thay đổi giá trị gốc
-    move.flagsDisplay = flags; // thêm một trường flagsDisplay để lưu trữ giá trị flags dạng chuỗi cho mục đích hiển thị
+    move.flagsDisplay =
+        flags; // thêm một trường flagsDisplay để lưu trữ giá trị flags dạng chuỗi cho mục đích hiển thị
 
     return move;
   }
@@ -1346,7 +1349,9 @@ class Xiangqi {
       moveNumber++;
     }
 
+    moveObj.san = moveToJsChinese(moveObj);
     Move prettyMove = makePretty(moveObj);
+
     makeMove(moveObj);
     if (history.isNotEmpty) {
       (history.last as dynamic)['move'].moveNumber = moveNumber;
@@ -1468,5 +1473,159 @@ class Xiangqi {
       return null;
     }
     return {'row': row, 'col': col};
+  }
+
+  String moveToJsChinese(Move move) {
+    Map<String, String> figureNames = {
+      'P': 'B',
+      'C': 'P',
+      'R': 'X',
+      'N': 'M',
+      'B': 'V',
+      'A': 'S',
+      'K': 'Tg',
+    };
+
+    Map<String, List<String>> figureDir = {
+      'r': ['.', '/'], // [forward, backward]
+      'b': ['/', '.'], // [forward, backward]
+      'p': ['-']
+    };
+
+    Map<String, List<String>> figureOrd = {
+      'r': ['前', '後'], // [front, rear]
+      'b': ['後', '前'], // [front, rear]
+      'm': ['中']
+    };
+
+    Map<String, List<String>> figureValues = {
+      'r': ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+      'b': ['9', '8', '7', '6', '5', '4', '3', '2', '1'],
+    };
+
+    String pieceType = move.piece.toUpperCase();
+    String pieceName = figureNames[pieceType] ?? '';
+
+    String from = algebraic(move.from);
+    String to = algebraic(move.to);
+
+    // Sửa fromX và toX
+    int fromX = (from.codeUnitAt(0) - 97); // Không đảo ngược thứ tự cột
+    int fromY = (from.codeUnitAt(1) - 48);
+    int toX = (to.codeUnitAt(0) - 97); // Không đảo ngược thứ tự cột
+    int toY = (to.codeUnitAt(1) - 48);
+
+    // Tìm các quân cờ cùng loại, cùng màu và cùng cột
+    List<int> samePieces = [];
+    for (int i = Xiangqi.SQUARES['a9']!; i <= Xiangqi.SQUARES['i0']!; ++i) {
+      if (board[i] != null &&
+          board[i]!.type.toUpperCase() == pieceType &&
+          board[i]!.color == move.color &&
+          i != move.from) {
+        samePieces.add(i);
+      }
+    }
+
+    String s1 = '';
+    String s2 = '';
+
+    // Xử lý s1 (Tối ưu: Không chia trường hợp, hoán đổi 'tr' và 's')
+    if (pieceType != 'A' && pieceType != 'B') {
+      int cr = 0;
+      // Kiểm tra số quân cờ cùng loại và cùng màu trên toàn bàn cờ (cr)
+      for (int x = 0; x < 9; x++) {
+        if (x == fromX) continue;
+        for (int y = 0; y < 10; y++) {
+          String sq = '${'abcdefghi'[x]}$y';
+          if (Xiangqi.SQUARES.containsKey(sq) &&
+              board[Xiangqi.SQUARES[sq]!] != null &&
+              board[Xiangqi.SQUARES[sq]!]!.type.toUpperCase() == pieceType &&
+              board[Xiangqi.SQUARES[sq]!]!.color == move.color) {
+            cr++;
+          }
+        }
+        if (cr < 2) cr = 0;
+      }
+
+      int c = 0;
+      int cc = 0;
+      // Xác định s1 dựa trên vị trí các quân cờ cùng loại trên cùng cột
+      List<int> sameColPieces =
+          samePieces.where((piece) => file(piece) == file(move.from)).toList();
+      sameColPieces.add(move.from);
+      sameColPieces.sort((a, b) {
+        // Sắp xếp: rank lớn hơn ở trước (đỏ), rank nhỏ hơn ở trước (đen)
+        return (turn == Xiangqi.RED) ? rank(b) - rank(a) : rank(a) - rank(b);
+      });
+
+      for (int p in sameColPieces) {
+        int y = int.parse(algebraic(p)[1]); // rank
+
+        // Không cần chia trường hợp đỏ/đen
+        if (y.compareTo(fromY) * (turn == 'r' ? -1 : 1) > 0) {
+          // Nằm trước quân đang xét
+          if (cr == 0) {
+            s1 = figureOrd[turn]![0] + pieceName; // tr/s + tên quân
+            c++;
+          } else {
+            s1 = figureOrd[turn]![0] +
+                figureValues[turn]![8 - fromX]; // tr/s + số thứ tự cột
+            c++;
+          }
+        } else if (y == fromY) {
+          if (c == 0) {
+            s1 = pieceName +
+                figureValues[turn]![8 - fromX]; // tên quân + số thứ tự cột
+          } else {
+            cc = c;
+          }
+        } else {
+          // Nằm sau quân đang xét
+          if (cr == 0) {
+            if (c == 0) {
+              s1 = figureOrd[turn]![1] + pieceName; // s/tr + tên quân
+            } else {
+              // Giữ nguyên 'g' + tên quân
+              s1 = 'g' + pieceName;
+              c++;
+            }
+          } else {
+            if (c == 0) {
+              s1 = figureOrd[turn]![1] +
+                  figureValues[turn]![8 - fromX]; // s/tr + số thứ tự cột
+            } else {
+              // Giữ nguyên 'g' + số thứ tự cột
+              s1 = 'g' + figureValues[turn]![8 - fromX];
+              c++;
+            }
+          }
+        }
+      }
+
+      if (c > 2 && c != cc) {
+        s1 = figureValues[turn]![cc] + pieceName;
+      }
+    } else {
+      s1 = pieceName + figureValues[turn]![8 - fromX];
+    }
+
+    // Xử lý s2
+    if (fromY > toY) {
+      if (fromX == toX) {
+        s2 = figureDir[turn]![1] + (fromY - toY).toString();
+      } else {
+        s2 = figureDir[turn]![1] + figureValues[turn]![8 - toX];
+      }
+    } else if (fromY == toY) {
+      s2 = figureDir['p']![0] + figureValues[turn]![8 - toX];
+    } else {
+      if (fromX == toX) {
+        s2 = figureDir[turn]![0] + (toY - fromY).toString();
+      } else {
+        s2 = figureDir[turn]![0] + figureValues[turn]![8 - toX];
+      }
+    }
+
+    return s1 + s2;
   }
 }
