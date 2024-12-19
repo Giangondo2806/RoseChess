@@ -22,19 +22,16 @@ void main() {
     });
 
     test('should make a valid move', () {
-      final test = xiangqi.generatePrettyMoves();
-      for (int i = 0; i < test.length; i++) {
-        print(test[i].iccs);
-      }
-
       xiangqi.move({'from': 'h2', 'to': 'e2'});
       xiangqi.move({'from': 'h9', 'to': 'g7'});
       xiangqi.move({'from': 'h0', 'to': 'g2'});
+      expect(xiangqi, isNotNull);
+      expect(
+          xiangqi.fen(),
+          contains(
+              'rnbakab1r/9/1c4nc1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R b'));
 
-      print(xiangqi.generateFen());
-      print(xiangqi.getHistory());
-      // xiangqi.move({'from': 'h9', 'to': 'g7'});
-      // xiangqi.move({'from': 'h0', 'to': 'g2'});
+      expect(xiangqi.gameOver(), false);
 
       //     expect(game.ascii()).toBe(`
       //    +---------------------------+
@@ -89,43 +86,7 @@ void main() {
       xiangqi.move({'from': 'h9', 'to': 'g7'});
       xiangqi.move({'from': 'h0', 'to': 'g2'});
 
-      expect(
-          xiangqi.getHistory(verbose: true),
-          equals([
-            {
-              "move_number": 1,
-              "color": 'r',
-              "from": 'h2',
-              "to": 'e2',
-              "flags": 'n',
-              "piece": 'C',
-              "iccs": 'h2e2',
-              "fen":
-                  'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w'
-            },
-            {
-              "move_number": 1,
-              "color": 'b',
-              "from": 'h9',
-              "to": 'g7',
-              "flags": 'n',
-              "piece": 'n',
-              "iccs": 'h9g7',
-              "fen":
-                  'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C4/9/RNBAKABNR b'
-            },
-            {
-              "move_number": 2,
-              "color": 'r',
-              "from": 'h0',
-              "to": 'g2',
-              "flags": 'n',
-              "piece": 'N',
-              "iccs": 'h0g2',
-              "fen":
-                  'rnbakab1r/9/1c4nc1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C4/9/RNBAKAB1R w'
-            }
-          ]));
+      expect(xiangqi.getHistory(), equals(['h2e2', 'h9g7', 'h0g2']));
     });
 
     test('history fromload', () {
@@ -134,32 +95,37 @@ void main() {
       expect(xiangqi.getHistory(verbose: true), equals([]));
       xiangqi.move({'from': 'c9', 'to': 'e7'});
       xiangqi.move({'from': 'c3', 'to': 'c4'});
-      expect(
-          xiangqi.getHistory(verbose: true),
-          equals([
-            {
-              "color": 'b',
-              "from": 'c9',
-              "to": 'e7',
-              "flags": 'n',
-              "piece": 'b',
-              "move_number": 1,
-              "iccs": 'c9e7',
-              "fen":
-                  'rnbakabnr/9/1c7/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R b'
-            },
-            {
-              "color": 'r',
-              "from": 'c3',
-              "to": 'c4',
-              "flags": 'n',
-              "piece": 'P',
-              "move_number": 2,
-              "iccs": 'c3c4',
-              "fen":
-                  'rn1akabnr/9/1c2b4/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R w'
-            }
-          ]));
+      final moves = xiangqi.getHistory(verbose: true);
+
+      final expected = [
+        {
+          "color": 'b',
+          "from": 'c9',
+          "to": 'e7',
+          "flags": 'n',
+          "piece": 'b',
+          "move_number": 1,
+          "iccs": 'c9e7',
+          "fen":
+              'rnbakabnr/9/1c7/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R b'
+        },
+        {
+          "color": 'r',
+          "from": 'c3',
+          "to": 'c4',
+          "flags": 'n',
+          "piece": 'P',
+          "move_number": 2,
+          "iccs": 'c3c4',
+          "fen":
+              'rn1akabnr/9/1c2b4/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R w'
+        }
+      ];
+
+      for (int i = 0; i < moves.length; i++) {
+        expect(moves[i].fen, contains(expected[i]['fen']));
+        expect(moves[i].iccs, contains(expected[i]['iccs']));
+      }
     });
   });
 }

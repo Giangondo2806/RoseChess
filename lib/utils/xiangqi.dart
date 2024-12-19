@@ -1,123 +1,50 @@
-enum Color { b, r }
-
-enum PawnType { p }
-
-enum ExcludePawnType { c, r, n, b, a, k }
-
-typedef PieceType = dynamic; // Union type not directly supported, using dynamic
-
-enum Square {
-  a9,
-  b9,
-  c9,
-  d9,
-  e9,
-  f9,
-  g9,
-  h9,
-  i9,
-  a8,
-  b8,
-  c8,
-  d8,
-  e8,
-  f8,
-  g8,
-  h8,
-  i8,
-  a7,
-  b7,
-  c7,
-  d7,
-  e7,
-  f7,
-  g7,
-  h7,
-  i7,
-  a6,
-  b6,
-  c6,
-  d6,
-  e6,
-  f6,
-  g6,
-  h6,
-  i6,
-  a5,
-  b5,
-  c5,
-  d5,
-  e5,
-  f5,
-  g5,
-  h5,
-  i5,
-  a4,
-  b4,
-  c4,
-  d4,
-  e4,
-  f4,
-  g4,
-  h4,
-  i4,
-  a3,
-  b3,
-  c3,
-  d3,
-  e3,
-  f3,
-  g3,
-  h3,
-  i3,
-  a2,
-  b2,
-  c2,
-  d2,
-  e2,
-  f2,
-  g2,
-  h2,
-  i2,
-  a1,
-  b1,
-  c1,
-  d1,
-  e1,
-  f1,
-  g1,
-  h1,
-  i1,
-  a0,
-  b0,
-  c0,
-  d0,
-  e0,
-  f0,
-  g0,
-  h0,
-  i0
+class Color {
+  static const b = 'b';
+  static const r = 'r';
 }
 
-enum FlagKeys { NORMAL, CAPTURE }
+class PieceType {
+  static const p = 'p';
+  static const c = 'c';
+  static const r = 'r';
+  static const n = 'n';
+  static const b = 'b';
+  static const a = 'a';
+  static const k = 'k';
+}
+
+class PieceInfo {
+  int number;
+  List<int> squares;
+
+  PieceInfo({required this.number, required this.squares});
+}
+
+typedef Square = String;
+
+class FlagKeys {
+  static const NORMAL = 'n';
+  static const CAPTURE = 'c';
+}
 
 class Piece {
-  PieceType type;
-  Color color;
+  String type;
+  String color;
 
   Piece({required this.type, required this.color});
 }
 
 class Move {
   int? moveNumber;
-  Color color;
+  String color;
   int from;
   int to;
   int flags;
-  PieceType piece;
-  PieceType? captured;
+  String piece;
+  String? captured;
   String? fen;
   String? iccs;
+  String? flagsDisplay;
 
   Move({
     this.moveNumber,
@@ -134,8 +61,8 @@ class Move {
 
 class HistoryMove {
   Move move;
-  Map<Color, int> kings;
-  Color turn;
+  Map<String, int> kings;
+  String turn;
 
   HistoryMove({required this.move, required this.kings, required this.turn});
 }
@@ -154,29 +81,30 @@ class ValidationResult {
  */
 
 class Xiangqi {
-  static const Color BLACK = Color.b;
-  static const Color RED = Color.r;
-  static const int EMPTY = -1;
-  static const PieceType PAWN = PawnType.p;
-  static const PieceType CANNON = ExcludePawnType.c;
-  static const PieceType ROOK = ExcludePawnType.r;
-  static const PieceType KNIGHT = ExcludePawnType.n;
-  static const PieceType BISHOP = ExcludePawnType.b;
-  static const PieceType ADVISER = ExcludePawnType.a;
-  static const PieceType KING = ExcludePawnType.k;
-  static const String SYMBOLS = 'pcrnbakPCRNBAK';
-  static const String DEFAULT_POSITION =
-      'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r';
-  static const List<String> POSSIBLE_RESULTS = ['1-0', '0-1', '1/2-1/2', '*'];
-  static const Map<Color, List<int>> PAWN_OFFSETS = {
+  static const WHITE = 'w';
+  static const BLACK = Color.b;
+  static const RED = Color.r;
+  static const EMPTY = -1;
+  static const PAWN = PieceType.p;
+  static const CANNON = PieceType.c;
+  static const ROOK = PieceType.r;
+  static const KNIGHT = PieceType.n;
+  static const BISHOP = PieceType.b;
+  static const ADVISER = PieceType.a;
+  static const KING = PieceType.k;
+  static const SYMBOLS = 'pcrnbakPCRNBAK';
+  static const DEFAULT_POSITION =
+      'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
+  static const POSSIBLE_RESULTS = ['1-0', '0-1', '1/2-1/2', '*'];
+  static const PAWN_OFFSETS = {
     Color.b: [0x10, -0x01, 0x01],
     Color.r: [-0x10, -0x01, 0x01]
   };
 
-  static const Map<ExcludePawnType, List<int>> PIECE_OFFSETS = {
-    ExcludePawnType.c: [-0x10, 0x10, -0x01, 0x01],
-    ExcludePawnType.r: [-0x10, 0x10, -0x01, 0x01],
-    ExcludePawnType.n: [
+  static const PIECE_OFFSETS = {
+    PieceType.c: [-0x10, 0x10, -0x01, 0x01],
+    PieceType.r: [-0x10, 0x10, -0x01, 0x01],
+    PieceType.n: [
       -0x20 - 0x01,
       -0x20 + 0x01,
       0x20 - 0x01,
@@ -186,213 +114,118 @@ class Xiangqi {
       -0x10 + 0x02,
       0x10 + 0x02
     ],
-    ExcludePawnType.b: [-0x20 - 0x02, 0x20 + 0x02, 0x20 - 0x02, -0x20 + 0x02],
-    ExcludePawnType.a: [-0x10 - 0x01, 0x10 + 0x01, 0x10 - 0x01, -0x10 + 0x01],
-    ExcludePawnType.k: [-0x10, 0x10, -0x01, 0x01],
+    PieceType.b: [-0x20 - 0x02, 0x20 + 0x02, 0x20 - 0x02, -0x20 + 0x02],
+    PieceType.a: [-0x10 - 0x01, 0x10 + 0x01, 0x10 - 0x01, -0x10 + 0x01],
+    PieceType.k: [-0x10, 0x10, -0x01, 0x01],
   };
 
-  static final Map<String, Square> _stringToEnumMap = {
-    'a9': Square.a9,
-    'b9': Square.b9,
-    'c9': Square.c9,
-    'd9': Square.d9,
-    'e9': Square.e9,
-    'f9': Square.f9,
-    'g9': Square.g9,
-    'h9': Square.h9,
-    'i9': Square.i9,
-    'a8': Square.a8,
-    'b8': Square.b8,
-    'c8': Square.c8,
-    'd8': Square.d8,
-    'e8': Square.e8,
-    'f8': Square.f8,
-    'g8': Square.g8,
-    'h8': Square.h8,
-    'i8': Square.i8,
-    'a7': Square.a7,
-    'b7': Square.b7,
-    'c7': Square.c7,
-    'd7': Square.d7,
-    'e7': Square.e7,
-    'f7': Square.f7,
-    'g7': Square.g7,
-    'h7': Square.h7,
-    'i7': Square.i7,
-    'a6': Square.a6,
-    'b6': Square.b6,
-    'c6': Square.c6,
-    'd6': Square.d6,
-    'e6': Square.e6,
-    'f6': Square.f6,
-    'g6': Square.g6,
-    'h6': Square.h6,
-    'i6': Square.i6,
-    'a5': Square.a5,
-    'b5': Square.b5,
-    'c5': Square.c5,
-    'd5': Square.d5,
-    'e5': Square.e5,
-    'f5': Square.f5,
-    'g5': Square.g5,
-    'h5': Square.h5,
-    'i5': Square.i5,
-    'a4': Square.a4,
-    'b4': Square.b4,
-    'c4': Square.c4,
-    'd4': Square.d4,
-    'e4': Square.e4,
-    'f4': Square.f4,
-    'g4': Square.g4,
-    'h4': Square.h4,
-    'i4': Square.i4,
-    'a3': Square.a3,
-    'b3': Square.b3,
-    'c3': Square.c3,
-    'd3': Square.d3,
-    'e3': Square.e3,
-    'f3': Square.f3,
-    'g3': Square.g3,
-    'h3': Square.h3,
-    'i3': Square.i3,
-    'a2': Square.a2,
-    'b2': Square.b2,
-    'c2': Square.c2,
-    'd2': Square.d2,
-    'e2': Square.e2,
-    'f2': Square.f2,
-    'g2': Square.g2,
-    'h2': Square.h2,
-    'i2': Square.i2,
-    'a1': Square.a1,
-    'b1': Square.b1,
-    'c1': Square.c1,
-    'd1': Square.d1,
-    'e1': Square.e1,
-    'f1': Square.f1,
-    'g1': Square.g1,
-    'h1': Square.h1,
-    'i1': Square.i1,
-    'a0': Square.a0,
-    'b0': Square.b0,
-    'c0': Square.c0,
-    'd0': Square.d0,
-    'e0': Square.e0,
-    'f0': Square.f0,
-    'g0': Square.g0,
-    'h0': Square.h0,
-    'i0': Square.i0,
-  };
-
-  static const Map<FlagKeys, String> FLAGS = {
+  static const FLAGS = {
     FlagKeys.NORMAL: 'n',
     FlagKeys.CAPTURE: 'c',
   };
 
-  static const Map<FlagKeys, int> BITS = {
+  static const BITS = {
     FlagKeys.NORMAL: 1,
     FlagKeys.CAPTURE: 2,
   };
 
-  static const Map<Square, int> SQUARES = {
-    Square.a9: 0x00,
-    Square.b9: 0x01,
-    Square.c9: 0x02,
-    Square.d9: 0x03,
-    Square.e9: 0x04,
-    Square.f9: 0x05,
-    Square.g9: 0x06,
-    Square.h9: 0x07,
-    Square.i9: 0x08,
-    Square.a8: 0x10,
-    Square.b8: 0x11,
-    Square.c8: 0x12,
-    Square.d8: 0x13,
-    Square.e8: 0x14,
-    Square.f8: 0x15,
-    Square.g8: 0x16,
-    Square.h8: 0x17,
-    Square.i8: 0x18,
-    Square.a7: 0x20,
-    Square.b7: 0x21,
-    Square.c7: 0x22,
-    Square.d7: 0x23,
-    Square.e7: 0x24,
-    Square.f7: 0x25,
-    Square.g7: 0x26,
-    Square.h7: 0x27,
-    Square.i7: 0x28,
-    Square.a6: 0x30,
-    Square.b6: 0x31,
-    Square.c6: 0x32,
-    Square.d6: 0x33,
-    Square.e6: 0x34,
-    Square.f6: 0x35,
-    Square.g6: 0x36,
-    Square.h6: 0x37,
-    Square.i6: 0x38,
-    Square.a5: 0x40,
-    Square.b5: 0x41,
-    Square.c5: 0x42,
-    Square.d5: 0x43,
-    Square.e5: 0x44,
-    Square.f5: 0x45,
-    Square.g5: 0x46,
-    Square.h5: 0x47,
-    Square.i5: 0x48,
-    Square.a4: 0x50,
-    Square.b4: 0x51,
-    Square.c4: 0x52,
-    Square.d4: 0x53,
-    Square.e4: 0x54,
-    Square.f4: 0x55,
-    Square.g4: 0x56,
-    Square.h4: 0x57,
-    Square.i4: 0x58,
-    Square.a3: 0x60,
-    Square.b3: 0x61,
-    Square.c3: 0x62,
-    Square.d3: 0x63,
-    Square.e3: 0x64,
-    Square.f3: 0x65,
-    Square.g3: 0x66,
-    Square.h3: 0x67,
-    Square.i3: 0x68,
-    Square.a2: 0x70,
-    Square.b2: 0x71,
-    Square.c2: 0x72,
-    Square.d2: 0x73,
-    Square.e2: 0x74,
-    Square.f2: 0x75,
-    Square.g2: 0x76,
-    Square.h2: 0x77,
-    Square.i2: 0x78,
-    Square.a1: 0x80,
-    Square.b1: 0x81,
-    Square.c1: 0x82,
-    Square.d1: 0x83,
-    Square.e1: 0x84,
-    Square.f1: 0x85,
-    Square.g1: 0x86,
-    Square.h1: 0x87,
-    Square.i1: 0x88,
-    Square.a0: 0x90,
-    Square.b0: 0x91,
-    Square.c0: 0x92,
-    Square.d0: 0x93,
-    Square.e0: 0x94,
-    Square.f0: 0x95,
-    Square.g0: 0x96,
-    Square.h0: 0x97,
-    Square.i0: 0x98,
+  static const SQUARES = {
+    'a9': 0x00,
+    'b9': 0x01,
+    'c9': 0x02,
+    'd9': 0x03,
+    'e9': 0x04,
+    'f9': 0x05,
+    'g9': 0x06,
+    'h9': 0x07,
+    'i9': 0x08,
+    'a8': 0x10,
+    'b8': 0x11,
+    'c8': 0x12,
+    'd8': 0x13,
+    'e8': 0x14,
+    'f8': 0x15,
+    'g8': 0x16,
+    'h8': 0x17,
+    'i8': 0x18,
+    'a7': 0x20,
+    'b7': 0x21,
+    'c7': 0x22,
+    'd7': 0x23,
+    'e7': 0x24,
+    'f7': 0x25,
+    'g7': 0x26,
+    'h7': 0x27,
+    'i7': 0x28,
+    'a6': 0x30,
+    'b6': 0x31,
+    'c6': 0x32,
+    'd6': 0x33,
+    'e6': 0x34,
+    'f6': 0x35,
+    'g6': 0x36,
+    'h6': 0x37,
+    'i6': 0x38,
+    'a5': 0x40,
+    'b5': 0x41,
+    'c5': 0x42,
+    'd5': 0x43,
+    'e5': 0x44,
+    'f5': 0x45,
+    'g5': 0x46,
+    'h5': 0x47,
+    'i5': 0x48,
+    'a4': 0x50,
+    'b4': 0x51,
+    'c4': 0x52,
+    'd4': 0x53,
+    'e4': 0x54,
+    'f4': 0x55,
+    'g4': 0x56,
+    'h4': 0x57,
+    'i4': 0x58,
+    'a3': 0x60,
+    'b3': 0x61,
+    'c3': 0x62,
+    'd3': 0x63,
+    'e3': 0x64,
+    'f3': 0x65,
+    'g3': 0x66,
+    'h3': 0x67,
+    'i3': 0x68,
+    'a2': 0x70,
+    'b2': 0x71,
+    'c2': 0x72,
+    'd2': 0x73,
+    'e2': 0x74,
+    'f2': 0x75,
+    'g2': 0x76,
+    'h2': 0x77,
+    'i2': 0x78,
+    'a1': 0x80,
+    'b1': 0x81,
+    'c1': 0x82,
+    'd1': 0x83,
+    'e1': 0x84,
+    'f1': 0x85,
+    'g1': 0x86,
+    'h1': 0x87,
+    'i1': 0x88,
+    'a0': 0x90,
+    'b0': 0x91,
+    'c0': 0x92,
+    'd0': 0x93,
+    'e0': 0x94,
+    'f0': 0x95,
+    'g0': 0x96,
+    'h0': 0x97,
+    'i0': 0x98,
   };
 
-  List<Piece?> board = List<Piece?>.filled(256, null);
-  Map<Color, int> kings = {Color.r: Xiangqi.EMPTY, Color.b: Xiangqi.EMPTY};
-  Color turn = Xiangqi.RED;
-  // int half_moves = 0;
-  // int move_number = 1;
-  List<HistoryMove> history = [];
+  List<Piece?> board = List.filled(256, null);
+  Map<String, int> kings = {Color.r: Xiangqi.EMPTY, Color.b: Xiangqi.EMPTY};
+  String turn = Xiangqi.RED;
+  List<dynamic> history = [];
   List<Move> futures = [];
   Map<String, String> header = {};
   int moveNumber = 0;
@@ -405,16 +238,18 @@ class Xiangqi {
     }
   }
 
-  Color getCurrentTurn() {
+  String getCurrentTurn() {
     return turn;
   }
 
   void clear({bool keepHeaders = false}) {
-    board = List<Piece?>.filled(256, null);
+    board = List.filled(256, null);
     kings = {Color.r: Xiangqi.EMPTY, Color.b: Xiangqi.EMPTY};
     turn = Xiangqi.RED;
     history = [];
     futures = [];
+    if (!keepHeaders) header = {};
+    updateSetup(generateFen());
   }
 
   void reset() {
@@ -425,37 +260,35 @@ class Xiangqi {
     if (!validateFen(fen).valid) {
       return false;
     }
-    clear(keepHeaders: false);
+
     final tokens = fen.split(RegExp(r'\s+'));
     final position = tokens[0];
-    int file = 0;
-    int rank = 9;
+    int square = 0;
+
+    clear(keepHeaders: keepHeaders);
 
     for (int i = 0; i < position.length; ++i) {
       final piece = position[i];
 
       if (piece == '/') {
-        file = 0;
-        rank--;
+        square += 0x07;
       } else if (isDigit(piece)) {
-        file += int.parse(piece);
+        square += int.parse(piece);
       } else {
-        final color =
-            piece.toUpperCase() == piece ? Xiangqi.RED : Xiangqi.BLACK;
-        final sq = algebraicToEnum('${"abcdefghi"[file]}$rank');
-
-        put(
-            Piece(
-                type: getPieceTypeFromSymbol(piece.toLowerCase()),
-                color: color),
-            sq!);
-
-        file++;
+        final color = piece.codeUnitAt(0) < 'a'.codeUnitAt(0)
+            ? Xiangqi.RED
+            : Xiangqi.BLACK;
+        put(Piece(type: piece.toLowerCase(), color: color), algebraic(square));
+        square++;
       }
     }
 
-    turn = (tokens[1] == 'b' || tokens[1] == 'w') ? Xiangqi.BLACK : Xiangqi.RED;
-    moveNumber = turn == Color.b ? 1 : 0;
+    turn = (tokens[1] == Xiangqi.BLACK || tokens[1] == Xiangqi.WHITE)
+        ? Xiangqi.BLACK
+        : Xiangqi.RED;
+    moveNumber = turn == 'b' ? 1 : 0;
+
+    updateSetup(generateFen());
 
     return true;
   }
@@ -509,21 +342,21 @@ class Xiangqi {
       return result(7);
     }
 
-    final Map<String, Map<String, dynamic>> pieces = {
-      'p': {'number': 0, 'squares': <int>[]},
-      'P': {'number': 0, 'squares': <int>[]},
-      'c': {'number': 0, 'squares': <int>[]},
-      'C': {'number': 0, 'squares': <int>[]},
-      'r': {'number': 0, 'squares': <int>[]},
-      'R': {'number': 0, 'squares': <int>[]},
-      'n': {'number': 0, 'squares': <int>[]},
-      'N': {'number': 0, 'squares': <int>[]},
-      'b': {'number': 0, 'squares': <int>[]},
-      'B': {'number': 0, 'squares': <int>[]},
-      'a': {'number': 0, 'squares': <int>[]},
-      'A': {'number': 0, 'squares': <int>[]},
-      'k': {'number': 0, 'squares': <int>[]},
-      'K': {'number': 0, 'squares': <int>[]},
+    final Map<String, PieceInfo> pieces = {
+      'p': PieceInfo(number: 0, squares: []),
+      'P': PieceInfo(number: 0, squares: []),
+      'c': PieceInfo(number: 0, squares: []),
+      'C': PieceInfo(number: 0, squares: []),
+      'r': PieceInfo(number: 0, squares: []),
+      'R': PieceInfo(number: 0, squares: []),
+      'n': PieceInfo(number: 0, squares: []),
+      'N': PieceInfo(number: 0, squares: []),
+      'b': PieceInfo(number: 0, squares: []),
+      'B': PieceInfo(number: 0, squares: []),
+      'a': PieceInfo(number: 0, squares: []),
+      'A': PieceInfo(number: 0, squares: []),
+      'k': PieceInfo(number: 0, squares: []),
+      'K': PieceInfo(number: 0, squares: []),
     };
 
     for (int i = 0; i < rows.length; i++) {
@@ -539,11 +372,11 @@ class Xiangqi {
           previousWasNumber = true;
         } else {
           try {
-            pieces[rows[i][j]]!['number']++;
+            pieces[rows[i][j]]!.number = pieces[rows[i][j]]!.number + 1;
           } catch (e) {
             return result(9);
           }
-          pieces[rows[i][j]]!['squares'].add((i << 4) | sumFields);
+          pieces[rows[i][j]]!.squares.add((i << 4) | sumFields);
           sumFields += 1;
           previousWasNumber = false;
         }
@@ -553,64 +386,61 @@ class Xiangqi {
       }
     }
 
-    if (pieces['k']!['number'] != 1 || pieces['K']!['number'] != 1) {
+    if (pieces['k']!.number != 1 || pieces['K']!.number != 1) {
       return result(11);
     }
-    if (pieces['a']!['number'] > 2 || pieces['A']!['number'] > 2) {
+    if (pieces['a']!.number > 2 || pieces['A']!.number > 2) {
       return result(12);
     }
-    if (pieces['b']!['number'] > 2 || pieces['B']!['number'] > 2) {
+    if (pieces['b']!.number > 2 || pieces['B']!.number > 2) {
       return result(13);
     }
-    if (pieces['n']!['number'] > 2 || pieces['N']!['number'] > 2) {
+    if (pieces['n']!.number > 2 || pieces['N']!.number > 2) {
       return result(14);
     }
-    if (pieces['r']!['number'] > 2 || pieces['R']!['number'] > 2) {
+    if (pieces['r']!.number > 2 || pieces['R']!.number > 2) {
       return result(15);
     }
-    if (pieces['c']!['number'] > 2 || pieces['C']!['number'] > 2) {
+    if (pieces['c']!.number > 2 || pieces['C']!.number > 2) {
       return result(16);
     }
-    if (pieces['p']!['number'] > 5 || pieces['P']!['number'] > 5) {
+    if (pieces['p']!.number > 5 || pieces['P']!.number > 5) {
       return result(17);
     }
 
-    if (outOfPlace(Xiangqi.KING, pieces['k']!['squares'][0], Xiangqi.BLACK)) {
+    if (outOfPlace(Xiangqi.KING, pieces['k']!.squares[0], Xiangqi.BLACK)) {
       return result(18);
     }
-    if (outOfPlace(Xiangqi.KING, pieces['K']!['squares'][0], Xiangqi.RED)) {
+    if (outOfPlace(Xiangqi.KING, pieces['K']!.squares[0], Xiangqi.RED)) {
       return result(19);
     }
-    for (int i = 0; i < pieces['a']!['squares'].length; ++i) {
-      if (outOfPlace(
-          Xiangqi.ADVISER, pieces['a']!['squares'][i], Xiangqi.BLACK)) {
+    for (int i = 0; i < pieces['a']!.squares.length; ++i) {
+      if (outOfPlace(Xiangqi.ADVISER, pieces['a']!.squares[i], Xiangqi.BLACK)) {
         return result(20);
       }
     }
-    for (int i = 0; i < pieces['A']!['squares'].length; ++i) {
-      if (outOfPlace(
-          Xiangqi.ADVISER, pieces['A']!['squares'][i], Xiangqi.RED)) {
+    for (int i = 0; i < pieces['A']!.squares.length; ++i) {
+      if (outOfPlace(Xiangqi.ADVISER, pieces['A']!.squares[i], Xiangqi.RED)) {
         return result(21);
       }
     }
-    for (int i = 0; i < pieces['b']!['squares'].length; ++i) {
-      if (outOfPlace(
-          Xiangqi.BISHOP, pieces['b']!['squares'][i], Xiangqi.BLACK)) {
+    for (int i = 0; i < pieces['b']!.squares.length; ++i) {
+      if (outOfPlace(Xiangqi.BISHOP, pieces['b']!.squares[i], Xiangqi.BLACK)) {
         return result(22);
       }
     }
-    for (int i = 0; i < pieces['B']!['squares'].length; ++i) {
-      if (outOfPlace(Xiangqi.BISHOP, pieces['B']!['squares'][i], Xiangqi.RED)) {
+    for (int i = 0; i < (pieces['B']!.squares as dynamic).length; ++i) {
+      if (outOfPlace(Xiangqi.BISHOP, pieces['B']!.squares[i], Xiangqi.RED)) {
         return result(23);
       }
     }
-    for (int i = 0; i < pieces['p']!['squares'].length; ++i) {
-      if (outOfPlace(Xiangqi.PAWN, pieces['p']!['squares'][i], Xiangqi.BLACK)) {
+    for (int i = 0; i < (pieces['p']!.squares as dynamic).length; ++i) {
+      if (outOfPlace(Xiangqi.PAWN, pieces['p']!.squares[i], Xiangqi.BLACK)) {
         return result(24);
       }
     }
-    for (int i = 0; i < pieces['P']!['squares'].length; ++i) {
-      if (outOfPlace(Xiangqi.PAWN, pieces['P']!['squares'][i], Xiangqi.RED)) {
+    for (int i = 0; i < pieces['P']!.squares.length; ++i) {
+      if (outOfPlace(Xiangqi.PAWN, pieces['P']!.squares[i], Xiangqi.RED)) {
         return result(25);
       }
     }
@@ -622,9 +452,7 @@ class Xiangqi {
     int empty = 0;
     String fen = '';
 
-    for (int i = Xiangqi.SQUARES[Square.a9]!;
-        i <= Xiangqi.SQUARES[Square.i0]!;
-        ++i) {
+    for (int i = Xiangqi.SQUARES['a9']!; i <= Xiangqi.SQUARES['i0']!; ++i) {
       if (board[i] == null) {
         empty++;
       } else {
@@ -635,17 +463,15 @@ class Xiangqi {
         final color = board[i]!.color;
         final piece = board[i]!.type;
 
-        fen += color == Xiangqi.RED
-            ? getPieceSymbol(piece).toUpperCase()
-            : getPieceSymbol(piece).toLowerCase();
+        fen += color == Xiangqi.RED ? piece.toUpperCase() : piece.toLowerCase();
       }
 
-      if (file(i) == 8) {
+      if (file(i) >= 8) {
         if (empty > 0) {
           fen += empty.toString();
         }
 
-        if (i != Xiangqi.SQUARES[Square.i0]) {
+        if (i != Xiangqi.SQUARES['i0']) {
           fen += '/';
         }
 
@@ -654,8 +480,26 @@ class Xiangqi {
       }
     }
 
-    // Thêm moveNumber và các thông số khác vào chuỗi FEN
-    return [fen, turn == Color.r ? 'w' : 'b'].join(' ');
+    return [fen, turn == 'r' ? 'w' : 'b'].join(' ');
+  }
+
+  Map<String, String> setHeader(List<String> args) {
+    for (int i = 0; i < args.length; i += 2) {
+      if (args[i] is String && args[i + 1] is String) {
+        header[args[i]] = args[i + 1];
+      }
+    }
+    return header;
+  }
+
+  void updateSetup(String fen) {
+    if (history.isNotEmpty) return;
+
+    if (fen != Xiangqi.DEFAULT_POSITION) {
+      header['FEN'] = fen;
+    } else {
+      header.remove('FEN');
+    }
   }
 
   Piece? get(Square square) {
@@ -664,8 +508,11 @@ class Xiangqi {
   }
 
   bool put(Piece piece, Square square) {
-    // ignore: unnecessary_null_comparison
-    if (piece.type == null || piece.color == null) {
+    if (!piece.type.isNotEmpty || !piece.color.isNotEmpty) {
+      return false;
+    }
+
+    if (!Xiangqi.SYMBOLS.contains(piece.type.toLowerCase())) {
       return false;
     }
 
@@ -689,6 +536,8 @@ class Xiangqi {
       kings[piece.color] = sq;
     }
 
+    updateSetup(generateFen());
+
     return true;
   }
 
@@ -699,23 +548,22 @@ class Xiangqi {
       kings[piece.color] = Xiangqi.EMPTY;
     }
 
+    updateSetup(generateFen());
+
     return piece;
   }
 
   Move buildMove(List<Piece?> board, int from, int to, int flags) {
-
-    final int moveFrom = Xiangqi.SQUARES[from]!;
-    final int moveTo = Xiangqi.SQUARES[to]!;
     Move move = Move(
       color: turn,
-      from: moveFrom,
-      to: moveTo,
+      from: from,
+      to: to,
       flags: flags,
-      piece: board[moveFrom]!.type,
+      piece: board[from]!.type,
     );
 
-    if (board[moveTo] != null) {
-      move.captured = board[moveTo]!.type;
+    if (board[to] != null) {
+      move.captured = board[to]!.type;
     }
     return move;
   }
@@ -728,11 +576,11 @@ class Xiangqi {
     }
 
     List<Move> moves = [];
-    Color us = turn;
-    Color them = swapColor(us);
+    String us = turn;
+    String them = swapColor(us);
 
-    int firstSq = Xiangqi.SQUARES[Square.a9]!;
-    int lastSq = Xiangqi.SQUARES[Square.i0]!;
+    int firstSq = Xiangqi.SQUARES['a9']!;
+    int lastSq = Xiangqi.SQUARES['i0']!;
 
     if (square != null) {
       if (Xiangqi.SQUARES.containsKey(square)) {
@@ -752,30 +600,36 @@ class Xiangqi {
       final piece = board[i];
       if (piece == null || piece.color != us) continue;
 
-      final List<int> offsets = (piece.type == Xiangqi.PAWN
+      final OFFSETS = piece.type == Xiangqi.PAWN
           ? Xiangqi.PAWN_OFFSETS[us]!
-          : Xiangqi.PIECE_OFFSETS[piece.type]!);
+          : Xiangqi.PIECE_OFFSETS[piece.type]!;
 
-      for (int j = 0; j < offsets.length; ++j) {
+      for (int j = 0, len = OFFSETS.length; j < len; ++j) {
         if (piece.type == Xiangqi.PAWN && j > 0 && !crossedRiver(i, us)) break;
 
-        final offset = offsets[j];
+        int offset = OFFSETS[j];
         int square_ = i;
         bool crossed = false;
 
         while (true) {
-          square_ += offset as int;
+          square_ += offset;
 
-          if (outOfBoard(square_))
+          if (outOfBoard(square_)) {
+            crossed = false;
             break;
-          else if (piece.type == Xiangqi.KNIGHT && hobblingHorseLeg(i, j))
+          } else if (piece.type == Xiangqi.KNIGHT && hobblingHorseLeg(i, j)) {
+            crossed = false;
             break;
-          else if (piece.type == Xiangqi.BISHOP &&
-              (blockingElephantEye(i, j) || crossedRiver(square_, us)))
+          } else if (piece.type == Xiangqi.BISHOP &&
+              (blockingElephantEye(i, j) || crossedRiver(square_, us))) {
+            crossed = false;
             break;
-          else if ((piece.type == Xiangqi.ADVISER ||
+          } else if ((piece.type == Xiangqi.ADVISER ||
                   piece.type == Xiangqi.KING) &&
-              outOfPlace(piece.type, square_, us)) break;
+              outOfPlace(piece.type, square_, us)) {
+            crossed = false;
+            break;
+          }
 
           if (board[square_] == null) {
             if (piece.type == Xiangqi.CANNON && crossed) continue;
@@ -783,14 +637,15 @@ class Xiangqi {
           } else {
             if (piece.type == Xiangqi.CANNON) {
               if (crossed) {
-                if (board[square_]!.color == them)
+                if ((board[square_] as Piece).color == them)
                   addMove(board, moves, i, square_,
                       Xiangqi.BITS[FlagKeys.CAPTURE]!);
+                crossed = false;
                 break;
               }
               crossed = true;
             } else {
-              if (board[square_]!.color == them)
+              if ((board[square_] as Piece).color == them)
                 addMove(
                     board, moves, i, square_, Xiangqi.BITS[FlagKeys.CAPTURE]!);
               break;
@@ -810,10 +665,12 @@ class Xiangqi {
     }
 
     List<Move> legalMoves = [];
-    for (int i = 0; i < moves.length; i++) {
+    for (int i = 0, len = moves.length; i < len; i++) {
+      makeMove(moves[i]);
       if (!kingAttacked(us)) {
         legalMoves.add(moves[i]);
       }
+      undoMove();
     }
 
     if (opponent) {
@@ -824,32 +681,33 @@ class Xiangqi {
   }
 
   String moveToIccs(Move move, {bool sloppy = false}) {
-    return algebraic(move.from)! + algebraic(move.to)!;
+    String output = '';
+    output = algebraic(move.from) + algebraic(move.to);
+    return output;
   }
 
   String strippedIccs(String move) {
-    return move
-        .replaceAll(RegExp(r'='), '')
-        .replaceAll(RegExp(r'[+#]?[?!]*\$'), '');
+    return move.replaceAll('=', '').replaceAll(RegExp(r'[+#]?[?!]*$'), '');
   }
 
-  bool kingAttacked(Color us) {
-    int square = kings[us]!;
-    Color them = swapColor(us);
+  bool kingAttacked(String color) {
+    int square = kings[color]!;
+    String them = swapColor(color);
 
-    for (int i = 0; i < Xiangqi.PIECE_OFFSETS[Xiangqi.KNIGHT]!.length; ++i) {
+    for (int i = 0, len = Xiangqi.PIECE_OFFSETS[Xiangqi.KNIGHT]!.length;
+        i < len;
+        ++i) {
       int sq = square + Xiangqi.PIECE_OFFSETS[Xiangqi.KNIGHT]![i];
-      // Kiểm tra sq có nằm trong bàn cờ không trước khi truy cập board[sq]
       if (!outOfBoard(sq) &&
-          board[sq] != null &&
+          board[sq] != null && // Thêm !outOfBoard(sq)
           board[sq]!.color == them &&
           board[sq]!.type == Xiangqi.KNIGHT &&
-          !hobblingHorseLeg(sq, i < 4 ? 3 - i : 11 - i)) {
-        return true;
-      }
+          !hobblingHorseLeg(sq, i < 4 ? 3 - i : 11 - i)) return true;
     }
 
-    for (int i = 0; i < Xiangqi.PIECE_OFFSETS[Xiangqi.ROOK]!.length; ++i) {
+    for (int i = 0, len = Xiangqi.PIECE_OFFSETS[Xiangqi.ROOK]!.length;
+        i < len;
+        ++i) {
       int offset = Xiangqi.PIECE_OFFSETS[Xiangqi.ROOK]![i];
       bool crossed = false;
       for (int sq = square + offset; !outOfBoard(sq); sq += offset) {
@@ -871,10 +729,10 @@ class Xiangqi {
       }
     }
 
-    for (int i = 0; i < Xiangqi.PAWN_OFFSETS[them]!.length; ++i) {
+    for (int i = 0, len = Xiangqi.PAWN_OFFSETS[them]!.length; i < len; ++i) {
       int sq = square - Xiangqi.PAWN_OFFSETS[them]![i];
-      if (board[sq] != null &&
-          !outOfBoard(sq) &&
+      if (!outOfBoard(sq) &&
+          board[sq] != null && // Thêm !outOfBoard(sq)
           board[sq]!.color == them &&
           board[sq]!.type == Xiangqi.PAWN) return true;
     }
@@ -895,10 +753,10 @@ class Xiangqi {
   }
 
   bool insufficientMaterial() {
-    Map<PieceType, int> pieces = {};
+    Map<String, int> pieces = {};
     int numPieces = 0;
 
-    for (Square sq in Xiangqi.SQUARES.keys) {
+    for (String sq in Xiangqi.SQUARES.keys) {
       Piece? piece = board[Xiangqi.SQUARES[sq]!];
       if (piece != null) {
         pieces[piece.type] = (pieces[piece.type] ?? 0) + 1;
@@ -911,76 +769,153 @@ class Xiangqi {
     else if (!pieces.containsKey(Xiangqi.KNIGHT) &&
         !pieces.containsKey(Xiangqi.ROOK) &&
         !pieces.containsKey(Xiangqi.CANNON) &&
-        !pieces.containsKey(Xiangqi.PAWN)) {
-      return true;
-    }
+        !pieces.containsKey(Xiangqi.PAWN)) return true;
 
     return false;
   }
 
-  void push(List list, Move? move) {
-    list.add(HistoryMove(
-      move: move!,
-      kings: {Color.b: kings[Color.b]!, Color.r: kings[Color.r]!},
-      turn: turn,
-    ));
+  bool inThreefoldRepetition() {
+    List<Move> moves = [];
+    Map<String, int> positions = {};
+    bool repetition = false;
+
+    while (true) {
+      Move? move = undoMove();
+      if (move == null) break;
+      moves.add(move);
+    }
+
+    while (true) {
+      String fen = generateFen().split(' ').sublist(0, 2).join('');
+
+      positions[fen] = (positions[fen] ?? 0) + 1;
+      if (positions[fen]! >= 3) {
+        repetition = true;
+      }
+
+      if (moves.isEmpty) {
+        break;
+      }
+      makeMove(moves.removeLast());
+    }
+
+    return repetition;
   }
 
-  void makeMove(Move move, {String? from, String? to}) {
-    if (move.iccs == null) return;
+  void push(List list, Move? move) {
+    list.add({
+      'move': move,
+      'kings': {'b': kings['b']!, 'r': kings['r']!},
+      'turn': turn,
+    });
+  }
 
-
-    final int moveFrom = Xiangqi.SQUARES[_stringToEnumMap[from]]!;
-    final int moveTo = Xiangqi.SQUARES[_stringToEnumMap[to]]!;
-    move.from = moveFrom;
-    move.to = moveTo;
-
+  void makeMove(Move move) {
     push(history, move);
-    if (board[moveFrom] != null && board[moveTo]?.type == Xiangqi.KING) {
-      kings[board[moveTo]!.color] = Xiangqi.EMPTY;
-    }
+    if (board[move.to] != null && board[move.to]!.type == Xiangqi.KING)
+      kings[board[move.to]!.color] = Xiangqi.EMPTY;
 
-    if (turn == Color.r) {
-      moveNumber++;
-    }
+    board[move.to] = board[move.from];
+    board[move.from] = null;
 
-    if (board[moveFrom] != null) {
-      board[moveTo] = board[moveFrom];
-      board[moveFrom] = null;
-    }
-
-    // Kiểm tra board[move.to] trước khi truy cập type và color
-    if (board[moveTo] != null && board[moveTo]?.type == Xiangqi.KING) {
-      kings[board[moveTo]!.color] = moveTo;
+    if (board[move.to]!.type == Xiangqi.KING) {
+      kings[board[move.to]!.color] = move.to;
     }
 
     turn = swapColor(turn);
   }
 
-  Move? moveFromIccs(String move, {bool sloppy = false}) {
-    String cleanMove = strippedIccs(move);
+  Move? setMove(dynamic old, {bool undo = true}) {
+    if (old == null) {
+      return null;
+    }
 
-    RegExpMatch? matches =
-        RegExp(r'([a-iA-I][0-9])-?([a-iA-I][0-9])').firstMatch(cleanMove);
+    final move = old['move'];
+    kings = old['kings'];
+    turn = old['turn'];
 
-    Square? from;
-    Square? to;
+    board[move.from] = board[move.to];
+    board[move.from]!.type = move.piece;
+    board[move.to] = null;
 
-    if (sloppy) {
-      if (matches != null) {
-        from = algebraicToEnum(matches.group(1));
-        to = algebraicToEnum(matches.group(2));
+    if ((move.flags & Xiangqi.BITS[FlagKeys.CAPTURE]!) > 0 && undo) {
+      // No need for int.parse anymore
+      board[move.to] = Piece(type: move.captured!, color: swapColor(turn));
+    }
+
+    return move;
+  }
+
+  Move? undoMove() {
+    return setMove(history.removeLast());
+  }
+
+  Move? redoMove() {
+    return setMove(futures.removeLast(), undo: false);
+  }
+
+  String getDisambiguator(Move move, {bool sloppy = false}) {
+    final moves = generateMoves(legal: !sloppy);
+
+    final from = move.from;
+    final to = move.to;
+    final piece = move.piece;
+
+    int ambiguities = 0;
+    int sameRank = 0;
+    int sameFile = 0;
+
+    for (int i = 0, len = moves.length; i < len; i++) {
+      int ambigFrom = moves[i].from;
+      int ambigTo = moves[i].to;
+      String ambigPiece = moves[i].piece;
+
+      if (piece == ambigPiece && from != ambigFrom && to == ambigTo) {
+        ambiguities++;
+
+        if (rank(from) == rank(ambigFrom)) {
+          sameRank++;
+        }
+
+        if (file(from) == file(ambigFrom)) {
+          sameFile++;
+        }
       }
     }
 
+    if (ambiguities > 0) {
+      if (sameRank > 0 && sameFile > 0) {
+        return algebraic(from);
+      } else if (sameFile > 0) {
+        return algebraic(from)[1];
+      } else {
+        return algebraic(from)[0];
+      }
+    }
+
+    return '';
+  }
+
+  Move? moveFromIccs(String move, {bool sloppy = false}) {
+    String cleanMove = strippedIccs(move);
+
+    RegExp matches = RegExp(r'([a-iA-I][0-9])-?([a-iA-I][0-9])');
+    String? piece, from, to;
+    if (matches.hasMatch(cleanMove)) {
+      final match = matches.firstMatch(cleanMove)!;
+      from = match.group(1);
+      to = match.group(2);
+    }
+
     List<Move> moves = generateMoves();
-    for (int i = 0; i < moves.length; i++) {
+    for (int i = 0, len = moves.length; i < len; i++) {
       if (cleanMove == strippedIccs(moveToIccs(moves[i])) ||
           (sloppy &&
               cleanMove == strippedIccs(moveToIccs(moves[i], sloppy: true)))) {
         return moves[i];
       } else {
-        if (matches != null &&
+        if (from != null &&
+            to != null &&
             Xiangqi.SQUARES[from] == moves[i].from &&
             Xiangqi.SQUARES[to] == moves[i].to) {
           return moves[i];
@@ -999,21 +934,13 @@ class Xiangqi {
     return i & 0x0f;
   }
 
-  Square? algebraicToEnum(String? alg) {
-    if (alg == null || alg.length != 2) return null;
-    final lowerCaseAlg = alg.toLowerCase();
-    return Square.values
-        .firstWhere((e) => e.toString().split('.').last == lowerCaseAlg);
-  }
-
-  String? algebraic(int i) {
+  Square algebraic(int i) {
     final f = file(i);
     final r = rank(i);
-    final square = '${"abcdefghi"[f]}${"9876543210"[r]}';
-    return algebraicToEnum(square)?.toString().split('.').last;
+    return 'abcdefghi'.substring(f, f + 1) + '9876543210'.substring(r, r + 1);
   }
 
-  Color swapColor(Color c) {
+  String swapColor(String c) {
     return c == Xiangqi.RED ? Xiangqi.BLACK : Xiangqi.RED;
   }
 
@@ -1021,7 +948,7 @@ class Xiangqi {
     return '0123456789'.contains(c);
   }
 
-  bool crossedRiver(int p, Color c) {
+  bool crossedRiver(int p, String c) {
     return c == Xiangqi.RED ? rank(p) < 5 : rank(p) > 4;
   }
 
@@ -1029,14 +956,13 @@ class Xiangqi {
     return square < 0 || rank(square) > 9 || file(square) > 8;
   }
 
-  bool outOfPlace(PieceType piece, int square, Color color) {
-    Map<String, List<int>> side = {
-      'RED': [],
-      'BLACK': []
-    }; // Khởi tạo với mảng rỗng
+  bool outOfPlace(String piece, int square, String color) {
+    Map<String, List<int>> side = {};
     if (piece == Xiangqi.PAWN) {
-      side['RED'] = [0, 2, 4, 6, 8];
-      side['BLACK'] = [0, 2, 4, 6, 8];
+      side = {
+        'RED': [0, 2, 4, 6, 8],
+        'BLACK': [0, 2, 4, 6, 8]
+      };
       if (color == Xiangqi.RED) {
         return rank(square) > 6 ||
             (rank(square) > 4 && !side['RED']!.contains(file(square)));
@@ -1045,31 +971,39 @@ class Xiangqi {
             (rank(square) < 5 && !side['BLACK']!.contains(file(square)));
       }
     } else if (piece == Xiangqi.BISHOP) {
-      side['RED'] = [0x92, 0x96, 0x70, 0x74, 0x78, 0x52, 0x56];
-      side['BLACK'] = [0x02, 0x06, 0x20, 0x24, 0x28, 0x42, 0x46];
+      side[Xiangqi.RED] = [0x92, 0x96, 0x70, 0x74, 0x78, 0x52, 0x56];
+      side[Xiangqi.BLACK] = [0x02, 0x06, 0x20, 0x24, 0x28, 0x42, 0x46];
     } else if (piece == Xiangqi.ADVISER) {
-      side['RED'] = [0x93, 0x95, 0x84, 0x73, 0x75];
-      side['BLACK'] = [0x03, 0x05, 0x14, 0x23, 0x25];
+      side[Xiangqi.RED] = [0x93, 0x95, 0x84, 0x73, 0x75];
+      side[Xiangqi.BLACK] = [0x03, 0x05, 0x14, 0x23, 0x25];
     } else if (piece == Xiangqi.KING) {
-      side['RED'] = [0x93, 0x94, 0x95, 0x83, 0x84, 0x85, 0x73, 0x74, 0x75];
-      side['BLACK'] = [0x03, 0x04, 0x05, 0x13, 0x14, 0x15, 0x23, 0x24, 0x25];
+      side[Xiangqi.RED] = [
+        0x93,
+        0x94,
+        0x95,
+        0x83,
+        0x84,
+        0x85,
+        0x73,
+        0x74,
+        0x75
+      ];
+      side[Xiangqi.BLACK] = [
+        0x03,
+        0x04,
+        0x05,
+        0x13,
+        0x14,
+        0x15,
+        0x23,
+        0x24,
+        0x25
+      ];
     } else {
       return outOfBoard(square);
     }
 
-    String colorKey = color.toString().split('.').last.toUpperCase();
-    List<int>? allowedSquares = side[colorKey];
-
-    if (allowedSquares == null) {
-      // Xử lý trường hợp colorKey không tồn tại trong side.
-      // Có thể:
-      // - Trả về giá trị mặc định (false hoặc true)
-      // - Throw exception (nếu đây là lỗi nghiêm trọng)
-      // - Ghi log lỗi
-      return false; // Hoặc xử lý phù hợp
-    } else {
-      return !allowedSquares.contains(square);
-    }
+    return !side[color]!.contains(square);
   }
 
   bool hobblingHorseLeg(int square, int index) {
@@ -1083,39 +1017,48 @@ class Xiangqi {
   }
 
   Move makePretty(Move uglyMove) {
-    Move move = uglyMove;
+    Move move = clone(uglyMove);
     move.iccs = moveToIccs(move);
-    move.to = Xiangqi.SQUARES.keys
-        .firstWhere((k) => Xiangqi.SQUARES[k] == move.to)
-        .index;
-    move.from = Xiangqi.SQUARES.keys
-        .firstWhere((k) => Xiangqi.SQUARES[k] == move.from)
-        .index;
     move.piece = turn == Xiangqi.RED
-        ? getPieceTypeFromSymbol(getPieceSymbol(move.piece).toUpperCase())
-        : move.piece;
+        ? move.piece.toUpperCase()
+        : move.piece.toLowerCase();
     move.fen = generateFen();
     move.moveNumber = uglyMove.moveNumber;
 
     String flags = '';
 
-    for (FlagKeys flag in Xiangqi.BITS.keys) {
-      if ((Xiangqi.BITS[flag]! & move.flags) > 0) {
-        flags += Xiangqi.FLAGS[flag]!;
+    for (String flag in Xiangqi.FLAGS.keys) {
+      if ((uglyMove.flags & Xiangqi.BITS[flag]!) > 0) {
+          flags += Xiangqi.FLAGS[flag]!;
       }
     }
-    move.flags = flags.codeUnits.isEmpty
-        ? 0
-        : flags.codeUnits.first; // Assuming flags is a single character
+    // Gán flags mới cho move.flags để hiển thị, không thay đổi giá trị gốc
+    move.flagsDisplay = flags; // thêm một trường flagsDisplay để lưu trữ giá trị flags dạng chuỗi cho mục đích hiển thị
 
     return move;
   }
 
-  T clone<T>(T obj) {
+  dynamic clone(dynamic obj) {
     if (obj is List) {
-      return obj.map((item) => clone(item)).toList() as T;
+      List dupe = [];
+      for (var element in obj) {
+        if (element is Map || element is List) {
+          dupe.add(clone(element));
+        } else {
+          dupe.add(element);
+        }
+      }
+      return dupe;
     } else if (obj is Map) {
-      return obj.map((key, value) => MapEntry(key, clone(value))) as T;
+      Map dupe = {};
+      for (var key in obj.keys) {
+        if (obj[key] is Map || obj[key] is List) {
+          dupe[key] = clone(obj[key]);
+        } else {
+          dupe[key] = obj[key];
+        }
+      }
+      return dupe;
     } else {
       return obj;
     }
@@ -1125,25 +1068,25 @@ class Xiangqi {
     return str.trim();
   }
 
-  // int perft(int depth) {
-  //   final moves = generateMoves(legal: false);
-  //   int nodes = 0;
+  int perft(int depth) {
+    final moves = generateMoves(legal: false);
+    int nodes = 0;
 
-  //   for (int i = 0; i < moves.length; i++) {
-  //     makeMove(moves[i]);
-  //     if (!kingAttacked(turn)) {
-  //       if (depth - 1 > 0) {
-  //         int childNodes = perft(depth - 1);
-  //         nodes += childNodes;
-  //       } else {
-  //         nodes++;
-  //       }
-  //     }
-  //     undoMove();
-  //   }
+    for (int i = 0, len = moves.length; i < len; i++) {
+      makeMove(moves[i]);
+      if (!kingAttacked(turn)) {
+        if (depth - 1 > 0) {
+          int childNodes = perft(depth - 1);
+          nodes += childNodes;
+        } else {
+          nodes++;
+        }
+      }
+      undoMove();
+    }
 
-  //   return nodes;
-  // }
+    return nodes;
+  }
 
   List<dynamic> moves(
       {bool legal = true,
@@ -1154,7 +1097,7 @@ class Xiangqi {
         generateMoves(legal: legal, square: square, opponent: opponent);
     List<dynamic> moves = [];
 
-    for (int i = 0; i < uglyMoves.length; i++) {
+    for (int i = 0, len = uglyMoves.length; i < len; i++) {
       if (verbose) {
         moves.add(makePretty(uglyMoves[i]));
       } else {
@@ -1184,9 +1127,7 @@ class Xiangqi {
     List<List<Piece?>> output = [];
     List<Piece?> row = [];
 
-    for (int i = Xiangqi.SQUARES[Square.a9]!;
-        i <= Xiangqi.SQUARES[Square.i0]!;
-        i++) {
+    for (int i = Xiangqi.SQUARES['a9']!; i <= Xiangqi.SQUARES['i0']!; i++) {
       if (board[i] == null) {
         row.add(null);
       } else {
@@ -1202,20 +1143,196 @@ class Xiangqi {
     return output;
   }
 
-  Move? move(dynamic moveInput, {bool sloppy = false}) {
-    Move? moveObj = null;
+  String pgn({int maxWidth = 0, String newlineChar = '\n'}) {
+    String newline = newlineChar;
+    int maxWidth_ = maxWidth;
+    List<String> result = [];
+    bool headerExists = false;
 
+    for (String key in header.keys) {
+      result.add('[$key "${header[key]}"]$newline');
+      headerExists = true;
+    }
+
+    if (headerExists && history.isNotEmpty) {
+      result.add(newline);
+    }
+
+    List<Move> reversedHistory = [];
+    while (history.isNotEmpty) {
+      reversedHistory.add(undoMove()!);
+    }
+
+    List<String> moves = [];
+    String moveString = '';
+
+    while (reversedHistory.isNotEmpty) {
+      Move move = reversedHistory.removeLast();
+
+      if (history.isEmpty && move.color == 'b') {
+      } else if (move.color != 'b') {
+        if (moveString.isNotEmpty) {
+          moves.add(moveString);
+        }
+        moveString =
+            (move.moveNumber ?? (turn == 'r' ? moveNumber + 1 : moveNumber))
+                    .toString() +
+                '.';
+      }
+
+      moveString = '$moveString ${moveToIccs(move)}';
+      makeMove(move);
+    }
+
+    if (moveString.isNotEmpty) {
+      moves.add(moveString);
+    }
+
+    if (header.containsKey('Result')) {
+      moves.add(header['Result']!);
+    }
+
+    if (maxWidth_ == 0) {
+      return result.join('') + moves.join(' ');
+    }
+
+    int currentWidth = 0;
+    for (int i = 0; i < moves.length; i++) {
+      if (currentWidth + moves[i].length > maxWidth_ && i != 0) {
+        if (result.last == ' ') {
+          result.removeLast();
+        }
+
+        result.add(newline);
+        currentWidth = 0;
+      } else if (i != 0) {
+        result.add(' ');
+        currentWidth++;
+      }
+      result.add(moves[i]);
+      currentWidth += moves[i].length;
+    }
+
+    return result.join('');
+  }
+
+  bool loadPgn(String pgn,
+      {String newlineChar = '\r?\n', bool sloppy = false}) {
+    bool sloppy_ = sloppy;
+
+    String mask(String str) {
+      return str.replaceAll('\\', '\\\\');
+    }
+
+    bool hasKeys(Map object) {
+      for (String key in object.keys) {
+        return true;
+      }
+      return false;
+    }
+
+    Map<String, String> parsePgnHeader(String header,
+        {String newlineChar = '\r?\n'}) {
+      String newlineChar_ = newlineChar;
+      Map<String, String> headerObj = {};
+      List<String> headers = header.split(RegExp(mask(newlineChar_)));
+
+      for (int i = 0; i < headers.length; i++) {
+        String key = headers[i]
+            .replaceFirst(RegExp(r'^\[([A-Z][A-Za-z]*)\s.*\]$'), r'$1');
+        String value =
+            headers[i].replaceFirst(RegExp(r'^\[[A-Za-z]+\s"(.*)"]$'), r'$1');
+        if (trim(key).isNotEmpty) {
+          headerObj[key] = value;
+        }
+      }
+
+      return headerObj;
+    }
+
+    String newlineChar_ = newlineChar;
+
+    RegExp headerRegex =
+        RegExp(r'^(?:\s)*(((?:' + mask(newlineChar_) + r')*\[[^\]]+\])+)');
+
+    String headerString =
+        headerRegex.hasMatch(pgn) ? headerRegex.firstMatch(pgn)!.group(1)! : '';
+    reset();
+
+    Map<String, String> headers =
+        parsePgnHeader(headerString, newlineChar: newlineChar_);
+    // for (String key in headers.keys) {
+    //     setHeader([key, headers[key]]);
+    // }
+
+    if (headers.containsKey('FEN')) {
+      if (!load(headers['FEN']!, keepHeaders: true)) {
+        print('load header FEN failed!');
+        return false;
+      }
+    }
+
+    String ms = pgn
+        .replaceFirst(headerString, '')
+        .replaceAll(RegExp(mask(newlineChar_), multiLine: true), ' ');
+
+    ms = ms.replaceAllMapped(RegExp(r'({[^}]+})+?'), (match) => '');
+    RegExp ravRegex = RegExp(r'(\([^()]+\))+?');
+    while (ravRegex.hasMatch(ms)) {
+      ms = ms.replaceAll(ravRegex, '');
+    }
+
+    ms = ms.replaceAll(RegExp(r'\d+\.(\.\.)?'), '');
+
+    ms = ms.replaceAll(RegExp(r'\.\.\.'), '');
+
+    ms = ms.replaceAll(RegExp(r'\$\d+'), '');
+
+    List<String> moves = trim(ms).split(RegExp(r'\s+'));
+
+    moves = moves.join(',').replaceAll(',,', ',').split(',');
+    dynamic move = '';
+
+    for (int halfMove = 0; halfMove < moves.length - 1; halfMove++) {
+      move = moveFromIccs(moves[halfMove], sloppy: sloppy_);
+
+      if (move == null) {
+        print('impossible move: ${moves[halfMove]}!\n${ascii()}');
+        return false;
+      } else {
+        makeMove(move);
+      }
+    }
+
+    move = moves.last;
+    if (Xiangqi.POSSIBLE_RESULTS.contains(move)) {
+      if (hasKeys(header) && !header.containsKey('Result')) {
+        setHeader(['Result', move]);
+      }
+    } else {
+      move = moveFromIccs(move, sloppy: sloppy_);
+      if (move == null) {
+        print('impossible last move: ${moves.last}!\n${ascii()}');
+        return false;
+      } else {
+        makeMove(move);
+      }
+    }
+    return true;
+  }
+
+  Move? move(dynamic moveInput, {bool sloppy = false}) {
+    bool sloppy_ = sloppy;
+    Move? moveObj = null;
     if (moveInput is String) {
-      moveObj = moveFromIccs(moveInput, sloppy: sloppy);
+      moveObj = moveFromIccs(moveInput, sloppy: sloppy_);
     } else if (moveInput is Map) {
       List<Move> moves = generateMoves();
 
-      for (int i = 0; i < moves.length; i++) {
+      for (int i = 0, len = moves.length; i < len; i++) {
         if (moveInput['from'] == algebraic(moves[i].from) &&
-            moveInput['to'] == algebraic(moves[i].to) &&
-            !moveInput.containsKey('promotion')) {
+            moveInput['to'] == algebraic(moves[i].to)) {
           moveObj = moves[i];
-          moves[i].iccs = moveInput['from'] + moveInput['to'];
           break;
         }
       }
@@ -1225,29 +1342,71 @@ class Xiangqi {
       return null;
     }
 
-    if (getCurrentTurn() == Color.r) {
+    if (getCurrentTurn() == 'r') {
       moveNumber++;
     }
 
     Move prettyMove = makePretty(moveObj);
-    makeMove(moveObj, from: moveInput['from'], to: moveInput['to']);
+    makeMove(moveObj);
     if (history.isNotEmpty) {
-      history.last.move.moveNumber = moveNumber;
+      (history.last as dynamic)['move'].moveNumber = moveNumber;
     }
+    futures = [];
 
     return prettyMove;
   }
 
+  Move? undo() {
+    push(futures, null);
+    Move? move = undoMove();
+    if (move != null) {
+      Move prettyMove = makePretty(move);
+      List temp = [move.from, move.to];
+      move.from = temp[1];
+      move.to = temp[0];
+      move.flags =
+          (history.last as dynamic)['move'].flags; // khôi phục lại flags gốc
+      futures[futures.length - 1] = move;
+      return prettyMove;
+    } else {
+      futures.removeLast();
+      return null;
+    }
+  }
+
+  Move? redo() {
+    push(history, null);
+    Move? move = redoMove();
+    if (move != null) {
+      List temp = [move.from, move.to];
+      move.from = temp[1];
+      move.to = temp[0];
+      move.flags =
+          (futures.last as dynamic)['move'].flags; // khôi phục lại flags gốc
+      history[history.length - 1] = move;
+      return makePretty(move);
+    } else {
+      history.removeLast();
+      return null;
+    }
+  }
+
   List<dynamic> getHistory({bool verbose = false}) {
+    List<Move> reversedHistory = [];
     List<dynamic> moveHistory = [];
 
-    for (int i = 0; i < history.length; i++) {
-      HistoryMove historyMove = history[i];
+    while (history.isNotEmpty) {
+      reversedHistory.add(undoMove()!);
+    }
+
+    while (reversedHistory.isNotEmpty) {
+      Move move = reversedHistory.removeLast();
       if (verbose) {
-        moveHistory.add(makePretty(historyMove.move));
+        moveHistory.add(makePretty(move));
       } else {
-        moveHistory.add(moveToIccs(historyMove.move));
+        moveHistory.add(moveToIccs(move));
       }
+      makeMove(move);
     }
 
     return moveHistory;
@@ -1255,9 +1414,7 @@ class Xiangqi {
 
   String ascii() {
     String s = '   +---------------------------+\n';
-    for (int i = Xiangqi.SQUARES[Square.a9]!;
-        i <= Xiangqi.SQUARES[Square.i0]!;
-        i++) {
+    for (int i = Xiangqi.SQUARES['a9']!; i <= Xiangqi.SQUARES['i0']!; i++) {
       if (file(i) == 0) {
         s += ' ${'9876543210'[rank(i)]} |';
       }
@@ -1265,11 +1422,10 @@ class Xiangqi {
       if (board[i] == null) {
         s += ' . ';
       } else {
-        PieceType piece = board[i]!.type;
-        Color color = board[i]!.color;
-        String symbol = color == Xiangqi.RED
-            ? getPieceSymbol(piece).toUpperCase()
-            : getPieceSymbol(piece).toLowerCase();
+        String piece = board[i]!.type;
+        String color = board[i]!.color;
+        String symbol =
+            color == Xiangqi.RED ? piece.toUpperCase() : piece.toLowerCase();
         s += ' $symbol ';
       }
 
@@ -1291,11 +1447,11 @@ class Xiangqi {
         .toList();
   }
 
-  Square toNotion(int x, int y) {
+  static Square toNotion(int x, int y) {
     const files = "abcdefghi";
     final file = files[y];
     final rank = 9 - x;
-    return algebraicToEnum('$file$rank')!;
+    return '$file$rank';
   }
 
   static Map<String, int>? fromNotion(String notion) {
@@ -1308,53 +1464,9 @@ class Xiangqi {
     final col = colChar.codeUnitAt(0) - 'a'.codeUnitAt(0);
     final row = 9 - int.parse(rowChar);
 
-    if (col < 0 || col > 8 || row.isNaN || row < 0 || row > 9) {
+    if (col < 0 || col > 8 || row < 0 || row > 9) {
       return null;
     }
     return {'row': row, 'col': col};
-  }
-
-  String getPieceSymbol(PieceType piece) {
-    if (piece is PawnType) {
-      return 'p';
-    } else if (piece is ExcludePawnType) {
-      switch (piece) {
-        case ExcludePawnType.c:
-          return 'c';
-        case ExcludePawnType.r:
-          return 'r';
-        case ExcludePawnType.n:
-          return 'n';
-        case ExcludePawnType.b:
-          return 'b';
-        case ExcludePawnType.a:
-          return 'a';
-        case ExcludePawnType.k:
-          return 'k';
-      }
-    }
-    return '';
-  }
-
-  PieceType? getPieceTypeFromSymbol(String symbol) {
-    switch (symbol.toLowerCase()) {
-      // Sửa ở đây: Chuyển symbol thành chữ thường
-      case 'p':
-        return PawnType.p;
-      case 'c':
-        return ExcludePawnType.c;
-      case 'r':
-        return ExcludePawnType.r;
-      case 'n':
-        return ExcludePawnType.n;
-      case 'b':
-        return ExcludePawnType.b;
-      case 'a':
-        return ExcludePawnType.a;
-      case 'k':
-        return ExcludePawnType.k;
-      default:
-        throw ArgumentError('Invalid piece symbol: $symbol');
-    }
   }
 }
