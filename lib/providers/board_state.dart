@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:rose_flutter/engine/rose.dart';
+import 'package:rose_flutter/engine/rose_state.dart';
+import 'package:rose_flutter/utils/xiangqi.dart';
 import '../models/piece.dart';
 import '../models/board_position.dart';
 import '../constants.dart';
+import '../widgets/chess_board.dart';
 
 class BoardState with ChangeNotifier {
   // Board dimensions
   final int rows = 10;
   final int cols = 9;
+  late Xiangqi xiangqi;
+  List<String> canMoves = [];
+  List<ArrowData> _arrows = [];
+  List<ArrowData> get arrows => _arrows;
 
   // Initial board setup (using a map for easier access)
   late Map<BoardPosition, Piece?> board;
@@ -16,29 +24,47 @@ class BoardState with ChangeNotifier {
   // Map to track the location of the pieces by ID.
   late Map<String, BoardPosition> piecePositions;
 
-  BoardState() {
+  Rose? _roseEngine;
+  bool _engineReady = false;
+  bool _gameStarted = false;
+  bool _isSettingEngine = false;
+  bool _readyOkReceived = false;
+  String engineFileName;
+
+  Rose? get roseEngine => _roseEngine;
+  bool get engineReady => _engineReady;
+  bool get gameStarted => _gameStarted;
+
+  BoardState(this.engineFileName) {
     _initializeBoard();
   }
 
   void _initializeBoard() {
+    piecePositions = {};
     board = {};
+    xiangqi = Xiangqi();
+    var initialBoard = xiangqi.getBoard();
     int idCounter = 0;
     for (int i = 0; i < initialBoard.length; i++) {
       for (int j = 0; j < initialBoard[i].length; j++) {
         final pieceData = initialBoard[i][j];
         if (pieceData != null) {
+          // Đảm bảo BoardPosition luôn có notation
+          if (pieceData.notion == null) {
+            throw Exception("Piece data notion is null at i=$i, j=$j");
+          }
           final piece = _createPieceFromData(pieceData, idCounter);
-          board[BoardPosition(pieceData['notion']!)] = piece;
-          piecePositions[piece.id!] = BoardPosition(pieceData['notion']!);
+          board[BoardPosition(pieceData.notion!)] = piece;
+          piecePositions[piece.id] = BoardPosition(pieceData.notion!);
           idCounter++;
         }
       }
     }
   }
 
-  Piece _createPieceFromData(Map<String, dynamic> pieceData, int idCounter) {
-    final type = _getPieceType(pieceData['type']);
-    final color = _getPieceColor(pieceData['color']);
+  Piece _createPieceFromData(XiangqiPiece pieceData, int idCounter) {
+    final type = _getPieceType(pieceData.type);
+    final color = _getPieceColor(pieceData.color);
     final assetPath = _getAssetPath(type, color);
     final piece = Piece(
       id: "piece_$idCounter",
@@ -106,6 +132,14 @@ class BoardState with ChangeNotifier {
     if (selectedPosition == null) {
       if (board[position] != null) {
         selectedPosition = position;
+        if (selectedPosition != null) {
+          canMoves = xiangqi
+              .generatePrettyMoves(square: selectedPosition!.notation)
+              .map((el) => el.iccs!)
+              .toList();
+        } else {
+          canMoves = [];
+        }
       }
     } else {
       if (position != selectedPosition) {
@@ -113,13 +147,44 @@ class BoardState with ChangeNotifier {
         final targetPiece = board[position];
 
         if (selectedPiece != null &&
-            (targetPiece == null || targetPiece.color != selectedPiece.color)) {
-          _movePiece(selectedPosition!, position, selectedPiece);
+            canMoves != null &&
+            (targetPiece == null || targetPiece.color != selectedPiece.color) &&
+            selectedPosition != null) {
+          if (canMoves!
+              .contains(selectedPosition!.notation + position.notation)) {
+            clearArrows();
+            xiangqi.move(
+                {'from': selectedPosition!.notation, 'to': position.notation});
+            _movePiece(selectedPosition!, position, selectedPiece);
+            _engineMove(xiangqi.generateFen());
+
+            canMoves = []; // Xóa canMoves sau khi di chuyển
+          } else {
+            // Không phải nước đi hợp lệ
+            selectedPosition = null;
+            canMoves = [];
+          }
         } else {
-          selectedPosition = position;
+          // Chọn quân cờ mới
+          if (board[position] != null) {
+            selectedPosition = position;
+            if (selectedPosition != null) {
+              canMoves = xiangqi
+                  .generatePrettyMoves(square: selectedPosition!.notation)
+                  .map((el) => el.iccs!)
+                  .toList();
+            } else {
+              canMoves = [];
+            }
+          } else {
+            selectedPosition = null;
+            canMoves = [];
+          }
         }
       } else {
+        // Bỏ chọn quân cờ
         selectedPosition = null;
+        canMoves = [];
       }
     }
     notifyListeners();
@@ -128,7 +193,126 @@ class BoardState with ChangeNotifier {
   void _movePiece(BoardPosition from, BoardPosition to, Piece piece) {
     board[to] = piece;
     board[from] = null;
-    piecePositions[piece.id!] = to;
+    piecePositions[piece.id] = to;
     selectedPosition = null;
+  }
+
+  void clearArrows() {
+    _arrows.clear();
+    notifyListeners();
+  }
+
+  void handleMenuAction(String action) {
+    print('Menu action received: $action');
+    switch (action) {
+      case 'new_game':
+        _startGame();
+        break;
+      case 'detect_image':
+        // Xử lý Detect Image
+        break;
+      case 'flip_board':
+        // Xử lý Flip Board
+        break;
+      case 'settings':
+        // Xử lý Settings
+        break;
+    }
+  }
+
+  Future<void> initEngine() async {
+    try {
+      _roseEngine = await roseAsync();
+      print('start engine');
+      if (_roseEngine != null) {
+        _roseEngine?.stdout.listen((line) {
+          if (line.trim() == 'readyok') {
+            if (true) {
+              _readyOkReceived = true;
+              notifyListeners();
+            }
+          }
+        });
+        if (_roseEngine!.state.value == RoseState.ready) {
+          if (true) {
+            _engineReady = true;
+            notifyListeners();
+          }
+          if (!_isSettingEngine) {
+            _settingEngine();
+          }
+        } else {
+          _roseEngine?.state.addListener(_engineStateListener);
+        }
+      }
+    } catch (error) {
+      print('Error init engine: $error');
+    }
+  }
+
+  void _engineStateListener() {
+    if (_roseEngine?.state.value == RoseState.ready) {
+      print("Engine is ready");
+      if (true) {
+        _engineReady = true;
+        notifyListeners();
+      }
+      if (!_isSettingEngine && _engineReady) {
+        _settingEngine();
+      }
+    } else if (_roseEngine?.state.value == RoseState.error) {
+      print("Engine has error");
+      if (true) {
+        _engineReady = false;
+        notifyListeners();
+      }
+    } else {
+      print('Engine state update to ${_roseEngine?.state.value}');
+    }
+  }
+
+  Future<void> _settingEngine() async {
+    if (_isSettingEngine) return;
+    _isSettingEngine = true;
+    _roseEngine?.stdin = 'uci\n';
+    _roseEngine?.stdin = 'setoption name Threads value 2\n';
+    _roseEngine?.stdin = 'setoption name Hash value 128\n';
+    _roseEngine?.stdin = 'setoption name Evalfile value $engineFileName \n';
+    _roseEngine?.stdin = 'isready\n';
+    if (true) {
+      _isSettingEngine = false;
+      notifyListeners();
+    }
+  }
+
+  void _pauseGame() {
+    if (_gameStarted == false) return;
+    _roseEngine?.stdin = 'stop\n';
+    _gameStarted = false;
+    notifyListeners();
+    print("Game paused.");
+  }
+
+  void _startGame() {
+    if (_gameStarted == true) return;
+    _gameStarted = true;
+    notifyListeners();
+    print("Game started.");
+  }
+
+  void _engineMove(String fen) {
+    if (!_engineReady || !_readyOkReceived) return;
+    _roseEngine?.stdin = 'stop\n';
+    _roseEngine?.stdin = 'position fen $fen\n';
+    _roseEngine?.stdin = 'go\n';
+    print('Sent Move $fen');
+    notifyListeners(); // Cập nhật giao diện
+  }
+
+  @override
+  void dispose() {
+    _pauseGame();
+    _roseEngine?.dispose();
+    super.dispose();
   }
 }

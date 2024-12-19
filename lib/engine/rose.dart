@@ -30,7 +30,6 @@ class Rose {
       }
     });
 
-    
     compute(_spawnIsolates, [_mainPort.sendPort, _stdoutPort.sendPort]).then(
       (success) {
         final state = success ? RoseState.ready : RoseState.error;
@@ -141,7 +140,21 @@ void _isolateStdout(SendPort stdoutPort) {
     final lines = data.split('\n');
     previous = lines.removeLast();
     for (final line in lines) {
-      stdoutPort.send(line);
+      if (line.trim() == 'readyok') {
+        stdoutPort.send(line);
+      } else if (line.startsWith('bestmove')) {
+        stdoutPort.send(line);
+      } else if (line.startsWith('info depth')) {
+        try {
+          final depthStr = line.split('depth ')[1].split(' ')[0];
+          final depth = int.parse(depthStr);
+          if (depth > 12) {
+            stdoutPort.send(line);
+          }
+        } catch (e) {
+          debugPrint('[rose] Error parsing info depth line: $line');
+        }
+      }
     }
   }
 }
