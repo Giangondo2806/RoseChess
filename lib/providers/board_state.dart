@@ -305,7 +305,6 @@ class BoardState with ChangeNotifier {
     _roseEngine?.stdin = 'stop\n';
     _roseEngine?.stdin = 'position fen $fen\n';
     _roseEngine?.stdin = 'go\n';
-    print('Sent Move $fen');
     notifyListeners(); // Cập nhật giao diện
   }
 

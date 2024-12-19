@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:rose_flutter/utils/xiangqi.dart';
 import '../models/piece.dart';
 import '../providers/board_state.dart';
 import '../constants.dart';
@@ -23,7 +24,6 @@ class ChessBoardWidget extends StatefulWidget {
 
   @override
   State<ChessBoardWidget> createState() => _ChessBoardWidgetState();
-
 }
 
 class _ChessBoardWidgetState extends State<ChessBoardWidget> {
@@ -33,6 +33,8 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final boardState = Provider.of<BoardState>(context);
+
+    // boardState.xiangqi.turn   === Xiangqi.RED
     boardState.roseEngine?.stdout.listen((line) {
       if (line.startsWith('info depth') && line.contains(' pv ')) {
         _extractMoves(line);
@@ -46,13 +48,16 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
       final pvString = line.substring(pvIndex + 4);
       final moves = pvString.split(' ');
       if (moves.length >= 2) {
-        if (moves[0] != (_previousMoves.isNotEmpty ? _previousMoves[0] : null) ||
-            moves[1] != (_previousMoves.length > 1 ? _previousMoves[1] : null)) {
+        if (moves[0] !=
+                (_previousMoves.isNotEmpty ? _previousMoves[0] : null) ||
+            moves[1] !=
+                (_previousMoves.length > 1 ? _previousMoves[1] : null)) {
           _previousMoves = List.from(moves);
 
           Future.delayed(const Duration(milliseconds: 200), () {
             if (mounted) {
-              final boardState = Provider.of<BoardState>(context, listen: false);
+              final boardState =
+                  Provider.of<BoardState>(context, listen: false);
               boardState.clearArrows();
               boardState.arrows.add(ArrowData(
                 from: BoardPosition(moves[0].substring(0, 2)),
@@ -72,14 +77,15 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final boardWidth = constraints.maxWidth; // Sử dụng chiều rộng tối đa
         final boardState = Provider.of<BoardState>(context, listen: false);
         final squareSize = boardWidth / boardState.cols;
-        final boardHeight = boardWidth * (boardState.rows / boardState.cols); // Tính toán chiều cao
+        final boardHeight = boardWidth *
+            (boardState.rows / boardState.cols); // Tính toán chiều cao
 
         return Center(
           child: SizedBox(
@@ -133,6 +139,10 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
 
   Widget _buildEmptySquare(
       double squareSize, BoardState boardState, BoardPosition position) {
+    // bool isSameColor = boardState.board[position]?.color ==
+    //     (boardState.xiangqi.turn == Xiangqi.RED
+    //         ? PieceColor.red
+    //         : PieceColor.black);
     return Positioned(
       left: position.col * squareSize,
       top: position.row * squareSize,
@@ -151,11 +161,8 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
     );
   }
 
-  Widget _buildAnimatedPiece(
-      Piece piece,
-      double squareSize,
-      BoardState boardState,
-      BoardPosition position) {
+  Widget _buildAnimatedPiece(Piece piece, double squareSize,
+      BoardState boardState, BoardPosition position) {
     return AnimatedPositioned(
       key: ValueKey(piece.id),
       duration: const Duration(milliseconds: 200),
