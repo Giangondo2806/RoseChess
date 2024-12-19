@@ -415,26 +415,10 @@ class Xiangqi {
     turn = Xiangqi.RED;
     history = [];
     futures = [];
-    if (!keepHeaders) header = {};
-    updateSetup(generateFen());
   }
 
   void reset() {
     load(Xiangqi.DEFAULT_POSITION);
-  }
-
-  Square squareToEnum(int square) {
-    return Xiangqi.SQUARES.keys
-        .firstWhere((key) => Xiangqi.SQUARES[key] == square);
-  }
-
-  int squareTextToIndex(String text) {
-    if (text.length != 2) {
-      return -1; // Hoặc giá trị nào đó để chỉ ra lỗi
-    }
-    int file = text.codeUnitAt(0) - 'a'.codeUnitAt(0);
-    int rank = 9 - int.parse(text[1]);
-    return rank * 9 + file;
   }
 
   bool load(String fen, {bool keepHeaders = false}) {
@@ -472,8 +456,6 @@ class Xiangqi {
 
     turn = (tokens[1] == 'b' || tokens[1] == 'w') ? Xiangqi.BLACK : Xiangqi.RED;
     moveNumber = turn == Color.b ? 1 : 0;
-
-    updateSetup(generateFen());
 
     return true;
   }
@@ -676,25 +658,6 @@ class Xiangqi {
     return [fen, turn == Color.r ? 'w' : 'b'].join(' ');
   }
 
-  Map<String, String> setHeader(List<String> args) {
-    for (int i = 0; i < args.length; i += 2) {
-      if (i + 1 < args.length && args[i] is String && args[i + 1] is String) {
-        header[args[i]] = args[i + 1];
-      }
-    }
-    return header;
-  }
-
-  void updateSetup(String fen) {
-    if (history.isNotEmpty) return;
-
-    if (fen != Xiangqi.DEFAULT_POSITION) {
-      header['FEN'] = fen;
-    } else {
-      header.remove('FEN');
-    }
-  }
-
   Piece? get(Square square) {
     final piece = board[Xiangqi.SQUARES[square]!];
     return piece != null ? Piece(type: piece.type, color: piece.color) : null;
@@ -726,8 +689,6 @@ class Xiangqi {
       kings[piece.color] = sq;
     }
 
-    updateSetup(generateFen());
-
     return true;
   }
 
@@ -738,22 +699,23 @@ class Xiangqi {
       kings[piece.color] = Xiangqi.EMPTY;
     }
 
-    updateSetup(generateFen());
-
     return piece;
   }
 
   Move buildMove(List<Piece?> board, int from, int to, int flags) {
+
+    final int moveFrom = Xiangqi.SQUARES[from]!;
+    final int moveTo = Xiangqi.SQUARES[to]!;
     Move move = Move(
       color: turn,
-      from: from,
-      to: to,
+      from: moveFrom,
+      to: moveTo,
       flags: flags,
-      piece: board[from]!.type,
+      piece: board[moveFrom]!.type,
     );
 
-    if (board[to] != null) {
-      move.captured = board[to]!.type;
+    if (board[moveTo] != null) {
+      move.captured = board[moveTo]!.type;
     }
     return move;
   }
@@ -956,34 +918,6 @@ class Xiangqi {
     return false;
   }
 
-  // bool inThreefoldRepetition() {
-  //   List<Move> moves = [];
-  //   Map<String, int> positions = {};
-  //   bool repetition = false;
-
-  //   while (true) {
-  //     // Move? move = undoMove();
-  //     if (move == null) break;
-  //     moves.add(move);
-  //   }
-
-  //   while (true) {
-  //     String fen = generateFen().split(' ').sublist(0, 2).join('');
-
-  //     positions[fen] = (positions[fen] ?? 0) + 1;
-  //     if (positions[fen]! >= 3) {
-  //       repetition = true;
-  //     }
-
-  //     if (moves.isEmpty) {
-  //       break;
-  //     }
-  //     makeMove(moves.removeLast());
-  //   }
-
-  //   return repetition;
-  // }
-
   void push(List list, Move? move) {
     list.add(HistoryMove(
       move: move!,
@@ -995,9 +929,11 @@ class Xiangqi {
   void makeMove(Move move, {String? from, String? to}) {
     if (move.iccs == null) return;
 
+
     final int moveFrom = Xiangqi.SQUARES[_stringToEnumMap[from]]!;
     final int moveTo = Xiangqi.SQUARES[_stringToEnumMap[to]]!;
-    print(board[moveFrom]?.type);
+    move.from = moveFrom;
+    move.to = moveTo;
 
     push(history, move);
     if (board[moveFrom] != null && board[moveTo]?.type == Xiangqi.KING) {
@@ -1019,79 +955,6 @@ class Xiangqi {
     }
 
     turn = swapColor(turn);
-
-    print(generateFen());
-  }
-
-  Move? setMove(dynamic old, {bool undo = true}) {
-    if (old == null) {
-      return null;
-    }
-
-    final Move move = old.move;
-    kings = old.kings;
-    turn = old.turn;
-
-    board[move.from] = board[move.to];
-    board[move.from]!.type = move.piece;
-    board[move.to] = null;
-
-    if ((move.flags & Xiangqi.BITS[FlagKeys.CAPTURE]!) > 0 && undo) {
-      board[move.to] = Piece(type: move.captured!, color: swapColor(turn));
-    }
-
-    return move;
-  }
-
-  // Move? undoMove() {
-  //   return setMove(history.isNotEmpty ? history.removeLast() : null);
-  // }
-
-  // Move? redoMove() {
-  //   return setMove(futures.isNotEmpty ? futures.removeLast() : null,
-  //       undo: false);
-  // }
-
-  String getDisambiguator(Move move, {bool sloppy = false}) {
-    final moves = generateMoves(legal: !sloppy);
-
-    final from = move.from;
-    final to = move.to;
-    final piece = move.piece;
-
-    int ambiguities = 0;
-    int sameRank = 0;
-    int sameFile = 0;
-
-    for (int i = 0; i < moves.length; i++) {
-      final ambigFrom = moves[i].from;
-      final ambigTo = moves[i].to;
-      final ambigPiece = moves[i].piece;
-
-      if (piece == ambigPiece && from != ambigFrom && to == ambigTo) {
-        ambiguities++;
-
-        if (rank(from) == rank(ambigFrom)) {
-          sameRank++;
-        }
-
-        if (file(from) == file(ambigFrom)) {
-          sameFile++;
-        }
-      }
-    }
-
-    if (ambiguities > 0) {
-      if (sameRank > 0 && sameFile > 0) {
-        return algebraic(from)!;
-      } else if (sameFile > 0) {
-        return algebraic(from)![1];
-      } else {
-        return algebraic(from)![0];
-      }
-    }
-
-    return '';
   }
 
   Move? moveFromIccs(String move, {bool sloppy = false}) {
@@ -1220,7 +1083,7 @@ class Xiangqi {
   }
 
   Move makePretty(Move uglyMove) {
-    Move move = clone(uglyMove);
+    Move move = uglyMove;
     move.iccs = moveToIccs(move);
     move.to = Xiangqi.SQUARES.keys
         .firstWhere((k) => Xiangqi.SQUARES[k] == move.to)
@@ -1371,27 +1234,20 @@ class Xiangqi {
     if (history.isNotEmpty) {
       history.last.move.moveNumber = moveNumber;
     }
-    futures = [];
 
     return prettyMove;
   }
 
   List<dynamic> getHistory({bool verbose = false}) {
-    List<Move> reversedHistory = [];
     List<dynamic> moveHistory = [];
 
-    // while (history.isNotEmpty) {
-    //   reversedHistory.add(undoMove()!);
-    // }
-
-    while (reversedHistory.isNotEmpty) {
-      Move move = reversedHistory.removeLast();
+    for (int i = 0; i < history.length; i++) {
+      HistoryMove historyMove = history[i];
       if (verbose) {
-        moveHistory.add(makePretty(move));
+        moveHistory.add(makePretty(historyMove.move));
       } else {
-        moveHistory.add(moveToIccs(move));
+        moveHistory.add(moveToIccs(historyMove.move));
       }
-      // makeMove(move);
     }
 
     return moveHistory;
