@@ -28,15 +28,16 @@ class BoardState with ChangeNotifier {
   late Map<String, BoardPosition> piecePositions;
 
   Rose? _roseEngine;
-  bool _engineReady = false;
+  bool _connectedEngine = false;
   bool _gameStarted = false;
   bool _isSettingEngine = false;
   bool _readyOkReceived = false;
   String engineFileName;
 
   Rose? get roseEngine => _roseEngine;
-  bool get engineReady => _engineReady;
+  bool get engineConnected => _connectedEngine;
   bool get gameStarted => _gameStarted;
+  bool get engineReady => _readyOkReceived;
   
 
   BoardState(this.engineFileName) {
@@ -160,8 +161,7 @@ class BoardState with ChangeNotifier {
             xiangqi.move(
                 {'from': selectedPosition!.notation, 'to': position.notation});
             _movePiece(selectedPosition!, position, selectedPiece);
-            _engineMove(xiangqi.generateFen());
-
+            _engineMove('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
             canMoves = []; // Xóa canMoves sau khi di chuyển
           } else {
             // Không phải nước đi hợp lệ
@@ -239,7 +239,7 @@ class BoardState with ChangeNotifier {
         });
         if (_roseEngine!.state.value == RoseState.ready) {
           if (true) {
-            _engineReady = true;
+            _connectedEngine = true;
             notifyListeners();
           }
           if (!_isSettingEngine) {
@@ -258,16 +258,16 @@ class BoardState with ChangeNotifier {
     if (_roseEngine?.state.value == RoseState.ready) {
       print("Engine is ready");
       if (true) {
-        _engineReady = true;
+        _connectedEngine = true;
         notifyListeners();
       }
-      if (!_isSettingEngine && _engineReady) {
+      if (!_isSettingEngine && _connectedEngine) {
         _settingEngine();
       }
     } else if (_roseEngine?.state.value == RoseState.error) {
       print("Engine has error");
       if (true) {
-        _engineReady = false;
+        _connectedEngine = false;
         notifyListeners();
       }
     } else {
@@ -305,7 +305,7 @@ class BoardState with ChangeNotifier {
   }
 
   void _engineMove(String fen) {
-    if (!_engineReady || !_readyOkReceived) return;
+    if (!_connectedEngine || !_readyOkReceived) return;
     _roseEngine?.stdin = 'stop\n';
     _roseEngine?.stdin = 'position fen $fen\n';
     _roseEngine?.stdin = 'go\n';

@@ -28,9 +28,7 @@ class _SoftwareScreenState extends State<SoftwareScreen>
         ),
       ],
       child: Consumer<BoardState>(
-        // Sử dụng Consumer
         builder: (context, boardState, child) {
-          // Sử dụng addPostFrameCallback bên trong Consumer
           if (!_initialized) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               boardState.initEngine();
@@ -47,9 +45,8 @@ class _SoftwareScreenState extends State<SoftwareScreen>
                     onMenuAction: boardState.handleMenuAction,
                   ),
                   ChessBoardWidget(boardState: boardState),
-                  AnalysisWidget(),
-                  Text("Engine Ready: ${boardState.engineReady}"),
-                  Text("Game Started: ${boardState.gameStarted}"),
+            
+                  Expanded(child: AnalysisWidget()),
                 ],
               ),
             ),

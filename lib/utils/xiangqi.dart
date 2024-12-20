@@ -1433,7 +1433,6 @@ class Xiangqi {
 
   List<dynamic> getHistory({bool verbose = false}) {
     List<dynamic> moveHistory = [];
-    print(history);
 
     for (int i = 0; i < history.length; i++) {
       if (verbose) {
