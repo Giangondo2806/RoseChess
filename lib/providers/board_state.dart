@@ -1,5 +1,5 @@
-
 import 'package:flutter/foundation.dart';
+import 'package:rose_flutter/models/engine_info.dart';
 
 import '../engine/rose.dart';
 import '../engine/rose_state.dart';
@@ -15,9 +15,10 @@ class BoardState with ChangeNotifier {
   final int cols = 9;
   late Xiangqi xiangqi;
   List<String> canMoves = [];
-  List<ArrowData> _arrows = [];
+  final List<ArrowData> _arrows = [];
   List<ArrowData> get arrows => _arrows;
-  late String initFen ;
+  late String initFen;
+  List<EngineInfo> engineAnalysis = [];
 
   // Initial board setup (using a map for easier access)
   late Map<BoardPosition, Piece?> board;
@@ -38,7 +39,6 @@ class BoardState with ChangeNotifier {
   bool get engineConnected => _connectedEngine;
   bool get gameStarted => _gameStarted;
   bool get engineReady => _readyOkReceived;
-  
 
   BoardState(this.engineFileName) {
     _initializeBoard();
@@ -235,6 +235,11 @@ class BoardState with ChangeNotifier {
               _readyOkReceived = true;
               notifyListeners();
             }
+          } else if (line.startsWith('info depth')) {
+            print('output: $line');
+            // Thêm dòng phân tích vào danh sách
+            engineAnalysis.insert(0, parseEngineInfo(fen: xiangqi.generateFen(), input: line));
+            notifyListeners(); // Thông báo cho UI cập nhật
           }
         });
         if (_roseEngine!.state.value == RoseState.ready) {
@@ -306,6 +311,7 @@ class BoardState with ChangeNotifier {
 
   void _engineMove(String fen) {
     if (!_connectedEngine || !_readyOkReceived) return;
+    engineAnalysis.clear();
     _roseEngine?.stdin = 'stop\n';
     _roseEngine?.stdin = 'position fen $fen\n';
     _roseEngine?.stdin = 'go\n';

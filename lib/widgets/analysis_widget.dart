@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../providers/board_state.dart';
 
+
+
 class AnalysisWidget extends StatefulWidget {
   const AnalysisWidget({Key? key}) : super(key: key);
 
@@ -15,6 +17,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
     with SingleTickerProviderStateMixin {
   bool _showNavigation = false;
   late TabController _tabController;
+  final ScrollController _scrollController = ScrollController();
 
   final List<String> mockMoves = [
     "1: a1b2 c6d7",
@@ -31,11 +34,27 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+
+    final boardState = Provider.of<BoardState>(context, listen: false);
+    boardState.addListener(() {
+      if (boardState.engineAnalysis.isNotEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              0.0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -77,10 +96,37 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                         children: [
                           // Phân tích
                           SingleChildScrollView(
+                            controller: _scrollController,
                             child: Container(
                               padding: const EdgeInsets.all(16.0),
-                              child: const Text(
-                                "Nội dung hướng dẫn phân tích ở đây. Có thể rất dài và cần scroll.",
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 8),
+                                  ...boardState.engineAnalysis.map((engineInfo) {
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 4.0),
+                                          child: Text(
+                                            engineInfo.title,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 8.0),
+                                          child: Text(engineInfo.moves),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ],
                               ),
                             ),
                           ),
@@ -191,14 +237,14 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
 
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 4.0, horizontal: 8.0),
+                                    vertical: 2.0, horizontal: 4.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize
                                       .min, // Giới hạn kích thước Row
                                   children: [
                                     SizedBox(
                                       width: 30,
-                                      child: Text('$moveNumber'),
+                                      child: Text(moveNumber),
                                     ),
                                     const SizedBox(width: 4.0),
                                     Expanded(
@@ -241,23 +287,40 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                   ),
                 ),
               ),
-              Positioned(
+              // Nút toggle
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
                 bottom: 10,
-                right: 10,
+                right: _showNavigation ? navigationWidth : 10,
+                // left: _showNavigation ? 5 : null,
+                // Đặt width cố định cho AnimatedPositioned
+                width: 40,
                 child: SizedBox(
-                  width: 40,
                   height: 40,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      setState(() {
-                        _showNavigation = !_showNavigation;
-                      });
-                    },
-                    child: Icon(
-                      _showNavigation
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      size: 20,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    decoration: BoxDecoration(
+                        color: _showNavigation
+                            ? Colors.red
+                            : Colors.grey, // Màu đỏ khi mở, xám khi đóng
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () {
+                          setState(() {
+                            _showNavigation = !_showNavigation;
+                          });
+                        },
+                        child: Icon(
+                          _showNavigation
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),

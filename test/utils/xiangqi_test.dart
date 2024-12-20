@@ -114,6 +114,18 @@ void main() {
       // expect(moves[0].san, equals("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C4/9/RNBAKABNR b"));
     });
 
+    test('sanmove notation', (){
+        xiangqi.load('rnbakabnr/9/1c5c1/p1p3p1p/4p4/9/P1P1P1P1P/1C2C4/9/RNBAKABNR w');
+        print(xiangqi.generateFen());
+        xiangqi.move({'from': 'e2', 'to': 'e5'});
+        final moves = xiangqi.getHistory();
+        print(moves.length);
+        for(int i= 0; i<moves.length; i++){
+          print(moves[i]);
+        }
+
+    });
+
     test('history fromload', () {
       xiangqi.load(
           'rnbakabnr/9/1c7/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R b');
@@ -158,4 +170,6 @@ void main() {
       }
     });
   });
+
+
 }
