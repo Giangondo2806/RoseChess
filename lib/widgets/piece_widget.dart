@@ -10,6 +10,7 @@ class PieceWidget extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
+
   const PieceWidget({
     Key? key,
     required this.piece,
@@ -26,6 +27,7 @@ class PieceWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
+          
           border: isSelected && piece.color.name== boardState.xiangqi.turn?  Border.all(color: Colors.blue, width: 2) : null,
         ),
         alignment: Alignment.center, // Căn giữa quân cờ

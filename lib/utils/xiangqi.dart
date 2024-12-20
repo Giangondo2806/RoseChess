@@ -490,7 +490,7 @@ class Xiangqi {
   Map<String, String> setHeader(List<String> args) {
     for (int i = 0; i < args.length; i += 2) {
       header[args[i]] = args[i + 1];
-        }
+    }
     return header;
   }
 
@@ -822,6 +822,25 @@ class Xiangqi {
     });
   }
 
+  Move _buildMoveFromInput({dynamic input}) {
+    var from = '';
+    var to = '';
+    if (input is String) {
+      from = input.substring(0, 2);
+      to = input.substring(2, 4);
+    } else {
+      from = input['from'];
+      to = input['to'];
+    }
+
+    return Move(
+        color: turn,
+        from: SQUARES[from]!,
+        to: SQUARES[to]!,
+        piece: board[SQUARES[from]!]!.type,
+        flags: BITS[FlagKeys.NORMAL]!);
+  }
+
   void makeMove(Move move) {
     push(history, move);
     if (board[move.to] != null && board[move.to]!.type == Xiangqi.KING) {
@@ -836,6 +855,7 @@ class Xiangqi {
     }
 
     turn = swapXiangqiColor(turn);
+    move.fen = generateFen();
   }
 
   Move? setMove(dynamic old, {bool undo = true}) {
@@ -914,7 +934,8 @@ class Xiangqi {
     String cleanMove = strippedIccs(move);
 
     RegExp matches = RegExp(r'([a-iA-I][0-9])-?([a-iA-I][0-9])');
-    String? piece, from, to;
+    String? from, to;
+
     if (matches.hasMatch(cleanMove)) {
       final match = matches.firstMatch(cleanMove)!;
       from = match.group(1);
@@ -1036,7 +1057,7 @@ class Xiangqi {
     move.piece = turn == Xiangqi.RED
         ? move.piece.toUpperCase()
         : move.piece.toLowerCase();
-    move.fen = generateFen();
+    move.fen = uglyMove.fen ?? generateFen();
     move.moveNumber = uglyMove.moveNumber;
     move.san = uglyMove.san;
 
@@ -1242,7 +1263,7 @@ class Xiangqi {
     }
 
     bool hasKeys(Map object) {
-      for (String key in object.keys) {
+      for (String _ in object.keys) {
         return true;
       }
       return false;
@@ -1338,7 +1359,7 @@ class Xiangqi {
     return true;
   }
 
-  Move? move(dynamic moveInput, {bool sloppy = false}) {
+  Move? move(dynamic moveInput, {bool sloppy = false, List<Move>? canMoves}) {
     bool sloppy_ = sloppy;
     Move? moveObj;
     if (moveInput is String) {
@@ -1411,22 +1432,30 @@ class Xiangqi {
   }
 
   List<dynamic> getHistory({bool verbose = false}) {
-    List<Move> reversedHistory = [];
     List<dynamic> moveHistory = [];
+    print(history);
 
-    while (history.isNotEmpty) {
-      reversedHistory.add(undoMove()!);
-    }
-
-    while (reversedHistory.isNotEmpty) {
-      Move move = reversedHistory.removeLast();
+    for (int i = 0; i < history.length; i++) {
       if (verbose) {
-        moveHistory.add(makePretty(move));
+        moveHistory.add(makePretty(history[i]['move']));
       } else {
-        moveHistory.add(moveToIccs(move));
+        moveHistory.add(moveToIccs(history[i]['move']));
       }
-      makeMove(move);
     }
+
+    // while (history.isNotEmpty) {
+    //   reversedHistory.add(undoMove()!);
+    // }
+
+    // while (reversedHistory.isNotEmpty) {
+
+    //   if (verbose) {
+    //     moveHistory.add(makePretty(move));
+    //   } else {
+    //     moveHistory.add(moveToIccs(move));
+    //   }
+    //   makeMove(move);
+    // }
 
     return moveHistory;
   }
@@ -1643,4 +1672,30 @@ class Xiangqi {
 
     return s1 + s2;
   }
+
+  String simpleMove(dynamic input) {
+    final move = _buildMoveFromInput(input: input);
+    final san = moveToJsChinese(move);
+    if (getCurrentTurn() == 'r') {
+      moveNumber++;
+    }
+    move.san = san;
+    makeMove(move);
+    if (history.isNotEmpty) {
+      (history.last as dynamic)['move'].moveNumber = moveNumber;
+    }
+    return san;
+  }
+}
+
+String getSanMovesFromfenAndNotations(
+    {required String fen, required String chainNotation}) {
+  final xiangqi = Xiangqi(fen: fen);
+  final List<String> moves = chainNotation.split(" ");
+  String sans = '';
+  for (int i = 0; i < moves.length; i++) {
+    String san = xiangqi.simpleMove(moves[i]);
+    sans += ' $san';
+  }
+  return sans;
 }

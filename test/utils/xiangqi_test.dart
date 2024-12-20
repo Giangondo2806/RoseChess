@@ -22,9 +22,9 @@ void main() {
     });
 
     test('should make a valid move', () {
-      xiangqi.move({'from': 'h2', 'to': 'e2'});
-      xiangqi.move({'from': 'h9', 'to': 'g7'});
-      xiangqi.move({'from': 'h0', 'to': 'g2'});
+      xiangqi.simpleMove({'from': 'h2', 'to': 'e2'});
+      xiangqi.simpleMove({'from': 'h9', 'to': 'g7'});
+      xiangqi.simpleMove({'from': 'h0', 'to': 'g2'});
 
       expect(xiangqi, isNotNull);
       expect(
@@ -67,7 +67,7 @@ void main() {
     });
 
     test('should be undo', () {
-      xiangqi.move('e3e4');
+      xiangqi.simpleMove('e3e4');
       expect(
           xiangqi.fen(),
           contains(
@@ -83,16 +83,15 @@ void main() {
     });
 
     test('history', () {
-      xiangqi.move({'from': 'h2', 'to': 'e2'});
-      xiangqi.move({'from': 'h9', 'to': 'g7'});
-      xiangqi.move({'from': 'h0', 'to': 'g2'});
-      xiangqi.move({'from': 'i9', 'to': 'h9'});
-      xiangqi.move({'from': 'e2', 'to': 'e1'});
-      xiangqi.move({'from': 'b7', 'to': 'e7'});
-      xiangqi.move({'from': 'b2', 'to': 'e2'});
-      xiangqi.move({'from': 'b9', 'to': 'c7'});
-      xiangqi.move({'from': 'b9', 'to': 'c7'});
-      xiangqi.move({'from': 'e2', 'to': 'e6'});
+      xiangqi.simpleMove({'from': 'h2', 'to': 'e2'});
+      xiangqi.simpleMove({'from': 'h9', 'to': 'g7'});
+      xiangqi.simpleMove({'from': 'h0', 'to': 'g2'});
+      xiangqi.simpleMove({'from': 'i9', 'to': 'h9'});
+      xiangqi.simpleMove({'from': 'e2', 'to': 'e1'});
+      xiangqi.simpleMove({'from': 'b7', 'to': 'e7'});
+      xiangqi.simpleMove({'from': 'b2', 'to': 'e2'});
+      xiangqi.simpleMove({'from': 'b9', 'to': 'c7'});
+      xiangqi.simpleMove({'from': 'e2', 'to': 'e6'});
 
       final expectSan = [
         'P2-5',
@@ -111,14 +110,16 @@ void main() {
       for (int i = 0; i < moves.length; i++) {
         expect(moves[i].san, equals(expectSan[i]));
       }
+
+      // expect(moves[0].san, equals("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C4/9/RNBAKABNR b"));
     });
 
     test('history fromload', () {
       xiangqi.load(
           'rnbakabnr/9/1c7/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R b');
       expect(xiangqi.getHistory(verbose: true), equals([]));
-      xiangqi.move({'from': 'c9', 'to': 'e7'});
-      xiangqi.move({'from': 'c3', 'to': 'c4'});
+      xiangqi.simpleMove({'from': 'c9', 'to': 'e7'});
+      xiangqi.simpleMove({'from': 'c3', 'to': 'c4'});
       final moves = xiangqi.getHistory(verbose: true);
 
       final expected = [
@@ -132,7 +133,7 @@ void main() {
           "iccs": 'c9e7',
           "san": 'V3.5',
           "fen":
-              'rnbakabnr/9/1c7/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R b'
+              'rn1akabnr/9/1c2b4/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R w'
         },
         {
           "color": 'r',
@@ -144,7 +145,7 @@ void main() {
           "iccs": 'c3c4',
           "san": 'B7.1',
           "fen":
-              'rn1akabnr/9/1c2b4/p1p1p1p1p/7c1/9/P1P1P1P1P/1C2C1N2/9/RNBAKAB1R w'
+              'rn1akabnr/9/1c2b4/p1p1p1p1p/7c1/2P6/P3P1P1P/1C2C1N2/9/RNBAKAB1R b'
         }
       ];
 

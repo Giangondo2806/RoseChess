@@ -17,6 +17,7 @@ class BoardState with ChangeNotifier {
   List<String> canMoves = [];
   List<ArrowData> _arrows = [];
   List<ArrowData> get arrows => _arrows;
+  late String initFen ;
 
   // Initial board setup (using a map for easier access)
   late Map<BoardPosition, Piece?> board;
@@ -46,6 +47,7 @@ class BoardState with ChangeNotifier {
     piecePositions = {};
     board = {};
     xiangqi = Xiangqi();
+    initFen = xiangqi.generateFen();
     var initialBoard = xiangqi.getBoard();
     int idCounter = 0;
     for (int i = 0; i < initialBoard.length; i++) {
@@ -152,7 +154,7 @@ class BoardState with ChangeNotifier {
         if (selectedPiece != null &&
             (targetPiece == null || targetPiece.color != selectedPiece.color) &&
             selectedPosition != null) {
-          if (canMoves!
+          if (canMoves
               .contains(selectedPosition!.notation + position.notation)) {
             clearArrows();
             xiangqi.move(
