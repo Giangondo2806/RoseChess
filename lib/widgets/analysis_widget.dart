@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/board_state.dart';
-
-
+import '../providers/theme_provider.dart';
+import 'book_item_widget.dart';
 
 class AnalysisWidget extends StatefulWidget {
   const AnalysisWidget({Key? key}) : super(key: key);
@@ -64,11 +63,14 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
     final screenWidth = MediaQuery.of(context).size.width;
     final navigationWidth = screenWidth / 2;
     final contentWidth = screenWidth - navigationWidth;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.currentTheme.brightness == Brightness.dark;
 
     return Column(
       children: [
         Container(
-          color: Colors.white,
+          // TabBar
+          color: themeProvider.currentTheme.appBarTheme.backgroundColor,
           child: TabBar(
             controller: _tabController,
             labelColor: Colors.blue,
@@ -95,60 +97,150 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                         physics: const NeverScrollableScrollPhysics(),
                         children: [
                           // Phân tích
-                          SingleChildScrollView(
-                            controller: _scrollController,
-                            child: Container(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 8),
-                                  ...boardState.engineAnalysis.map((engineInfo) {
-                                    return Column(
+                          CustomScrollView(
+                            slivers: [
+                              SliverToBoxAdapter(
+                                child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 4.0),
-                                          child: Text(
-                                            engineInfo.title,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 8.0),
-                                          child: Text(engineInfo.moves),
-                                        ),
+                                        const SizedBox(height: 8),
+                                        ...boardState.engineAnalysis
+                                            .map((engineInfo) {
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 4.0),
+                                                child: Text(
+                                                  engineInfo.title,
+                                                  style: themeProvider
+                                                      .currentTheme
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 8.0),
+                                                child: Text(
+                                                  engineInfo.moves,
+                                                  style: themeProvider
+                                                      .currentTheme
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }),
                                       ],
-                                    );
-                                  }).toList(),
-                                ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
 
                           // Book
-                          SingleChildScrollView(
-                            child: Container(
-                              padding: const EdgeInsets.all(16.0),
-                              child: const Text(
-                                "Nội dung Book ở đây.",
+                          CustomScrollView(
+                            slivers: <Widget>[
+                              // Tiêu đề cố định
+                              SliverPersistentHeader(
+                                pinned: true, // Để tiêu đề cố định
+                                delegate: _SliverAppBarDelegate(
+                                  child: Container(
+                                    height:
+                                        40, // Thêm chiều cao xác định cho Container
+                                    color: themeProvider.currentTheme
+                                        .appBarTheme.backgroundColor,
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: Text('Move',
+                                              style: themeProvider.currentTheme
+                                                  .textTheme.bodyLarge!
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                              textAlign: TextAlign.center),
+                                        ),
+                                        Expanded(
+                                          child: Text('Score',
+                                              style: themeProvider.currentTheme
+                                                  .textTheme.bodyLarge!
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                              textAlign: TextAlign.center),
+                                        ),
+                                        Expanded(
+                                          child: Text('Winrate',
+                                              style: themeProvider.currentTheme
+                                                  .textTheme.bodyLarge!
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                              textAlign: TextAlign.center),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              // Danh sách BookItem
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                                    final move = boardState.chessdbMoves[index];
+                                    return Column(
+                                      children: [
+                                        BookItem(move: move),
+                                        Divider(
+                                          thickness: 0.5,
+                                          color: isDarkMode
+                                              ? const Color(0xFF404040)
+                                              : const Color(0xFFE0E0E0),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                  childCount: boardState.chessdbMoves.length,
+                                ),
+                              ),
+                            ],
                           ),
 
                           // Graph
-                          SingleChildScrollView(
-                            child: Container(
-                              padding: const EdgeInsets.all(16.0),
-                              child: const Text(
-                                "Nội dung Graph ở đây.",
+                          CustomScrollView(
+                            slivers: [
+                              SliverToBoxAdapter(
+                                child: SingleChildScrollView(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      "Nội dung Graph ở đây.",
+                                      style: themeProvider
+                                          .currentTheme.textTheme.bodyMedium,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       ),
@@ -166,6 +258,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                   transform: Matrix4.translationValues(
                       _showNavigation ? 0 : navigationWidth, 0, 0),
                   child: Material(
+                    color: themeProvider.currentTheme.scaffoldBackgroundColor,
                     child: Column(
                       children: [
                         // Bốn nút điều hướng
@@ -180,7 +273,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                     onPressed: () {
                                       // Xử lý sự kiện <<
                                     },
-                                    icon: const Icon(Icons.fast_rewind),
+                                    icon: Icon(Icons.fast_rewind,
+                                        color: themeProvider.currentTheme
+                                            .textTheme.bodyLarge!.color),
                                     tooltip: 'Về đầu',
                                   ),
                                 ),
@@ -191,7 +286,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                     onPressed: () {
                                       // Xử lý sự kiện <
                                     },
-                                    icon: const Icon(Icons.arrow_back),
+                                    icon: Icon(Icons.arrow_back,
+                                        color: themeProvider.currentTheme
+                                            .textTheme.bodyLarge!.color),
                                     tooltip: 'Lùi lại',
                                   ),
                                 ),
@@ -202,7 +299,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                     onPressed: () {
                                       // Xử lý sự kiện >
                                     },
-                                    icon: const Icon(Icons.arrow_forward),
+                                    icon: Icon(Icons.arrow_forward,
+                                        color: themeProvider.currentTheme
+                                            .textTheme.bodyLarge!.color),
                                     tooltip: 'Tiến lên',
                                   ),
                                 ),
@@ -213,7 +312,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                     onPressed: () {
                                       // Xử lý sự kiện >>
                                     },
-                                    icon: const Icon(Icons.fast_forward),
+                                    icon: Icon(Icons.fast_forward,
+                                        color: themeProvider.currentTheme
+                                            .textTheme.bodyLarge!.color),
                                     tooltip: 'Đến cuối',
                                   ),
                                 ),
@@ -222,7 +323,12 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                           ),
                         ),
                         // Thanh phân cách
-                        const Divider(height: 1, thickness: 1),
+                        Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: isDarkMode
+                                ? const Color(0xFF404040)
+                                : const Color(0xFFE0E0E0)),
 
                         // Danh sách nước đi
                         Expanded(
@@ -244,7 +350,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                   children: [
                                     SizedBox(
                                       width: 30,
-                                      child: Text(moveNumber),
+                                      child: Text(moveNumber,
+                                          style: themeProvider.currentTheme
+                                              .textTheme.bodyMedium),
                                     ),
                                     const SizedBox(width: 4.0),
                                     Expanded(
@@ -252,6 +360,16 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                         fit: BoxFit.scaleDown,
                                         alignment: Alignment.centerLeft,
                                         child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: isDarkMode
+                                                ? const Color(0xFF404040)
+                                                : Colors.grey[300],
+                                            foregroundColor: themeProvider
+                                                .currentTheme
+                                                .textTheme
+                                                .bodyLarge!
+                                                .color,
+                                          ),
                                           onPressed: () {
                                             print(
                                                 "Đã nhấn vào nước đi: $move1");
@@ -267,6 +385,16 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                           fit: BoxFit.scaleDown,
                                           alignment: Alignment.centerLeft,
                                           child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: isDarkMode
+                                                  ? const Color(0xFF404040)
+                                                  : Colors.grey[300],
+                                              foregroundColor: themeProvider
+                                                  .currentTheme
+                                                  .textTheme
+                                                  .bodyLarge!
+                                                  .color,
+                                            ),
                                             onPressed: () {
                                               print(
                                                   "Đã nhấn vào nước đi: $move2");
@@ -330,5 +458,28 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
         ),
       ],
     );
+  }
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate({required this.child});
+
+  final Widget child;
+
+  @override
+  double get minExtent => 40; // Chiều cao tối thiểu của header
+
+  @override
+  double get maxExtent => 40; // Chiều cao tối đa của header
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
   }
 }

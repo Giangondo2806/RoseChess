@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:rose_flutter/models/chessdb_move.dart';
 import 'package:rose_flutter/models/engine_info.dart';
+import 'package:rose_flutter/services/chess_db_service.dart';
 
 import '../engine/rose.dart';
 import '../engine/rose_state.dart';
@@ -7,7 +9,7 @@ import '../models/piece.dart';
 import '../models/board_position.dart';
 import '../constants.dart';
 import '../utils/xiangqi.dart';
-import '../widgets/chess_board.dart';
+import '../widgets/chess_board_widget.dart';
 
 class BoardState with ChangeNotifier {
   // Board dimensions
@@ -28,12 +30,13 @@ class BoardState with ChangeNotifier {
   bool _isSettingEngine = false;
   bool _readyOkReceived = false;
   String engineFileName;
-  bool _enableSearchEngine = false;
+  List<ChessdbMove> _chessdbMoves = [];
 
   Rose? get roseEngine => _roseEngine;
   bool get engineConnected => _connectedEngine;
   // bool get gameStarted => _gameStarted;
   bool get engineReady => _readyOkReceived;
+  List<ChessdbMove> get chessdbMoves => _chessdbMoves;
 
   BoardState(this.engineFileName) {
     _initializeBoard();
@@ -44,6 +47,9 @@ class BoardState with ChangeNotifier {
     board = {};
     xiangqi = Xiangqi();
     initFen = xiangqi.generateFen();
+    getChessdbMoves(initFen).then((moves)=>{
+      _chessdbMoves = moves
+    });
     var initialBoard = xiangqi.getBoard();
     int idCounter = 0;
     for (int i = 0; i < initialBoard.length; i++) {
@@ -153,8 +159,12 @@ class BoardState with ChangeNotifier {
           if (canMoves
               .contains(selectedPosition!.notation + position.notation)) {
             clearArrows();
-            xiangqi.move(
+            xiangqi.simpleMove(
                 {'from': selectedPosition!.notation, 'to': position.notation});
+
+            getChessdbMoves(xiangqi.generateFen()).then((data)=>{
+              _chessdbMoves=data
+            });
             _movePiece(selectedPosition!, position, selectedPiece);
             _engineMove('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
             canMoves = []; // Xóa canMoves sau khi di chuyển
@@ -235,10 +245,8 @@ class BoardState with ChangeNotifier {
                 parseEngineInfo(fen: xiangqi.generateFen(), input: line);
             if (info.moves != '') {
               engineAnalysis.insert(0, info);
-               notifyListeners(); // Thông báo cho UI cập nhật
+              notifyListeners(); // Thông báo cho UI cập nhật
             }
-
-           
           }
         });
         if (_roseEngine!.state.value == RoseState.ready) {

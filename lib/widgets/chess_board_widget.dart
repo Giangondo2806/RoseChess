@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../models/piece.dart';
 import '../providers/board_state.dart';
 import '../constants.dart';
+import '../providers/theme_provider.dart';
 import 'piece_widget.dart';
 import '../models/board_position.dart';
 
@@ -76,37 +77,52 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
     }
   }
 
-  @override
+
+ @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final boardWidth = constraints.maxWidth-5; 
+        // Calculate padding value
+        const double paddingValue = 10.0;
+
+        // Calculate boardWidth after padding
+        final boardWidth = constraints.maxWidth - (2 * paddingValue);
         final boardState = Provider.of<BoardState>(context, listen: false);
         final squareSize = boardWidth / boardState.cols;
-        final boardHeight = boardWidth *
-            (boardState.rows / boardState.cols);
+        final boardHeight = boardWidth * (boardState.rows / boardState.cols);
+
+        // Get theme provider
+        final themeProvider = Provider.of<ThemeProvider>(context);
+        final isDarkMode = themeProvider.currentTheme.brightness == Brightness.dark;
 
         return Center(
-          child: SizedBox(
-            width: boardWidth,
-            height: boardHeight,
-            child: Consumer<BoardState>(
-              builder: (context, boardState, child) {
-                return Stack(
-                  children: [
-                    RepaintBoundary(
-                      child: SvgPicture.asset(
-                        boardAsset,
-                        width: boardWidth,
-                        height: boardHeight,
-                      ),
-                    ),
-                    ..._buildBoardSquares(squareSize, boardState),
-                    if (boardState.arrows.isNotEmpty)
-                      _buildMoveIndicator(squareSize, boardState),
-                  ],
-                );
-              },
+          child: Container( // Outer Container
+            padding: const EdgeInsets.all(paddingValue),
+            color: isDarkMode ? Colors.black : Colors.white, // Theme-dependent background color
+            child: Container( // Inner Container
+              color: const Color(0xFF12a192), // Fixed board background color
+              child: SizedBox(
+                width: boardWidth,
+                height: boardHeight,
+                child: Consumer<BoardState>(
+                  builder: (context, boardState, child) {
+                    return Stack(
+                      children: [
+                        RepaintBoundary(
+                          child: SvgPicture.asset(
+                            boardAsset,
+                            width: boardWidth,
+                            height: boardHeight,
+                          ),
+                        ),
+                        ..._buildBoardSquares(squareSize, boardState),
+                        if (boardState.arrows.isNotEmpty)
+                          _buildMoveIndicator(squareSize, boardState),
+                      ],
+                    );
+                  },
+                ),
+              ),
             ),
           ),
         );

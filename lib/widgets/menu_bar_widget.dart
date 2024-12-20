@@ -1,48 +1,107 @@
 import 'package:flutter/material.dart';
 
 class MenuBarWidget extends StatelessWidget {
-  // Thêm callback function onMenuAction
   final Function(String) onMenuAction;
+  final double iconPadding = 2.0; // Điều chỉnh padding
+  final double iconSize = 24.0; // Điều chỉnh kích thước icon
 
   const MenuBarWidget({Key? key, required this.onMenuAction}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Đẩy các icon ra xa nhau tối đa
       children: [
-        IconButton(
-          icon: const Icon(Icons.play_arrow),
-          tooltip: 'New Game',
-          onPressed: () {
-            // Gọi callback function để emit event 'new_game'
+        InkWell(
+          onTap: () {
             onMenuAction('new_game');
           },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.note_add_outlined, size: iconSize),
+          ),
         ),
-        IconButton(
-          icon: const Icon(Icons.image_search),
-          tooltip: 'Detect Image',
-          onPressed: () {
-            // Gọi callback function để emit event 'detect_image'
-            onMenuAction('detect_image');
+        InkWell(
+          onTap: () {
+            onMenuAction('auto_red');
           },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.computer_outlined, size: iconSize, color: Colors.red),
+          ),
         ),
-        IconButton(
-          icon: const Icon(Icons.flip),
-          tooltip: 'Flip Board',
-          onPressed: () {
-            // Gọi callback function để emit event 'flip_board'
+        InkWell(
+          onTap: () {
+            onMenuAction('auto_black');
+          },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.computer_outlined, size: iconSize, color: Colors.black),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            onMenuAction('enable_engine');
+          },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.search_outlined, size: iconSize),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            onMenuAction('quick_move');
+          },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.bolt_outlined, size: iconSize),
+          ),
+        ),
+        InkWell(
+          onTap: () {
             onMenuAction('flip_board');
           },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.flip_outlined, size: iconSize),
+          ),
         ),
-        IconButton(
-          icon: const Icon(Icons.settings),
-          tooltip: 'Settings',
-          onPressed: () {
-            // Gọi callback function để emit event 'settings'
+        InkWell(
+          onTap: () {
+            onMenuAction('edit');
+          },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.edit_document, size: iconSize),
+          ),
+        ),
+           InkWell(
+          onTap: () {
+            onMenuAction('copy');
+          },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.content_copy_outlined, size: iconSize),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            onMenuAction('detect_image');
+          },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.image_search_outlined, size: iconSize),
+          ),
+        ),
+        InkWell(
+          onTap: () {
             onMenuAction('settings');
           },
+          child: Padding(
+            padding: EdgeInsets.all(iconPadding),
+            child: Icon(Icons.settings_outlined, size: iconSize),
+          ),
         ),
-        // Thêm các icon khác nếu cần
       ],
     );
   }

@@ -1527,6 +1527,13 @@ class Xiangqi {
     return {'row': row, 'col': col};
   }
 
+
+
+  String getSanfromNotation(String notation){
+     Move move = _buildMoveFromInput(input: notation);
+     return moveToJsChinese(move);
+  }
+
   String moveToJsChinese(Move move) {
     Map<String, String> figureNames = {
       'P': 'B',

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/board_state.dart';
 import '../widgets/analysis_widget.dart';
-import '../widgets/chess_board.dart';
+import '../widgets/chess_board_widget.dart';
 import '../widgets/menu_bar_widget.dart';
 
 class SoftwareScreen extends StatefulWidget {
