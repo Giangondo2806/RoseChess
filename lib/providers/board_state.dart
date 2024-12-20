@@ -18,26 +18,21 @@ class BoardState with ChangeNotifier {
   final List<ArrowData> _arrows = [];
   List<ArrowData> get arrows => _arrows;
   late String initFen;
-  List<EngineInfo> engineAnalysis = [];
-
-  // Initial board setup (using a map for easier access)
+  final List<EngineInfo> engineAnalysis = [];
   late Map<BoardPosition, Piece?> board;
-
-  // Currently selected piece position
   BoardPosition? selectedPosition;
-  // Map to track the location of the pieces by ID.
   late Map<String, BoardPosition> piecePositions;
-
   Rose? _roseEngine;
   bool _connectedEngine = false;
-  bool _gameStarted = false;
+  // bool _gameStarted = false;
   bool _isSettingEngine = false;
   bool _readyOkReceived = false;
   String engineFileName;
+  bool _enableSearchEngine = false;
 
   Rose? get roseEngine => _roseEngine;
   bool get engineConnected => _connectedEngine;
-  bool get gameStarted => _gameStarted;
+  // bool get gameStarted => _gameStarted;
   bool get engineReady => _readyOkReceived;
 
   BoardState(this.engineFileName) {
@@ -210,7 +205,7 @@ class BoardState with ChangeNotifier {
     print('Menu action received: $action');
     switch (action) {
       case 'new_game':
-        _startGame();
+        _newGame();
         break;
       case 'detect_image':
         // Xử lý Detect Image
@@ -299,18 +294,17 @@ class BoardState with ChangeNotifier {
   }
 
   void _pauseGame() {
-    if (_gameStarted == false) return;
+    // if (_gameStarted == false) return;
     _roseEngine?.stdin = 'stop\n';
-    _gameStarted = false;
     notifyListeners();
-    print("Game paused.");
   }
 
-  void _startGame() {
-    if (_gameStarted == true) return;
-    _gameStarted = true;
+  void _newGame() {
+    _pauseGame();
+    engineAnalysis.clear();
+    arrows.clear();
+    _initializeBoard();
     notifyListeners();
-    print("Game started.");
   }
 
   void _engineMove(String fen) {
