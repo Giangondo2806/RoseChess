@@ -236,10 +236,14 @@ class BoardState with ChangeNotifier {
               notifyListeners();
             }
           } else if (line.startsWith('info depth')) {
-            print('output: $line');
-            // Thêm dòng phân tích vào danh sách
-            engineAnalysis.insert(0, parseEngineInfo(fen: xiangqi.generateFen(), input: line));
-            notifyListeners(); // Thông báo cho UI cập nhật
+            final info =
+                parseEngineInfo(fen: xiangqi.generateFen(), input: line);
+            if (info.moves != '') {
+              engineAnalysis.insert(0, info);
+               notifyListeners(); // Thông báo cho UI cập nhật
+            }
+
+           
           }
         });
         if (_roseEngine!.state.value == RoseState.ready) {
