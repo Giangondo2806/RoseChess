@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rose_flutter/providers/book_state.dart';
+import 'package:rose_chess/providers/book_state.dart';
 import '../providers/arrow_state.dart';
 import '../providers/board_state.dart';
 import '../providers/engine_analysis_state.dart';

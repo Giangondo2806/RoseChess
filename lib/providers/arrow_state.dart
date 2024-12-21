@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rose_flutter/models/board_position.dart';
+import 'package:rose_chess/models/board_position.dart';
 
 class ArrowData {
   final BoardPosition from;

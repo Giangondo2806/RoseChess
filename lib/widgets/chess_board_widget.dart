@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:rose_flutter/utils/board.dart';
-import 'package:rose_flutter/widgets/arrows_widget.dart';
+import 'package:rose_chess/utils/board.dart';
+import 'package:rose_chess/widgets/arrows_widget.dart';
 import '../models/piece.dart';
 import '../providers/board_state.dart';
 import '../providers/arrow_state.dart'; // Import ArrowState

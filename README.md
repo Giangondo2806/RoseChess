@@ -1,4 +1,4 @@
-# rose_flutter
+# rose_chess
 
 A new Flutter project.
 

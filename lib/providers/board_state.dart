@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rose_flutter/models/engine_info.dart';
-import 'package:rose_flutter/providers/arrow_state.dart';
-import 'package:rose_flutter/providers/book_state.dart';
+import 'package:rose_chess/models/engine_info.dart';
+import 'package:rose_chess/providers/arrow_state.dart';
+import 'package:rose_chess/providers/book_state.dart';
 
 import '../engine/rose.dart';
 import '../engine/rose_state.dart';

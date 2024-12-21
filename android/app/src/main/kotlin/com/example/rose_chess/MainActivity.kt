@@ -1,4 +1,4 @@
-package com.example.rose_flutter
+package com.example.rose_chess
 
 import io.flutter.embedding.android.FlutterActivity
 

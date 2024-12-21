@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:rose_flutter/utils/xiangqi.dart';
+import 'package:rose_chess/utils/xiangqi.dart';
 
 class EngineInfo {
   final String title;

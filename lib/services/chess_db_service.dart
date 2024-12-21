@@ -1,6 +1,6 @@
 import 'package:http/http.dart' as http;
-import 'package:rose_flutter/models/chessdb_move.dart';
-import 'package:rose_flutter/utils/xiangqi.dart';
+import 'package:rose_chess/models/chessdb_move.dart';
+import 'package:rose_chess/utils/xiangqi.dart';
 
 Future<List<ChessdbMove>> getChessdbMoves(String fen) async {
   final Xiangqi xiangqi = Xiangqi(fen: fen);

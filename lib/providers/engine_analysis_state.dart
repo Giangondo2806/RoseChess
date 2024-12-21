@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:rose_flutter/models/engine_info.dart';
+import 'package:rose_chess/models/engine_info.dart';
 
 class EngineAnalysisState with ChangeNotifier {
   final List<EngineInfo> engineAnalysis = [];

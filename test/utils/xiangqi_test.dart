@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rose_flutter/utils/xiangqi.dart';
+import 'package:rose_chess/utils/xiangqi.dart';
 
 void main() {
   group('Xiangqi', () {

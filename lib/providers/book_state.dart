@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rose_flutter/models/chessdb_move.dart';
+import 'package:rose_chess/models/chessdb_move.dart';
 
 import '../services/chess_db_service.dart';
 
