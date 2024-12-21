@@ -16,8 +16,35 @@ class SoftwareScreen extends StatefulWidget {
 }
 
 class _SoftwareScreenState extends State<SoftwareScreen>
-    with TickerProviderStateMixin {
-  bool _initialized = false;
+    with WidgetsBindingObserver {
+  bool _initialized = false; // Thêm biến flag để đánh dấu
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    final boardState = Provider.of<BoardState>(context, listen: false);
+    if (state == AppLifecycleState.resumed) {
+      boardState.initEngine();
+      if (boardState.isBoardInitialized) {
+        boardState.resumeGame();
+      }
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      boardState.pauseGame();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,31 +54,34 @@ class _SoftwareScreenState extends State<SoftwareScreen>
           create: (context) => BoardState(widget.engineFileName),
         ),
       ],
-      child: Consumer<BoardState>(
-        builder: (context, boardState, child) {
-          if (!_initialized) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              boardState.initEngine();
-            });
-            _initialized = true;
-          }
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          child: Consumer<BoardState>(
+            builder: (context, boardState, child) {
+              // Di chuyển logic khởi tạo vào đây
+              if (!_initialized) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  boardState.initEngine();
+                  if (!boardState.isBoardInitialized) {
+                    boardState.newGame();
+                  }
+                });
+                _initialized = true;
+              }
 
-          return Scaffold(
-            body: Padding(
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-              child: Column(
+              return Column(
                 children: [
                   MenuBarWidget(
                     onMenuAction: boardState.handleMenuAction,
                   ),
                   ChessBoardWidget(boardState: boardState),
-            
                   Expanded(child: AnalysisWidget()),
                 ],
-              ),
-            ),
-          );
-        },
+              );
+            },
+          ),
+        ),
       ),
     );
   }

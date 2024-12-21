@@ -9,7 +9,7 @@ import '../models/piece.dart';
 import '../models/board_position.dart';
 import '../constants.dart';
 import '../utils/xiangqi.dart';
-import '../widgets/chess_board_widget.dart';
+import '../widgets/arrows_widget.dart';
 
 class BoardState with ChangeNotifier {
   // Board dimensions
@@ -31,25 +31,39 @@ class BoardState with ChangeNotifier {
   bool _readyOkReceived = false;
   String engineFileName;
   List<ChessdbMove> _chessdbMoves = [];
+  bool _isBoardInitialized = false;
+  bool _isEngineInitializing = false;
 
   Rose? get roseEngine => _roseEngine;
   bool get engineConnected => _connectedEngine;
   // bool get gameStarted => _gameStarted;
   bool get engineReady => _readyOkReceived;
   List<ChessdbMove> get chessdbMoves => _chessdbMoves;
+  bool get isBoardInitialized => _isBoardInitialized;
 
   BoardState(this.engineFileName) {
+    board = {};
+    //_initializeBoard(); // Không gọi ở constructor nữa
+  }
+
+  void newGame() {
+    pauseGame();
+    engineAnalysis.clear();
+    arrows.clear();
+    _isBoardInitialized = false; // Reset biến đánh dấu
     _initializeBoard();
+    notifyListeners();
   }
 
   void _initializeBoard() {
+    if (_isBoardInitialized) return; // Chỉ khởi tạo một lần
+
     piecePositions = {};
-    board = {};
+    // board = {};
     xiangqi = Xiangqi();
     initFen = xiangqi.generateFen();
-    getChessdbMoves(initFen).then((moves)=>{
-      _chessdbMoves = moves
-    });
+    getChessdbMoves(initFen).then((moves) => {_chessdbMoves = moves});
+
     var initialBoard = xiangqi.getBoard();
     int idCounter = 0;
     for (int i = 0; i < initialBoard.length; i++) {
@@ -67,6 +81,7 @@ class BoardState with ChangeNotifier {
         }
       }
     }
+    _isBoardInitialized = true;
   }
 
   Piece _createPieceFromData(XiangqiPiece pieceData, int idCounter) {
@@ -162,9 +177,8 @@ class BoardState with ChangeNotifier {
             xiangqi.simpleMove(
                 {'from': selectedPosition!.notation, 'to': position.notation});
 
-            getChessdbMoves(xiangqi.generateFen()).then((data)=>{
-              _chessdbMoves=data
-            });
+            getChessdbMoves(xiangqi.generateFen())
+                .then((data) => {_chessdbMoves = data});
             _movePiece(selectedPosition!, position, selectedPiece);
             _engineMove('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
             canMoves = []; // Xóa canMoves sau khi di chuyển
@@ -215,7 +229,7 @@ class BoardState with ChangeNotifier {
     print('Menu action received: $action');
     switch (action) {
       case 'new_game':
-        _newGame();
+        newGame();
         break;
       case 'detect_image':
         // Xử lý Detect Image
@@ -230,9 +244,13 @@ class BoardState with ChangeNotifier {
   }
 
   Future<void> initEngine() async {
+    if (_isEngineInitializing) return;
+
+    _isEngineInitializing = true;
     try {
-      _roseEngine = await roseAsync();
-      print('start engine');
+      if (_roseEngine == null || _roseEngine?.state.value == RoseState.error) {
+        _roseEngine = await roseAsync();
+      }
       if (_roseEngine != null) {
         _roseEngine?.stdout.listen((line) {
           if (line.trim() == 'readyok') {
@@ -241,6 +259,7 @@ class BoardState with ChangeNotifier {
               notifyListeners();
             }
           } else if (line.startsWith('info depth')) {
+            print('engineout: $line');
             final info =
                 parseEngineInfo(fen: xiangqi.generateFen(), input: line);
             if (info.moves != '') {
@@ -263,6 +282,8 @@ class BoardState with ChangeNotifier {
       }
     } catch (error) {
       print('Error init engine: $error');
+    } finally {
+      _isEngineInitializing = false;
     }
   }
 
@@ -301,18 +322,14 @@ class BoardState with ChangeNotifier {
     }
   }
 
-  void _pauseGame() {
-    // if (_gameStarted == false) return;
+  void pauseGame() {
     _roseEngine?.stdin = 'stop\n';
     notifyListeners();
   }
 
-  void _newGame() {
-    _pauseGame();
-    engineAnalysis.clear();
-    arrows.clear();
-    _initializeBoard();
-    notifyListeners();
+  void resumeGame() {
+    _engineMove('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
+    notifyListeners(); // Important: Cập nhật UI sau khi khôi phục trạng thái
   }
 
   void _engineMove(String fen) {
@@ -326,7 +343,7 @@ class BoardState with ChangeNotifier {
 
   @override
   void dispose() {
-    _pauseGame();
+    pauseGame();
     _roseEngine?.dispose();
     super.dispose();
   }
