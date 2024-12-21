@@ -287,9 +287,7 @@ class Xiangqi {
       }
     }
 
-    turn = (tokens[1] == Xiangqi.BLACK)
-        ? Xiangqi.BLACK
-        : Xiangqi.RED;
+    turn = (tokens[1] == Xiangqi.BLACK) ? Xiangqi.BLACK : Xiangqi.RED;
     moveNumber = turn == 'b' ? 1 : 0;
 
     updateSetup(generateFen());
@@ -842,12 +840,6 @@ class Xiangqi {
   }
 
   void makeMove(Move move) {
-
-    if(move.iccs !=null){
-  print('move ${move.from} ${move.to}');
-    }
-
-  
     push(history, move);
     if (board[move.to] != null && board[move.to]!.type == Xiangqi.KING) {
       kings[board[move.to]!.color] = Xiangqi.EMPTY;
@@ -1372,7 +1364,7 @@ class Xiangqi {
       moveObj = moveFromIccs(moveInput, sloppy: sloppy_);
     } else if (moveInput is Map) {
       List<Move> moves = generateMoves();
-      
+
       print(moveInput);
 
       for (int i = 0, len = moves.length; i < len; i++) {
@@ -1527,11 +1519,9 @@ class Xiangqi {
     return {'row': row, 'col': col};
   }
 
-
-
-  String getSanfromNotation(String notation){
-     Move move = _buildMoveFromInput(input: notation);
-     return moveToJsChinese(move);
+  String getSanfromNotation(String notation) {
+    Move move = _buildMoveFromInput(input: notation);
+    return moveToJsChinese(move);
   }
 
   String moveToJsChinese(Move move) {
