@@ -31,7 +31,7 @@ flutter:
     - assets/images/xiangqipieces/wikipedia/
 
 flutter_launcher_icons:
-  android: "launcher_icon" # hoặc true để dùng adaptive icon
+  android: true # hoặc true để dùng adaptive icon
   ios: true
   image_path: "assets/icons/favicon.png" # Đường dẫn đến icon của bạn
   # adaptive_icon_background: "assets/icon/background.png"
