@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:rose_flutter/models/chessdb_move.dart';
 import 'package:rose_flutter/models/engine_info.dart';
+import 'package:rose_flutter/providers/book_state.dart';
 import 'package:rose_flutter/services/chess_db_service.dart';
 
 import '../engine/rose.dart';
@@ -9,7 +10,7 @@ import '../models/piece.dart';
 import '../models/board_position.dart';
 import '../constants.dart';
 import '../utils/xiangqi.dart';
-import '../widgets/arrows_widget.dart';
+import 'engine_analysis_state.dart';
 
 class BoardState with ChangeNotifier {
   // Board dimensions
@@ -17,16 +18,12 @@ class BoardState with ChangeNotifier {
   final int cols = 9;
   late Xiangqi xiangqi;
   List<String> canMoves = [];
-  final List<ArrowData> _arrows = [];
-  List<ArrowData> get arrows => _arrows;
   late String initFen;
-  final List<EngineInfo> engineAnalysis = [];
   late Map<BoardPosition, Piece?> board;
   BoardPosition? selectedPosition;
   late Map<String, BoardPosition> piecePositions;
   Rose? _roseEngine;
   bool _connectedEngine = false;
-  // bool _gameStarted = false;
   bool _isSettingEngine = false;
   bool _readyOkReceived = false;
   String engineFileName;
@@ -36,30 +33,36 @@ class BoardState with ChangeNotifier {
 
   Rose? get roseEngine => _roseEngine;
   bool get engineConnected => _connectedEngine;
-  // bool get gameStarted => _gameStarted;
   bool get engineReady => _readyOkReceived;
   List<ChessdbMove> get chessdbMoves => _chessdbMoves;
   bool get isBoardInitialized => _isBoardInitialized;
+  late EngineAnalysisState engineAnalysisState;
+  late BookState bookState;
 
-  BoardState(this.engineFileName) {
+  void setEngineAnalysisState(EngineAnalysisState engineAnalysisState) {
+    engineAnalysisState = engineAnalysisState;
+    bookState = bookState;
+  }
+
+  BoardState(this.engineFileName, this.engineAnalysisState, this.bookState) {
     board = {};
-    //_initializeBoard(); // Không gọi ở constructor nữa
   }
 
   void newGame() {
-    pauseGame();
-    engineAnalysis.clear();
-    arrows.clear();
-    _isBoardInitialized = false; // Reset biến đánh dấu
+    //
+    print('call new game');
+    // pauseGame();
+    engineAnalysisState.clearAnalysis();
+    _isBoardInitialized = false;
     _initializeBoard();
     notifyListeners();
   }
 
   void _initializeBoard() {
-    if (_isBoardInitialized) return; // Chỉ khởi tạo một lần
+    if (_isBoardInitialized) return;
 
     piecePositions = {};
-    // board = {};
+    board = {};
     xiangqi = Xiangqi();
     initFen = xiangqi.generateFen();
     getChessdbMoves(initFen).then((moves) => {_chessdbMoves = moves});
@@ -159,9 +162,13 @@ class BoardState with ChangeNotifier {
               .generatePrettyMoves(square: selectedPosition!.notation)
               .map((el) => el.iccs!)
               .toList();
+          if (canMoves.isEmpty) return;
         } else {
           canMoves = [];
+          return;
         }
+      } else {
+        return;
       }
     } else {
       if (position != selectedPosition) {
@@ -173,22 +180,22 @@ class BoardState with ChangeNotifier {
             selectedPosition != null) {
           if (canMoves
               .contains(selectedPosition!.notation + position.notation)) {
-            clearArrows();
+            engineAnalysisState
+                .clearAnalysis(); // Use directly instead of Provider
             xiangqi.simpleMove(
                 {'from': selectedPosition!.notation, 'to': position.notation});
-
+            bookState.getbook(xiangqi.generateFen());
             getChessdbMoves(xiangqi.generateFen())
                 .then((data) => {_chessdbMoves = data});
             _movePiece(selectedPosition!, position, selectedPiece);
             _engineMove('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
-            canMoves = []; // Xóa canMoves sau khi di chuyển
+            canMoves = [];
           } else {
-            // Không phải nước đi hợp lệ
             selectedPosition = null;
             canMoves = [];
+            return;
           }
         } else {
-          // Chọn quân cờ mới
           if (board[position] != null) {
             selectedPosition = position;
             if (selectedPosition != null) {
@@ -196,18 +203,19 @@ class BoardState with ChangeNotifier {
                   .generatePrettyMoves(square: selectedPosition!.notation)
                   .map((el) => el.iccs!)
                   .toList();
+              if (canMoves.isEmpty) return;
             } else {
               canMoves = [];
+              return;
             }
           } else {
             selectedPosition = null;
             canMoves = [];
+            return;
           }
         }
       } else {
-        // Bỏ chọn quân cờ
-        selectedPosition = null;
-        canMoves = [];
+        return;
       }
     }
     notifyListeners();
@@ -218,11 +226,6 @@ class BoardState with ChangeNotifier {
     board[from] = null;
     piecePositions[piece.id] = to;
     selectedPosition = null;
-  }
-
-  void clearArrows() {
-    _arrows.clear();
-    notifyListeners();
   }
 
   void handleMenuAction(String action) {
@@ -263,8 +266,9 @@ class BoardState with ChangeNotifier {
             final info =
                 parseEngineInfo(fen: xiangqi.generateFen(), input: line);
             if (info.moves != '') {
-              engineAnalysis.insert(0, info);
-              notifyListeners(); // Thông báo cho UI cập nhật
+              // engineAnalysis.insert(0, info);
+              engineAnalysisState.addAnalysis(info);
+              // notifyListeners(); // Thông báo cho UI cập nhật
             }
           }
         });
@@ -324,7 +328,7 @@ class BoardState with ChangeNotifier {
 
   void pauseGame() {
     _roseEngine?.stdin = 'stop\n';
-    notifyListeners();
+    // notifyListeners();
   }
 
   void resumeGame() {
@@ -334,7 +338,8 @@ class BoardState with ChangeNotifier {
 
   void _engineMove(String fen) {
     if (!_connectedEngine || !_readyOkReceived) return;
-    engineAnalysis.clear();
+    // engineAnalysis.clear();
+    engineAnalysisState.clearAnalysis();
     _roseEngine?.stdin = 'stop\n';
     _roseEngine?.stdin = 'position fen $fen\n';
     _roseEngine?.stdin = 'go\n';

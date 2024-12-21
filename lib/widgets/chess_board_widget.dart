@@ -1,10 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:rose_flutter/utils/board.dart'; // Thay your_app_name bằng tên app của bạn
-import 'package:rose_flutter/widgets/arrows_widget.dart'; // Thay your_app_name bằng tên app của bạn
+import 'package:rose_flutter/utils/board.dart';
+import 'package:rose_flutter/widgets/arrows_widget.dart';
 import '../models/piece.dart';
 import '../providers/board_state.dart';
+import '../providers/arrow_state.dart'; // Import ArrowState
 import '../providers/theme_provider.dart';
 import 'piece_widget.dart';
 import '../models/board_position.dart';
@@ -18,7 +20,6 @@ class ChessBoardWidget extends StatefulWidget {
 }
 
 class _ChessBoardWidgetState extends State<ChessBoardWidget> {
-  List<String> _previousMoves = [];
 
   @override
   void didChangeDependencies() {
@@ -38,25 +39,24 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
       final pvString = line.substring(pvIndex + 4);
       final moves = pvString.split(' ');
       if (moves.length >= 2) {
-        if (moves[0] !=
-                (_previousMoves.isNotEmpty ? _previousMoves[0] : null) ||
-            moves[1] !=
-                (_previousMoves.length > 1 ? _previousMoves[1] : null)) {
-          _previousMoves = List.from(moves);
+        List<ArrowData> newArrows = [];
+        for (int i = 0; i < 2; i++) {
+          newArrows.add(ArrowData(
+            from: BoardPosition(moves[i].substring(0, 2)),
+            to: BoardPosition(moves[i].substring(2, 4)),
+            color: i == 0
+                ? Colors.blue.withOpacity(0.7)
+                : Colors.green.withOpacity(0.7),
+          ));
+        }
+
+        final arrowState = Provider.of<ArrowState>(context, listen: false);
+        if (!listEquals(arrowState.arrows, newArrows)) {
 
           Future.delayed(const Duration(milliseconds: 200), () {
             if (mounted) {
-              final boardState =
-                  Provider.of<BoardState>(context, listen: false);
-              boardState.clearArrows();
-              for (int i = 0; i < 2; i++) {
-                boardState.arrows.add(ArrowData(
-                  from: BoardPosition(moves[i].substring(0, 2)),
-                  to: BoardPosition(moves[i].substring(2, 4)),
-                  color: i == 0 ? Colors.blue.withOpacity(0.7) : Colors.green.withOpacity(0.7),
-                ));
-              }
-              boardState.notifyListeners();
+              arrowState.clearArrows();
+              arrowState.addArrows(newArrows);
             }
           });
         }
@@ -97,8 +97,12 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                       ),
                     ),
                     ..._buildBoardSquares(squareSize, boardState),
-                    // Sử dụng ArrowsWidget
-                    ArrowsWidget(squareSize: squareSize),
+                    Consumer<ArrowState>(
+                      builder: (context, arrowState, child) {
+                        return ArrowsWidget(
+                            squareSize: squareSize, arrows: arrowState.arrows);
+                      },
+                    ),
                   ],
                 ),
               ),

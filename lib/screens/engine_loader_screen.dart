@@ -143,10 +143,6 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
         },
       );
 
-      // Không cần thiết phải cấp quyền execute trên iOS
-      // if (Platform.isAndroid || Platform.isLinux) {
-      //   await Process.run('chmod', ['+x', engineFile.path]);
-      // }
 
       setState(() {
         _engineExists = true;

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rose_flutter/providers/book_state.dart';
+import '../providers/arrow_state.dart';
 import '../providers/board_state.dart';
+import '../providers/engine_analysis_state.dart';
 import '../widgets/analysis_widget.dart';
 import '../widgets/chess_board_widget.dart';
 import '../widgets/menu_bar_widget.dart';
@@ -51,7 +54,24 @@ class _SoftwareScreenState extends State<SoftwareScreen>
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => BoardState(widget.engineFileName),
+          create: (context) => EngineAnalysisState(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ArrowState(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => BookState(),
+        ),
+        ChangeNotifierProxyProvider2<EngineAnalysisState, BookState,
+            BoardState>(
+          create: (context) => BoardState(
+            widget.engineFileName,
+            Provider.of<EngineAnalysisState>(context, listen: false),
+            Provider.of<BookState>(context, listen: false),
+          ),
+          update: (context, engineAnalysisState, bookState, previous) =>
+              previous ??
+              BoardState(widget.engineFileName, engineAnalysisState, bookState),
         ),
       ],
       child: Scaffold(
@@ -64,6 +84,10 @@ class _SoftwareScreenState extends State<SoftwareScreen>
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   boardState.initEngine();
                   if (!boardState.isBoardInitialized) {
+                    // final engineAnalysisState =
+                    //     Provider.of<EngineAnalysisState>(context,
+                    //         listen: false);
+                    // boardState.setEngineAnalysisState(engineAnalysisState);
                     boardState.newGame();
                   }
                 });

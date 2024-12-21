@@ -1,31 +1,21 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/board_state.dart';
-import '../models/board_position.dart';
-
-class ArrowData {
-  final BoardPosition from;
-  final BoardPosition to;
-  final Color color;
-
-  ArrowData({required this.from, required this.to, required this.color});
-}
+import '../providers/arrow_state.dart'; // Import ArrowState
 
 class ArrowsWidget extends StatelessWidget {
   final double squareSize;
+  final List<ArrowData> arrows;
 
-  const ArrowsWidget({Key? key, required this.squareSize}) : super(key: key);
+  const ArrowsWidget({Key? key, required this.squareSize, required this.arrows})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BoardState>(
-      builder: (context, boardState, child) {
-        return CustomPaint(
-          painter: ArrowsPainter(arrows: boardState.arrows, squareSize: squareSize),
-        );
-      },
+    print('build');
+    return CustomPaint(
+      painter: ArrowsPainter(arrows: arrows, squareSize: squareSize),
     );
   }
 }
@@ -82,7 +72,9 @@ class ArrowsPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+  bool shouldRepaint(covariant ArrowsPainter oldDelegate) {
+    print('current: ${arrows}');
+    print(listEquals(arrows, oldDelegate.arrows));
+    return !listEquals(arrows, oldDelegate.arrows);
   }
 }

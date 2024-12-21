@@ -144,7 +144,7 @@ void _isolateStdout(SendPort stdoutPort) {
         stdoutPort.send(line);
       } else if (line.startsWith('bestmove')) {
         stdoutPort.send(line);
-      } else if (line.startsWith('info depth')) {
+      } else if (line.startsWith('info depth') && !line.contains('currmovenumber')) {
         try {
           final depthStr = line.split('depth ')[1].split(' ')[0];
           final depth = int.parse(depthStr);

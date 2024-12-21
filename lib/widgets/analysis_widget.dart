@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rose_flutter/providers/book_state.dart';
 
-import '../providers/board_state.dart';
+import '../providers/engine_analysis_state.dart';
 import '../providers/theme_provider.dart';
 import 'book_item_widget.dart';
 
@@ -34,9 +35,10 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
 
-    final boardState = Provider.of<BoardState>(context, listen: false);
-    boardState.addListener(() {
-      if (boardState.engineAnalysis.isNotEmpty) {
+    final engineAnalysisState =
+        Provider.of<EngineAnalysisState>(context, listen: false);
+    engineAnalysisState.addListener(() {
+      if (engineAnalysisState.engineAnalysis.isNotEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_scrollController.hasClients) {
             _scrollController.animateTo(
@@ -59,12 +61,14 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
 
   @override
   Widget build(BuildContext context) {
-    final boardState = Provider.of<BoardState>(context);
+    final engineAnalysisState = Provider.of<EngineAnalysisState>(context);
+    final bookState = Provider.of<BookState>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final navigationWidth = screenWidth / 2;
     final contentWidth = screenWidth - navigationWidth;
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.currentTheme.brightness == Brightness.dark;
+    final isDarkMode =
+        themeProvider.currentTheme.brightness == Brightness.dark;
 
     return Column(
       children: [
@@ -109,7 +113,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                           CrossAxisAlignment.start,
                                       children: [
                                         const SizedBox(height: 8),
-                                        ...boardState.engineAnalysis
+                                        ...engineAnalysisState.engineAnalysis
                                             .map((engineInfo) {
                                           return Column(
                                             crossAxisAlignment:
@@ -206,7 +210,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                               SliverList(
                                 delegate: SliverChildBuilderDelegate(
                                   (BuildContext context, int index) {
-                                    final move = boardState.chessdbMoves[index];
+                                    final move = bookState.moves[index];
                                     return Column(
                                       children: [
                                         BookItem(move: move),
@@ -219,7 +223,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                       ],
                                     );
                                   },
-                                  childCount: boardState.chessdbMoves.length,
+                                  childCount: bookState.moves.length,
                                 ),
                               ),
                             ],
