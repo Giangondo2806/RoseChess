@@ -67,8 +67,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
     final navigationWidth = screenWidth / 2;
     final contentWidth = screenWidth - navigationWidth;
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode =
-        themeProvider.currentTheme.brightness == Brightness.dark;
+    final isDarkMode = themeProvider.currentTheme.brightness == Brightness.dark;
 
     return Column(
       children: [

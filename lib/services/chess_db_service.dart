@@ -14,16 +14,23 @@ Future<List<ChessdbMove>> getChessdbMoves(String fen) async {
   );
   if (response.statusCode == 200) {
     final data = response.body;
-    return data
-        .split('|')
-        .sublist(0, 15)
-        .map((el) => ChessdbMove.fromString(el))
-        .map((el){
-          el.san = xiangqi.getSanfromNotation(el.notation);
-          return el;
-        }).toList();
-        
-  
+    try {
+      return data
+          .split('|')
+          .sublist(0, 15)
+          .map((el) => ChessdbMove.fromString(el))
+          .map((el) {
+            el.san = el.notation != ''
+                ? xiangqi.getSanfromNotation(el.notation!)
+                : '';
+            return el;
+          })
+          .where((el) => el.score != '??')
+          .toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
   } else {
     print('error: ${response.statusCode}');
     return [];

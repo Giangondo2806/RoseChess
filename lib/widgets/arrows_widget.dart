@@ -13,7 +13,6 @@ class ArrowsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('build');
     return CustomPaint(
       painter: ArrowsPainter(arrows: arrows, squareSize: squareSize),
     );
@@ -73,8 +72,6 @@ class ArrowsPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant ArrowsPainter oldDelegate) {
-    print('current: ${arrows}');
-    print(listEquals(arrows, oldDelegate.arrows));
     return !listEquals(arrows, oldDelegate.arrows);
   }
 }

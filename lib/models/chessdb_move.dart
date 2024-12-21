@@ -1,17 +1,17 @@
 class ChessdbMove {
   String score;
-  String notation;
+  String? notation;
   String? san;
-  String note;
+  String? note;
   String winrate;
 
   ChessdbMove(this.notation, this.score, this.note, this.winrate);
 
   static ChessdbMove fromString(String inputString) {
-    String? notation;
-    String? score;
-    String? note;
-    String? winrate;
+    String notation = '?';
+    String score = '?';
+    String note = '?';
+    String winrate = '?';
 
     List<String> parts = inputString.split(',');
     for (String part in parts) {
@@ -20,27 +20,23 @@ class ChessdbMove {
         String key = keyValue[0].trim();
         String value = keyValue[1].trim();
 
-        try {
-          switch (key) {
-            case 'move':
-              notation = value;
-              break;
-            case 'score':
-              score = value;
-              break;
-            case 'note':
-              note = value;
-              break;
-            case 'winrate':
-              winrate = value;
-              break;
-          }
-        } catch (e) {
-          print(inputString);
+        switch (key) {
+          case 'move':
+            notation = value;
+            break;
+          case 'score':
+            score = value;
+            break;
+          case 'note':
+            note = value;
+            break;
+          case 'winrate':
+            winrate = value;
+            break;
         }
       }
     }
 
-    return ChessdbMove(notation!, score!, note!, winrate!);
+    return ChessdbMove(notation, score, note, winrate);
   }
 }

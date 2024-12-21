@@ -13,19 +13,40 @@ class ArrowData {
 class ArrowState with ChangeNotifier {
   final List<ArrowData> _arrows = [];
   List<ArrowData> get arrows => _arrows;
+  final List<String> _notations = [];
 
   void clearArrows() {
     _arrows.clear();
+    _notations.clear();
     notifyListeners();
   }
 
-  void addArrow(ArrowData arrow) {
-    _arrows.add(arrow);
-    notifyListeners();
-  }
+  void addArrows(String line) {
+    final pvIndex = line.indexOf(' pv ');
+    if (pvIndex != -1) {
+      final pvString = line.substring(pvIndex + 4);
+      final moves = pvString.split(' ');
+      if (moves.length >= 2) {
+        List<ArrowData> newArrows = [];
+        for (int i = 0; i < 2; i++) {
+          newArrows.add(ArrowData(
+            from: BoardPosition(moves[i].substring(0, 2)),
+            to: BoardPosition(moves[i].substring(2, 4)),
+            color: i == 0
+                ? Colors.blue.withOpacity(0.7)
+                : Colors.green.withOpacity(0.7),
+          ));
+        }
 
-  void addArrows(List<ArrowData> arrows) {
-    _arrows.addAll(arrows);
-    notifyListeners();
+        if (!listEquals(_notations, [moves[0], moves[1]])) {
+          print('notation ${_notations}');
+          print('new ${moves[0]}${moves[1]}');
+          clearArrows();
+          _notations.addAll([moves[0], moves[1]]);
+          _arrows.addAll(newArrows);
+          notifyListeners();
+        }
+      }
+    }
   }
 }

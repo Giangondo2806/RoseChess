@@ -21,48 +21,8 @@ class ChessBoardWidget extends StatefulWidget {
 
 class _ChessBoardWidgetState extends State<ChessBoardWidget> {
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final boardState = Provider.of<BoardState>(context);
 
-    boardState.roseEngine?.stdout.listen((line) {
-      if (line.startsWith('info depth') && line.contains(' pv ')) {
-        _extractMoves(line);
-      }
-    });
-  }
 
-  void _extractMoves(String line) {
-    final pvIndex = line.indexOf(' pv ');
-    if (pvIndex != -1) {
-      final pvString = line.substring(pvIndex + 4);
-      final moves = pvString.split(' ');
-      if (moves.length >= 2) {
-        List<ArrowData> newArrows = [];
-        for (int i = 0; i < 2; i++) {
-          newArrows.add(ArrowData(
-            from: BoardPosition(moves[i].substring(0, 2)),
-            to: BoardPosition(moves[i].substring(2, 4)),
-            color: i == 0
-                ? Colors.blue.withOpacity(0.7)
-                : Colors.green.withOpacity(0.7),
-          ));
-        }
-
-        final arrowState = Provider.of<ArrowState>(context, listen: false);
-        if (!listEquals(arrowState.arrows, newArrows)) {
-
-          Future.delayed(const Duration(milliseconds: 200), () {
-            if (mounted) {
-              arrowState.clearArrows();
-              arrowState.addArrows(newArrows);
-            }
-          });
-        }
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

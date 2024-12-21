@@ -1364,9 +1364,6 @@ class Xiangqi {
       moveObj = moveFromIccs(moveInput, sloppy: sloppy_);
     } else if (moveInput is Map) {
       List<Move> moves = generateMoves();
-
-      print(moveInput);
-
       for (int i = 0, len = moves.length; i < len; i++) {
         if (moveInput['from'] == algebraic(moves[i].from) &&
             moveInput['to'] == algebraic(moves[i].to)) {
@@ -1375,8 +1372,6 @@ class Xiangqi {
         }
       }
     }
-
-    print(moveObj);
 
     if (moveObj == null) {
       return null;

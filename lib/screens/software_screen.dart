@@ -60,18 +60,21 @@ class _SoftwareScreenState extends State<SoftwareScreen>
           create: (context) => ArrowState(),
         ),
         ChangeNotifierProvider(
-          create: (context) => BookState(),
+          create: (context) => BookState(), 
         ),
-        ChangeNotifierProxyProvider2<EngineAnalysisState, BookState,
+        ChangeNotifierProxyProvider3<EngineAnalysisState, ArrowState, BookState,
             BoardState>(
           create: (context) => BoardState(
             widget.engineFileName,
             Provider.of<EngineAnalysisState>(context, listen: false),
+            Provider.of<ArrowState>(context, listen: false),
             Provider.of<BookState>(context, listen: false),
           ),
-          update: (context, engineAnalysisState, bookState, previous) =>
+          update: (context, engineAnalysisState, arrowState, bookState,
+                  previous) =>
               previous ??
-              BoardState(widget.engineFileName, engineAnalysisState, bookState),
+              BoardState(widget.engineFileName, engineAnalysisState, arrowState,
+                  bookState),
         ),
       ],
       child: Scaffold(
@@ -84,10 +87,6 @@ class _SoftwareScreenState extends State<SoftwareScreen>
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   boardState.initEngine();
                   if (!boardState.isBoardInitialized) {
-                    // final engineAnalysisState =
-                    //     Provider.of<EngineAnalysisState>(context,
-                    //         listen: false);
-                    // boardState.setEngineAnalysisState(engineAnalysisState);
                     boardState.newGame();
                   }
                 });

@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:rose_flutter/models/chessdb_move.dart';
+import 'package:flutter/material.dart';
 import 'package:rose_flutter/models/engine_info.dart';
+import 'package:rose_flutter/providers/arrow_state.dart';
 import 'package:rose_flutter/providers/book_state.dart';
-import 'package:rose_flutter/services/chess_db_service.dart';
 
 import '../engine/rose.dart';
 import '../engine/rose_state.dart';
@@ -27,32 +27,31 @@ class BoardState with ChangeNotifier {
   bool _isSettingEngine = false;
   bool _readyOkReceived = false;
   String engineFileName;
-  List<ChessdbMove> _chessdbMoves = [];
   bool _isBoardInitialized = false;
   bool _isEngineInitializing = false;
 
   Rose? get roseEngine => _roseEngine;
   bool get engineConnected => _connectedEngine;
   bool get engineReady => _readyOkReceived;
-  List<ChessdbMove> get chessdbMoves => _chessdbMoves;
   bool get isBoardInitialized => _isBoardInitialized;
   late EngineAnalysisState engineAnalysisState;
   late BookState bookState;
+  late ArrowState arrowState;
 
   void setEngineAnalysisState(EngineAnalysisState engineAnalysisState) {
     engineAnalysisState = engineAnalysisState;
     bookState = bookState;
   }
 
-  BoardState(this.engineFileName, this.engineAnalysisState, this.bookState) {
+  BoardState(this.engineFileName, this.engineAnalysisState, this.arrowState,
+      this.bookState) {
     board = {};
   }
 
   void newGame() {
-    //
-    print('call new game');
-    // pauseGame();
+    pauseGame();
     engineAnalysisState.clearAnalysis();
+    arrowState.clearArrows();
     _isBoardInitialized = false;
     _initializeBoard();
     notifyListeners();
@@ -65,7 +64,7 @@ class BoardState with ChangeNotifier {
     board = {};
     xiangqi = Xiangqi();
     initFen = xiangqi.generateFen();
-    getChessdbMoves(initFen).then((moves) => {_chessdbMoves = moves});
+    bookState.getbook(initFen);
 
     var initialBoard = xiangqi.getBoard();
     int idCounter = 0;
@@ -185,10 +184,9 @@ class BoardState with ChangeNotifier {
             xiangqi.simpleMove(
                 {'from': selectedPosition!.notation, 'to': position.notation});
             bookState.getbook(xiangqi.generateFen());
-            getChessdbMoves(xiangqi.generateFen())
-                .then((data) => {_chessdbMoves = data});
             _movePiece(selectedPosition!, position, selectedPiece);
-            _engineMove('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
+            _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
+            arrowState.clearArrows();
             canMoves = [];
           } else {
             selectedPosition = null;
@@ -262,12 +260,13 @@ class BoardState with ChangeNotifier {
               notifyListeners();
             }
           } else if (line.startsWith('info depth')) {
-            print('engineout: $line');
             final info =
                 parseEngineInfo(fen: xiangqi.generateFen(), input: line);
+
             if (info.moves != '') {
               // engineAnalysis.insert(0, info);
               engineAnalysisState.addAnalysis(info);
+              _extractMoves(line);
               // notifyListeners(); // Thông báo cho UI cập nhật
             }
           }
@@ -312,6 +311,10 @@ class BoardState with ChangeNotifier {
     }
   }
 
+  void _extractMoves(String line) {
+    arrowState.addArrows(line);
+  }
+
   Future<void> _settingEngine() async {
     if (_isSettingEngine) return;
     _isSettingEngine = true;
@@ -328,15 +331,14 @@ class BoardState with ChangeNotifier {
 
   void pauseGame() {
     _roseEngine?.stdin = 'stop\n';
-    // notifyListeners();
   }
 
   void resumeGame() {
-    _engineMove('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
+    _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
     notifyListeners(); // Important: Cập nhật UI sau khi khôi phục trạng thái
   }
 
-  void _engineMove(String fen) {
+  void _engineSearch(String fen) {
     if (!_connectedEngine || !_readyOkReceived) return;
     // engineAnalysis.clear();
     engineAnalysisState.clearAnalysis();
