@@ -33,7 +33,7 @@ flutter:
 flutter_launcher_icons:
   android: true # hoặc true để dùng adaptive icon
   ios: true
-  image_path: "assets/icons/favicon.png" # Đường dẫn đến icon của bạn
+  image_path: "assets/icons/favicon.512x512.png" # Đường dẫn đến icon của bạn
   # adaptive_icon_background: "assets/icon/background.png"
   # adaptive_icon_foreground: "assets/icon/foreground.png"
 

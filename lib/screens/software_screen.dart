@@ -20,7 +20,8 @@ class SoftwareScreen extends StatefulWidget {
 
 class _SoftwareScreenState extends State<SoftwareScreen>
     with WidgetsBindingObserver {
-  bool _initialized = false; // Thêm biến flag để đánh dấu
+  bool _engineInitialized = false;
+  BoardState? _boardState;
 
   @override
   void initState() {
@@ -30,23 +31,55 @@ class _SoftwareScreenState extends State<SoftwareScreen>
 
   @override
   void dispose() {
+    _cleanupEngine();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _cleanupEngine() {
+    if (_boardState != null) {
+      _boardState!.pauseGame();
+      _engineInitialized = false;
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    final boardState = Provider.of<BoardState>(context, listen: false);
-    if (state == AppLifecycleState.resumed) {
-      boardState.initEngine();
-      if (boardState.isBoardInitialized) {
-        boardState.resumeGame();
-      }
-    } else if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused) {
-      boardState.pauseGame();
+    if (_boardState == null) return;
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _initializeEngineIfNeeded();
+        if (_boardState!.isBoardInitialized) {
+          _boardState!.resumeGame();
+        }
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        _boardState!.pauseGame();
+        break;
+      default:
+        break;
     }
+  }
+
+  void _initializeEngineIfNeeded() {
+    if (!_engineInitialized && _boardState != null) {
+      _boardState!.initEngine().then((_) {
+        if (mounted) {
+          setState(() {
+            _engineInitialized = true;
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    _cleanupEngine();
   }
 
   @override
@@ -60,7 +93,7 @@ class _SoftwareScreenState extends State<SoftwareScreen>
           create: (context) => ArrowState(),
         ),
         ChangeNotifierProvider(
-          create: (context) => BookState(), 
+          create: (context) => BookState(),
         ),
         ChangeNotifierProxyProvider3<EngineAnalysisState, ArrowState, BookState,
             BoardState>(
@@ -71,10 +104,13 @@ class _SoftwareScreenState extends State<SoftwareScreen>
             Provider.of<BookState>(context, listen: false),
           ),
           update: (context, engineAnalysisState, arrowState, bookState,
-                  previous) =>
-              previous ??
-              BoardState(widget.engineFileName, engineAnalysisState, arrowState,
-                  bookState),
+              previous) {
+            final boardState = previous ??
+                BoardState(widget.engineFileName, engineAnalysisState, arrowState,
+                    bookState);
+            _boardState = boardState;
+            return boardState;
+          },
         ),
       ],
       child: Scaffold(
@@ -82,15 +118,14 @@ class _SoftwareScreenState extends State<SoftwareScreen>
           padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
           child: Consumer<BoardState>(
             builder: (context, boardState, child) {
-              // Di chuyển logic khởi tạo vào đây
-              if (!_initialized) {
+              // Initialize engine after first build
+              if (!_engineInitialized) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  boardState.initEngine();
+                  _initializeEngineIfNeeded();
                   if (!boardState.isBoardInitialized) {
                     boardState.newGame();
                   }
                 });
-                _initialized = true;
               }
 
               return Column(
@@ -99,7 +134,7 @@ class _SoftwareScreenState extends State<SoftwareScreen>
                     onMenuAction: boardState.handleMenuAction,
                   ),
                   ChessBoardWidget(boardState: boardState),
-                  Expanded(child: AnalysisWidget()),
+                  const Expanded(child: AnalysisWidget()),
                 ],
               );
             },
