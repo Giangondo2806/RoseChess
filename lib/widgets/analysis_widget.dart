@@ -76,9 +76,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
           color: themeProvider.currentTheme.appBarTheme.backgroundColor,
           child: TabBar(
             controller: _tabController,
-            labelColor: Colors.blue,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: Colors.blue,
+            // labelColor: Colors.blue,
+            // unselectedLabelColor: Colors.grey,
+            // indicatorColor: Colors.blue,
             tabs: const [
               Tab(text: "Phân tích"),
               Tab(text: "Book"),
@@ -162,10 +162,11 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                 pinned: true, // Để tiêu đề cố định
                                 delegate: _SliverAppBarDelegate(
                                   child: Container(
-                                    height:
-                                        40, // Thêm chiều cao xác định cho Container
-                                    color: themeProvider.currentTheme
-                                        .appBarTheme.backgroundColor,
+                                    height: 40,
+                                    color: themeProvider
+                                        .currentTheme
+                                        .scaffoldBackgroundColor
+                                        , // Thêm chiều cao xác định cho Container
                                     padding: const EdgeInsets.all(4.0),
                                     child: Row(
                                       mainAxisAlignment:
@@ -175,29 +176,20 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                       children: [
                                         Expanded(
                                           child: Text('Move',
-                                              style: themeProvider.currentTheme
-                                                  .textTheme.bodyLarge!
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center),
                                         ),
                                         Expanded(
                                           child: Text('Score',
-                                              style: themeProvider.currentTheme
-                                                  .textTheme.bodyLarge!
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center),
                                         ),
                                         Expanded(
                                           child: Text('Winrate',
-                                              style: themeProvider.currentTheme
-                                                  .textTheme.bodyLarge!
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center),
                                         ),
                                       ],
@@ -215,9 +207,6 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                         BookItem(move: move),
                                         Divider(
                                           thickness: 0.5,
-                                          color: isDarkMode
-                                              ? const Color(0xFF404040)
-                                              : const Color(0xFFE0E0E0),
                                         ),
                                       ],
                                     );
@@ -276,9 +265,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                     onPressed: () {
                                       // Xử lý sự kiện <<
                                     },
-                                    icon: Icon(Icons.fast_rewind,
-                                        color: themeProvider.currentTheme
-                                            .textTheme.bodyLarge!.color),
+                                    icon: Icon(
+                                      Icons.fast_rewind,
+                                    ),
                                     tooltip: 'Về đầu',
                                   ),
                                 ),
@@ -289,9 +278,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                     onPressed: () {
                                       // Xử lý sự kiện <
                                     },
-                                    icon: Icon(Icons.arrow_back,
-                                        color: themeProvider.currentTheme
-                                            .textTheme.bodyLarge!.color),
+                                    icon: Icon(
+                                      Icons.arrow_back,
+                                    ),
                                     tooltip: 'Lùi lại',
                                   ),
                                 ),
@@ -302,9 +291,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                     onPressed: () {
                                       // Xử lý sự kiện >
                                     },
-                                    icon: Icon(Icons.arrow_forward,
-                                        color: themeProvider.currentTheme
-                                            .textTheme.bodyLarge!.color),
+                                    icon: Icon(
+                                      Icons.arrow_forward,
+                                    ),
                                     tooltip: 'Tiến lên',
                                   ),
                                 ),
@@ -315,9 +304,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                     onPressed: () {
                                       // Xử lý sự kiện >>
                                     },
-                                    icon: Icon(Icons.fast_forward,
-                                        color: themeProvider.currentTheme
-                                            .textTheme.bodyLarge!.color),
+                                    icon: Icon(
+                                      Icons.fast_forward,
+                                    ),
                                     tooltip: 'Đến cuối',
                                   ),
                                 ),
@@ -327,11 +316,9 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                         ),
                         // Thanh phân cách
                         Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: isDarkMode
-                                ? const Color(0xFF404040)
-                                : const Color(0xFFE0E0E0)),
+                          height: 1,
+                          thickness: 1,
+                        ),
 
                         // Danh sách nước đi
                         Expanded(
@@ -363,16 +350,6 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                         fit: BoxFit.scaleDown,
                                         alignment: Alignment.centerLeft,
                                         child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: isDarkMode
-                                                ? const Color(0xFF404040)
-                                                : Colors.grey[300],
-                                            foregroundColor: themeProvider
-                                                .currentTheme
-                                                .textTheme
-                                                .bodyLarge!
-                                                .color,
-                                          ),
                                           onPressed: () {
                                             print(
                                                 "Đã nhấn vào nước đi: $move1");
@@ -388,16 +365,6 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                           fit: BoxFit.scaleDown,
                                           alignment: Alignment.centerLeft,
                                           child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: isDarkMode
-                                                  ? const Color(0xFF404040)
-                                                  : Colors.grey[300],
-                                              foregroundColor: themeProvider
-                                                  .currentTheme
-                                                  .textTheme
-                                                  .bodyLarge!
-                                                  .color,
-                                            ),
                                             onPressed: () {
                                               print(
                                                   "Đã nhấn vào nước đi: $move2");

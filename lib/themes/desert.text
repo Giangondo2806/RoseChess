@@ -7,7 +7,7 @@ final darkTheme = ThemeData(
   scaffoldBackgroundColor: const Color(0xFF483C32), // Taupe - Nâu xám
   // AppBar
   appBarTheme: const AppBarTheme(
-    backgroundColor: Color.fromARGB(255, 85, 70, 55), // Peru - Nâu đất
+    backgroundColor: Color(0xFFCD853F), // Peru - Nâu đất
     foregroundColor: Colors.white,
     iconTheme: IconThemeData(color: Colors.white),
     titleTextStyle: TextStyle(
