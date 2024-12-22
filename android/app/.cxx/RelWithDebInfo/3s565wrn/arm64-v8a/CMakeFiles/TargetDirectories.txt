@@ -1,3 +1,0 @@
-/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/RelWithDebInfo/3s565wrn/arm64-v8a/CMakeFiles/pikafish.dir
-/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/RelWithDebInfo/3s565wrn/arm64-v8a/CMakeFiles/edit_cache.dir
-/Users/trangiang/Desktop/game/rose_flutter/android/app/.cxx/RelWithDebInfo/3s565wrn/arm64-v8a/CMakeFiles/rebuild_cache.dir
