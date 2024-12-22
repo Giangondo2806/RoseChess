@@ -80,7 +80,7 @@ class Rose {
 
   /// Stops the C++ engine.
   void dispose() {
-    stdin = 'quit';
+    stdin = 'quit\n';
   }
 
   void _cleanUp(int exitCode) {
