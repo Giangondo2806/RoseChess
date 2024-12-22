@@ -1700,3 +1700,39 @@ String getSanMovesFromfenAndNotations(
   }
   return sans;
 }
+
+List<Map<String, Move?>> groupMoves(List<dynamic> moves) {
+
+  final groupedMoves = <Map<String, Move?>>[];
+  // Thay đổi kiểu dữ liệu của movesByNumber
+  Map<int, List<Move?>> movesByNumber = {};
+
+  // Nhóm các nước đi theo số nước đi
+  for (final move in moves) {
+    print(move.moveNumber);
+    final moveNumber = move.moveNumber;
+    if (!movesByNumber.containsKey(moveNumber)) {
+      movesByNumber[moveNumber] = [];
+    }
+    movesByNumber[moveNumber]!.add(move);
+  }
+
+  // Thêm nước đi null vào đầu nếu cần (chỉ cần kiểm tra một lần)
+  if (movesByNumber.containsKey(1) && movesByNumber[1]!.length % 2 != 0) {
+    movesByNumber[1]!.insert(0, null);
+  }
+
+  // Tạo danh sách các đối tượng được nhóm
+  for (final entry in movesByNumber.entries) {
+    final moves = entry.value;
+
+    for (int i = 0; i < moves.length; i += 2) {
+      groupedMoves.add({
+        'move1': moves[i],
+        'move2': i + 1 < moves.length ? moves[i + 1] : null,
+      });
+    }
+  }
+
+  return groupedMoves; // Di chuyển return ra ngoài vòng lặp for
+}

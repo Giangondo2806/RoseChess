@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/providers/book_state.dart';
+import 'package:rose_chess/providers/navigation_state.dart';
 import '../providers/arrow_state.dart';
 import '../providers/board_state.dart';
 import '../providers/engine_analysis_state.dart';
@@ -45,7 +46,6 @@ class _SoftwareScreenState extends State<SoftwareScreen>
       }
     } else if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
-          
       boardState.pauseGame();
     }
   }
@@ -61,21 +61,25 @@ class _SoftwareScreenState extends State<SoftwareScreen>
           create: (context) => ArrowState(),
         ),
         ChangeNotifierProvider(
-          create: (context) => BookState(), 
+          create: (context) => BookState(),
         ),
-        ChangeNotifierProxyProvider3<EngineAnalysisState, ArrowState, BookState,
-            BoardState>(
+        ChangeNotifierProvider(
+          create: (context) => NavigationState(),
+        ),
+        ChangeNotifierProxyProvider4<EngineAnalysisState, ArrowState, BookState,
+            NavigationState, BoardState>(
           create: (context) => BoardState(
             widget.engineFileName,
             Provider.of<EngineAnalysisState>(context, listen: false),
             Provider.of<ArrowState>(context, listen: false),
             Provider.of<BookState>(context, listen: false),
+            Provider.of<NavigationState>(context, listen: false),
           ),
           update: (context, engineAnalysisState, arrowState, bookState,
-                  previous) =>
+                  navigationState, previous) =>
               previous ??
               BoardState(widget.engineFileName, engineAnalysisState, arrowState,
-                  bookState),
+                  bookState, navigationState),
         ),
       ],
       child: Scaffold(

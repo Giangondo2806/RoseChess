@@ -7,7 +7,7 @@ final darkTheme = ThemeData(
   scaffoldBackgroundColor: const Color(0xFF483C32), // Taupe - Nâu xám
   // AppBar
   appBarTheme: const AppBarTheme(
-    backgroundColor: Color.fromARGB(255, 85, 70, 55), // Peru - Nâu đất
+    backgroundColor: Color.fromARGB(255, 97, 74, 52), // Peru - Nâu đất
     foregroundColor: Colors.white,
     iconTheme: IconThemeData(color: Colors.white),
     titleTextStyle: TextStyle(
@@ -71,7 +71,8 @@ final darkTheme = ThemeData(
   ),
   // Dialog
   dialogTheme: DialogTheme(
-    backgroundColor: const Color(0xFF5D4E42), // Màu nâu xám đậm hơn nền một chút
+    backgroundColor:
+        const Color(0xFF5D4E42), // Màu nâu xám đậm hơn nền một chút
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
     titleTextStyle: const TextStyle(
       color: Colors.white,
@@ -106,7 +107,8 @@ final darkTheme = ThemeData(
       borderRadius: BorderRadius.circular(8.0),
     ),
     focusedBorder: OutlineInputBorder(
-      borderSide: const BorderSide(color: Color(0xFFCD853F), width: 2.0), // Peru - Nâu đất
+      borderSide: const BorderSide(
+          color: Color(0xFFCD853F), width: 2.0), // Peru - Nâu đất
       borderRadius: BorderRadius.circular(8.0),
     ),
     labelStyle: const TextStyle(color: Colors.white),
@@ -133,13 +135,15 @@ final darkTheme = ThemeData(
   ),
   // Switch
   switchTheme: SwitchThemeData(
-    thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+    thumbColor:
+        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
       if (states.contains(MaterialState.selected)) {
         return const Color(0xFFCD853F); // Peru - Nâu đất
       }
       return Colors.grey[700];
     }),
-    trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+    trackColor:
+        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
       if (states.contains(MaterialState.selected)) {
         return const Color(0xFFCD853F).withOpacity(0.5); // Peru - Nâu đất
       }
@@ -151,22 +155,32 @@ final darkTheme = ThemeData(
     labelColor: Colors.white,
     unselectedLabelColor: Colors.grey,
     indicator: UnderlineTabIndicator(
-      borderSide: BorderSide(color: Color(0xFFCD853F), width: 2.0), // Peru - Nâu đất
+      borderSide:
+          BorderSide(color: Color(0xFFCD853F), width: 2.0), // Peru - Nâu đất
     ),
   ),
   // Text Theme
   textTheme: const TextTheme(
-    displayLarge: TextStyle(fontSize: 96.0, fontWeight: FontWeight.bold, color: Colors.white),
-    displayMedium: TextStyle(fontSize: 60.0, fontWeight: FontWeight.bold, color: Colors.white),
-    displaySmall: TextStyle(fontSize: 48.0, fontWeight: FontWeight.bold, color: Colors.white),
-    headlineMedium: TextStyle(fontSize: 34.0, fontWeight: FontWeight.bold, color: Colors.white),
-    headlineSmall: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
-    titleLarge: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
-    titleMedium: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, color: Colors.white),
-    titleSmall: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500, color: Colors.white),
+    displayLarge: TextStyle(
+        fontSize: 96.0, fontWeight: FontWeight.bold, color: Colors.white),
+    displayMedium: TextStyle(
+        fontSize: 60.0, fontWeight: FontWeight.bold, color: Colors.white),
+    displaySmall: TextStyle(
+        fontSize: 48.0, fontWeight: FontWeight.bold, color: Colors.white),
+    headlineMedium: TextStyle(
+        fontSize: 34.0, fontWeight: FontWeight.bold, color: Colors.white),
+    headlineSmall: TextStyle(
+        fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.white),
+    titleLarge: TextStyle(
+        fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
+    titleMedium: TextStyle(
+        fontSize: 16.0, fontWeight: FontWeight.w500, color: Colors.white),
+    titleSmall: TextStyle(
+        fontSize: 14.0, fontWeight: FontWeight.w500, color: Colors.white),
     bodyLarge: TextStyle(fontSize: 16.0, color: Colors.white),
     bodyMedium: TextStyle(fontSize: 14.0, color: Colors.white),
-    labelLarge: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.white),
+    labelLarge: TextStyle(
+        fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.white),
     bodySmall: TextStyle(fontSize: 12.0, color: Colors.white),
     labelSmall: TextStyle(fontSize: 10.0, color: Colors.grey),
   ),

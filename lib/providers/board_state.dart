@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rose_chess/models/engine_info.dart';
 import 'package:rose_chess/providers/arrow_state.dart';
 import 'package:rose_chess/providers/book_state.dart';
+import 'package:rose_chess/providers/navigation_state.dart';
 
 import '../engine/rose.dart';
 import '../engine/rose_state.dart';
@@ -37,14 +38,10 @@ class BoardState with ChangeNotifier {
   late EngineAnalysisState engineAnalysisState;
   late BookState bookState;
   late ArrowState arrowState;
-
-  void setEngineAnalysisState(EngineAnalysisState engineAnalysisState) {
-    engineAnalysisState = engineAnalysisState;
-    bookState = bookState;
-  }
+  late NavigationState navigationState;
 
   BoardState(this.engineFileName, this.engineAnalysisState, this.arrowState,
-      this.bookState) {
+      this.bookState, this.navigationState) {
     board = {};
   }
 
@@ -185,8 +182,10 @@ class BoardState with ChangeNotifier {
                 {'from': selectedPosition!.notation, 'to': position.notation});
             bookState.getbook(xiangqi.generateFen());
             _movePiece(selectedPosition!, position, selectedPiece);
-            _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
+            _engineSearch(
+                '$initFen - - moves ${xiangqi.getHistory().join(' ')}');
             arrowState.clearArrows();
+            navigationState.setMove(xiangqi.getHistory(verbose: true));
             canMoves = [];
           } else {
             selectedPosition = null;

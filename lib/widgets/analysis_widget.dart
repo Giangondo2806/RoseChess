@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/providers/book_state.dart';
+import 'package:rose_chess/providers/navigation_state.dart';
 
 import '../providers/engine_analysis_state.dart';
 import '../providers/theme_provider.dart';
@@ -63,11 +64,11 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
   Widget build(BuildContext context) {
     final engineAnalysisState = Provider.of<EngineAnalysisState>(context);
     final bookState = Provider.of<BookState>(context);
+    final navigationState = Provider.of<NavigationState>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final navigationWidth = screenWidth / 2;
     final contentWidth = screenWidth - navigationWidth;
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.currentTheme.brightness == Brightness.dark;
 
     return Column(
       children: [
@@ -163,10 +164,8 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                                 delegate: _SliverAppBarDelegate(
                                   child: Container(
                                     height: 40,
-                                    color: themeProvider
-                                        .currentTheme
-                                        .scaffoldBackgroundColor
-                                        , // Thêm chiều cao xác định cho Container
+                                    color: themeProvider.currentTheme
+                                        .scaffoldBackgroundColor, // Thêm chiều cao xác định cho Container
                                     padding: const EdgeInsets.all(4.0),
                                     child: Row(
                                       mainAxisAlignment:
@@ -324,56 +323,60 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                         Expanded(
                           child: ListView.builder(
                             padding: const EdgeInsets.only(top: 8.0),
-                            itemCount: mockMoves.length,
+                            itemCount: navigationState.moves.length,
                             itemBuilder: (context, index) {
-                              final parts = mockMoves[index].split(' ');
-                              final moveNumber = parts[0];
-                              final move1 = parts[1];
-                              final move2 = parts.length > 2 ? parts[2] : '';
+                              final move = navigationState.moves[index];
 
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 2.0, horizontal: 4.0),
                                 child: Row(
-                                  mainAxisSize: MainAxisSize
-                                      .min, // Giới hạn kích thước Row
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     SizedBox(
-                                      width: 30,
-                                      child: Text(moveNumber,
+                                      width: 20,
+                                      child: Text((index + 1).toString(),
                                           style: themeProvider.currentTheme
                                               .textTheme.bodyMedium),
                                     ),
-                                    const SizedBox(width: 4.0),
-                                    Expanded(
-                                      child: FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        alignment: Alignment.centerLeft,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            print(
-                                                "Đã nhấn vào nước đi: $move1");
-                                          },
-                                          child: Text(move1),
-                                        ),
-                                      ),
+                                    const SizedBox(width: 8.0),
+                                    Flexible(
+                                      flex: 1,
+                                      child: move['move1'] != null
+                                          ? ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 2.0,
+                                                        vertical: 4.0),
+                                              ),
+                                              onPressed: () {
+                                                print(
+                                                    "Đã nhấn vào nước đi: ${move['move1']!.san!}");
+                                              },
+                                              child: Text(move['move1']!.san!),
+                                            )
+                                          : const SizedBox.shrink(),
                                     ),
-                                    if (move2.isNotEmpty) ...[
-                                      const SizedBox(width: 8.0),
-                                      Expanded(
-                                        child: FittedBox(
-                                          fit: BoxFit.scaleDown,
-                                          alignment: Alignment.centerLeft,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              print(
-                                                  "Đã nhấn vào nước đi: $move2");
-                                            },
-                                            child: Text(move2),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                    const SizedBox(width: 8.0),
+                                    Flexible(
+                                      flex: 1,
+                                      child: move['move2'] != null
+                                          ? ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 2.0,
+                                                        vertical: 4.0),
+                                              ),
+                                              onPressed: () {
+                                                print(
+                                                    "Đã nhấn vào nước đi: ${move['move2']!.san!}");
+                                              },
+                                              child: Text(move['move2']!.san!),
+                                            )
+                                          : const SizedBox.shrink(),
+                                    ),
                                   ],
                                 ),
                               );

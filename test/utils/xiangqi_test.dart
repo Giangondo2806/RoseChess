@@ -21,6 +21,13 @@ void main() {
               'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w'));
     });
 
+    test('should make a valid move Move', () {
+      xiangqi.simpleMove({'from': 'h2', 'to': 'e2'});
+
+      final moves = xiangqi.getHistory(verbose: true);
+      print(groupMoves(moves));
+    });
+
     test('should make a valid move', () {
       xiangqi.simpleMove({'from': 'h2', 'to': 'e2'});
       xiangqi.simpleMove({'from': 'h9', 'to': 'g7'});
@@ -107,23 +114,29 @@ void main() {
 
       // expect(xiangqi.getHistory(), equals(['h2e2', 'h9g7', 'h0g2','i9h9']));
       final moves = xiangqi.getHistory(verbose: true);
+
+      print(groupMoves(moves));
       for (int i = 0; i < moves.length; i++) {
+        print(moves[i].moveNumber);
         expect(moves[i].san, equals(expectSan[i]));
       }
 
-      // expect(moves[0].san, equals("rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C4/9/RNBAKABNR b"));
+      expect(
+          moves[0].fen,
+          equals(
+              "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C4/9/RNBAKABNR b"));
     });
 
-    test('sanmove notation', (){
-        xiangqi.load('rnbakabnr/9/1c5c1/p1p3p1p/4p4/9/P1P1P1P1P/1C2C4/9/RNBAKABNR w');
-        print(xiangqi.generateFen());
-        xiangqi.move({'from': 'e2', 'to': 'e5'});
-        final moves = xiangqi.getHistory();
-        print(moves.length);
-        for(int i= 0; i<moves.length; i++){
-          print(moves[i]);
-        }
-
+    test('sanmove notation', () {
+      xiangqi.load(
+          'rnbakabnr/9/1c5c1/p1p3p1p/4p4/9/P1P1P1P1P/1C2C4/9/RNBAKABNR w');
+      print(xiangqi.generateFen());
+      xiangqi.move({'from': 'e2', 'to': 'e5'});
+      final moves = xiangqi.getHistory();
+      print(moves.length);
+      for (int i = 0; i < moves.length; i++) {
+        print(moves[i]);
+      }
     });
 
     test('history fromload', () {
@@ -170,6 +183,4 @@ void main() {
       }
     });
   });
-
-
 }
