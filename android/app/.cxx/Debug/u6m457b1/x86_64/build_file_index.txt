@@ -1,1 +1,0 @@
-/Users/trangiang/Desktop/game/rose_flutter/src/CMakeLists.txt

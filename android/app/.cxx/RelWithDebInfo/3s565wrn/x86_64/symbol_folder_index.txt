@@ -1,1 +1,0 @@
-/Users/trangiang/Desktop/game/rose_flutter/build/app/intermediates/cxx/RelWithDebInfo/3s565wrn/obj/x86_64

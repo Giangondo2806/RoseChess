@@ -45,6 +45,7 @@ class _SoftwareScreenState extends State<SoftwareScreen>
       }
     } else if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
+          
       boardState.pauseGame();
     }
   }
