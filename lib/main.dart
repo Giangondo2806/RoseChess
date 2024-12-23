@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:rose_chess/generated/l10n.dart';
 import 'providers/user_settings_provider.dart';
 import 'screens/engine_loader_screen.dart';
+import 'services/service_locator.dart';
 
 void main() {
+  setupDatabase();
   runApp(
     ChangeNotifierProvider(
       create: (context) => UserSettingsProvider(),

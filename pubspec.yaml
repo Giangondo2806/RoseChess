@@ -20,8 +20,9 @@ dependencies:
   device_info_plus: ^11.2.0
   provider: ^6.1.2
   flutter_svg: ^2.0.16
-  drift: ^2.12.0
-  sqlite3_flutter_libs: ^0.5.18
+  drift: ^2.22.1
+  drift_flutter: ^0.1.0
+  get_it: ^8.0.3
 
 dev_dependencies:
   flutter_test:
@@ -29,8 +30,9 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_launcher_icons: "^0.13.1"
   intl_utils: ^2.8.7
-  drift_dev: ^2.12.0
-  build_runner: ^2.3.3
+  drift_dev: ^2.22.0
+  build_runner: ^2.4.13
+
   
 flutter:
   uses-material-design: true
