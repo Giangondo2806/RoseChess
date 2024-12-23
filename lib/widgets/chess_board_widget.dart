@@ -6,7 +6,7 @@ import 'package:rose_chess/widgets/arrows_widget.dart';
 import '../models/piece.dart';
 import '../providers/board_state.dart';
 import '../providers/arrow_state.dart'; // Import ArrowState
-import '../providers/theme_provider.dart';
+import '../providers/user_settings_provider.dart';
 import 'piece_widget.dart';
 import '../models/board_position.dart';
 
@@ -33,9 +33,9 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
         final squareSize = boardWidth / boardState.cols;
         final boardHeight = boardWidth * (boardState.rows / boardState.cols);
 
-        final themeProvider = Provider.of<ThemeProvider>(context);
+        final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
         final isDarkMode =
-            themeProvider.currentTheme.brightness == Brightness.dark;
+            userSettingsProvider.currentTheme.brightness == Brightness.dark;
 
         return Center(
           child: Container(

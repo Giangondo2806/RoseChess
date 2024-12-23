@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/navigation_state.dart';
-import '../providers/theme_provider.dart';
+import '../providers/user_settings_provider.dart';
 
 class NavigationContent extends StatelessWidget {
   const NavigationContent({Key? key}) : super(key: key);
@@ -9,10 +9,10 @@ class NavigationContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationState = Provider.of<NavigationState>(context);
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
 
     return Material(
-      color: themeProvider.currentTheme.scaffoldBackgroundColor,
+      color: userSettingsProvider.currentTheme.scaffoldBackgroundColor,
       child: Column(
         children: [
           Padding(
@@ -75,7 +75,7 @@ class NavigationContent extends StatelessWidget {
                       SizedBox(
                         width: 20,
                         child: Text((index + 1).toString(),
-                            style: themeProvider
+                            style: userSettingsProvider
                                 .currentTheme.textTheme.bodyMedium),
                       ),
                       const SizedBox(width: 8.0),

@@ -22,8 +22,24 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
-        "lightMode": MessageLookupByLibrary.simpleMessage("Light Mode"),
-        "loading": MessageLookupByLibrary.simpleMessage("Loading...")
+        "applicationSettingsTitle":
+            MessageLookupByLibrary.simpleMessage("Application Settings"),
+        "boardColor": MessageLookupByLibrary.simpleMessage("Board Color"),
+        "book": MessageLookupByLibrary.simpleMessage("Book"),
+        "bookSettingsTitle":
+            MessageLookupByLibrary.simpleMessage("Book Settings"),
+        "comingSoon": MessageLookupByLibrary.simpleMessage("Coming Soon..."),
+        "engine": MessageLookupByLibrary.simpleMessage("Engine"),
+        "english": MessageLookupByLibrary.simpleMessage("English"),
+        "evaluation": MessageLookupByLibrary.simpleMessage("Evaluation"),
+        "hashSize": MessageLookupByLibrary.simpleMessage("Hash Size"),
+        "japanese": MessageLookupByLibrary.simpleMessage("Japanese"),
+        "language": MessageLookupByLibrary.simpleMessage("Language"),
+        "pieceSet": MessageLookupByLibrary.simpleMessage("Piece Set"),
+        "settingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
+        "theme": MessageLookupByLibrary.simpleMessage("Theme"),
+        "userSettingsTitle":
+            MessageLookupByLibrary.simpleMessage("User Settings"),
+        "vietnamese": MessageLookupByLibrary.simpleMessage("Vietnamese")
       };
 }

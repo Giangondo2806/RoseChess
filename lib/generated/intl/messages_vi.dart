@@ -22,8 +22,24 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "darkMode": MessageLookupByLibrary.simpleMessage("Chế độ sáng"),
-        "lightMode": MessageLookupByLibrary.simpleMessage("Chế độ tối"),
-        "loading": MessageLookupByLibrary.simpleMessage("Đang tải...")
+        "applicationSettingsTitle":
+            MessageLookupByLibrary.simpleMessage("Cài đặt phần mềm"),
+        "boardColor": MessageLookupByLibrary.simpleMessage("Màu bàn cờ"),
+        "book": MessageLookupByLibrary.simpleMessage("Book"),
+        "bookSettingsTitle":
+            MessageLookupByLibrary.simpleMessage("Cài đặt Book"),
+        "comingSoon": MessageLookupByLibrary.simpleMessage("Sắp ra mắt..."),
+        "engine": MessageLookupByLibrary.simpleMessage("Máy cờ"),
+        "english": MessageLookupByLibrary.simpleMessage("Tiếng Anh"),
+        "evaluation": MessageLookupByLibrary.simpleMessage("Phân tích"),
+        "hashSize": MessageLookupByLibrary.simpleMessage("Kích thước băm"),
+        "japanese": MessageLookupByLibrary.simpleMessage("Tiếng Nhật"),
+        "language": MessageLookupByLibrary.simpleMessage("Ngôn ngữ"),
+        "pieceSet": MessageLookupByLibrary.simpleMessage("Bộ quân cờ"),
+        "settingsTitle": MessageLookupByLibrary.simpleMessage("Cài đặt"),
+        "theme": MessageLookupByLibrary.simpleMessage("Giao diện"),
+        "userSettingsTitle":
+            MessageLookupByLibrary.simpleMessage("Cài đặt người dùng"),
+        "vietnamese": MessageLookupByLibrary.simpleMessage("Tiếng Việt")
       };
 }

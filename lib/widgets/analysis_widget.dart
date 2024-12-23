@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
+import 'package:rose_chess/themes/dark_theme.dart';
+import '../generated/l10n.dart';
+import '../providers/user_settings_provider.dart';
 import 'book_content_widget.dart';
 import 'engine_alalyis_content_widget.dart';
 import 'graph_content_widget.dart';
@@ -32,19 +34,24 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final theme = Provider.of<UserSettingsProvider>(context).currentTheme;
+    final lang = AppLocalizations.of(context);
+
     final screenWidth = MediaQuery.of(context).size.width;
     final navigationWidth = screenWidth / 2;
 
     return Column(
       children: [
         Container(
-          color: themeProvider.currentTheme.appBarTheme.backgroundColor,
+          color: theme == darkTheme
+              ? theme.appBarTheme.backgroundColor
+              : Color.fromARGB(255, 239, 232, 223),
           child: TabBar(
             controller: _tabController,
-            tabs: const [
-              Tab(text: "Phân tích"),
-              Tab(text: "Book"),
+            // labelColor: userSettingsProvider.currentTheme.appBarTheme.titleTextStyle!.color,
+            tabs: [
+              Tab(text: lang.evaluation),
+              Tab(text: lang.book),
               Tab(text: "Graph"),
             ],
           ),

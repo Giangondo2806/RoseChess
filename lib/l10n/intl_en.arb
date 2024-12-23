@@ -1,6 +1,19 @@
 {
-    "@@locale": "en",
-    "loading": "Loading...",
-    "darkMode": "Dark Mode",
-    "lightMode": "Light Mode"
-  }
+  "@@locale": "en",
+  "settingsTitle": "Settings",
+  "userSettingsTitle": "User Settings",
+  "language": "Language",
+  "english": "English",
+  "japanese": "Japanese",
+  "vietnamese": "Vietnamese",
+  "theme": "Theme",
+  "boardColor": "Board Color",
+  "pieceSet": "Piece Set",
+  "applicationSettingsTitle": "Application Settings",
+  "engine": "Engine",
+  "hashSize": "Hash Size",
+  "bookSettingsTitle": "Book Settings",
+  "comingSoon": "Coming Soon...",
+  "book": "Book",
+  "evaluation": "Evaluation"
+}

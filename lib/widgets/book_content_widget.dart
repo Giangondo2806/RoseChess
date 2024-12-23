@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/book_state.dart';
-import '../providers/theme_provider.dart';
+import '../providers/user_settings_provider.dart';
 import 'book_item_widget.dart';
 
 class BookContent extends StatelessWidget {
@@ -10,7 +10,7 @@ class BookContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bookState = Provider.of<BookState>(context);
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
 
     return CustomScrollView(
       slivers: <Widget>[
@@ -19,7 +19,7 @@ class BookContent extends StatelessWidget {
           delegate: _SliverAppBarDelegate(
             child: Container(
               height: 40,
-              color: themeProvider.currentTheme.scaffoldBackgroundColor,
+              color: userSettingsProvider.currentTheme.scaffoldBackgroundColor,
               padding: const EdgeInsets.all(4.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

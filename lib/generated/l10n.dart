@@ -12,82 +12,212 @@ import 'intl/messages_all.dart';
 // ignore_for_file: join_return_with_assignment, prefer_final_in_for_each
 // ignore_for_file: avoid_redundant_argument_values, avoid_escaping_inner_quotes
 
-class S {
-  S();
+class AppLocalizations {
+  AppLocalizations();
 
-  static S? _current;
+  static AppLocalizations? _current;
 
-  static S get current {
+  static AppLocalizations get current {
     assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+        'No instance of AppLocalizations was loaded. Try to initialize the AppLocalizations delegate before accessing AppLocalizations.current.');
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
-  static Future<S> load(Locale locale) {
+  static Future<AppLocalizations> load(Locale locale) {
     final name = (locale.countryCode?.isEmpty ?? false)
         ? locale.languageCode
         : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
-      final instance = S();
-      S._current = instance;
+      final instance = AppLocalizations();
+      AppLocalizations._current = instance;
 
       return instance;
     });
   }
 
-  static S of(BuildContext context) {
-    final instance = S.maybeOf(context);
+  static AppLocalizations of(BuildContext context) {
+    final instance = AppLocalizations.maybeOf(context);
     assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+        'No instance of AppLocalizations present in the widget tree. Did you add AppLocalizations.delegate in localizationsDelegates?');
     return instance!;
   }
 
-  static S? maybeOf(BuildContext context) {
-    return Localizations.of<S>(context, S);
+  static AppLocalizations? maybeOf(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  /// `Loading...`
-  String get loading {
+  /// `Settings`
+  String get settingsTitle {
     return Intl.message(
-      'Loading...',
-      name: 'loading',
+      'Settings',
+      name: 'settingsTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Dark Mode`
-  String get darkMode {
+  /// `User Settings`
+  String get userSettingsTitle {
     return Intl.message(
-      'Dark Mode',
-      name: 'darkMode',
+      'User Settings',
+      name: 'userSettingsTitle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Light Mode`
-  String get lightMode {
+  /// `Language`
+  String get language {
     return Intl.message(
-      'Light Mode',
-      name: 'lightMode',
+      'Language',
+      name: 'language',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get english {
+    return Intl.message(
+      'English',
+      name: 'english',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Japanese`
+  String get japanese {
+    return Intl.message(
+      'Japanese',
+      name: 'japanese',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vietnamese`
+  String get vietnamese {
+    return Intl.message(
+      'Vietnamese',
+      name: 'vietnamese',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Theme`
+  String get theme {
+    return Intl.message(
+      'Theme',
+      name: 'theme',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Board Color`
+  String get boardColor {
+    return Intl.message(
+      'Board Color',
+      name: 'boardColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Piece Set`
+  String get pieceSet {
+    return Intl.message(
+      'Piece Set',
+      name: 'pieceSet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Application Settings`
+  String get applicationSettingsTitle {
+    return Intl.message(
+      'Application Settings',
+      name: 'applicationSettingsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Engine`
+  String get engine {
+    return Intl.message(
+      'Engine',
+      name: 'engine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hash Size`
+  String get hashSize {
+    return Intl.message(
+      'Hash Size',
+      name: 'hashSize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Book Settings`
+  String get bookSettingsTitle {
+    return Intl.message(
+      'Book Settings',
+      name: 'bookSettingsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coming Soon...`
+  String get comingSoon {
+    return Intl.message(
+      'Coming Soon...',
+      name: 'comingSoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Book`
+  String get book {
+    return Intl.message(
+      'Book',
+      name: 'book',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Evaluation`
+  String get evaluation {
+    return Intl.message(
+      'Evaluation',
+      name: 'evaluation',
       desc: '',
       args: [],
     );
   }
 }
 
-class AppLocalizationDelegate extends LocalizationsDelegate<S> {
+class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
   const AppLocalizationDelegate();
 
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
-      Locale.fromSubtags(languageCode: 'jp'),
+      Locale.fromSubtags(languageCode: 'ja'),
       Locale.fromSubtags(languageCode: 'vi'),
     ];
   }
@@ -95,7 +225,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   @override
   bool isSupported(Locale locale) => _isSupported(locale);
   @override
-  Future<S> load(Locale locale) => S.load(locale);
+  Future<AppLocalizations> load(Locale locale) => AppLocalizations.load(locale);
   @override
   bool shouldReload(AppLocalizationDelegate old) => false;
 

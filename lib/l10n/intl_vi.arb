@@ -1,6 +1,19 @@
 {
-    "@@locale": "vi",
-    "loading": "Đang tải...",
-    "darkMode": "Chế độ sáng",
-    "lightMode": "Chế độ tối"
-  }
+  "@@locale": "vi",
+  "settingsTitle": "Cài đặt",
+  "userSettingsTitle": "Cài đặt người dùng",
+  "language": "Ngôn ngữ",
+  "english": "Tiếng Anh",
+  "japanese": "Tiếng Nhật",
+  "vietnamese": "Tiếng Việt",
+  "theme": "Giao diện",
+  "boardColor": "Màu bàn cờ",
+  "pieceSet": "Bộ quân cờ",
+  "applicationSettingsTitle": "Cài đặt phần mềm",
+  "engine": "Máy cờ",
+  "hashSize": "Kích thước băm",
+  "bookSettingsTitle": "Cài đặt Book",
+  "comingSoon": "Sắp ra mắt...",
+  "book": "Book",
+  "evaluation": "Phân tích"
+}

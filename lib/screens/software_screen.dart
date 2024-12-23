@@ -90,7 +90,7 @@ class _SoftwareScreenState extends State<SoftwareScreen>
               // Di chuyển logic khởi tạo vào đây
               if (!_initialized) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  boardState.initEngine();
+                  // boardState.initEngine();
                   if (!boardState.isBoardInitialized) {
                     boardState.newGame();
                   }
