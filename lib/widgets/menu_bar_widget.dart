@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../screens/settings_screen.dart';
+
 class MenuBarWidget extends StatelessWidget {
   final Function(String) onMenuAction;
   final double iconPadding = 2.0; // Điều chỉnh padding
@@ -95,7 +97,10 @@ class MenuBarWidget extends StatelessWidget {
         ),
         InkWell(
           onTap: () {
-            onMenuAction('settings');
+             Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SettingsScreen()),
+          );
           },
           child: Padding(
             padding: EdgeInsets.all(iconPadding),

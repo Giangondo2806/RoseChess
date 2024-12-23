@@ -40,7 +40,7 @@ class _SoftwareScreenState extends State<SoftwareScreen>
     super.didChangeAppLifecycleState(state);
     final boardState = Provider.of<BoardState>(context, listen: false);
     if (state == AppLifecycleState.resumed) {
-      boardState.initEngine();
+      // boardState.initEngine();
       if (boardState.isBoardInitialized) {
         boardState.resumeGame();
       }
