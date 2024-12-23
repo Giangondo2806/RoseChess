@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/providers/book_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
+import 'package:rose_chess/screens/engine_loader_screen.dart';
 import '../generated/l10n.dart';
 import '../providers/arrow_state.dart';
 import '../providers/board_state.dart';
@@ -36,13 +37,18 @@ class _SoftwareScreenState extends State<SoftwareScreen>
     super.dispose();
   }
 
-  // @override
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   super.didChangeAppLifecycleState(state);
-  //   if (state == AppLifecycleState.resumed) {
-  //     _initialized = false;
-  //   }
-  // }
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => EngineLoaderScreen(),
+        ),
+      );
+      // Navigator.of(context).popUntil((route) => route.isFirst);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +91,12 @@ class _SoftwareScreenState extends State<SoftwareScreen>
               // Di chuyển logic khởi tạo vào đây
 
               if (!_initialized) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
+                WidgetsBinding.instance.addPostFrameCallback((_) async {
+                  if (boardState.isEngineInitializing) {
+                    boardState.dispose();
+                    await Future.delayed(Duration(milliseconds: 1000));
+                  }
+
                   boardState.setLang(lang);
                   boardState.initEngine();
                   if (!boardState.isBoardInitialized) {

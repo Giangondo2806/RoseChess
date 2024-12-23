@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rose_chess/models/engine_info.dart';
@@ -11,7 +13,6 @@ import '../generated/l10n.dart';
 import '../models/piece.dart';
 import '../models/board_position.dart';
 import '../constants.dart';
-import '../services/service_locator.dart';
 import '../utils/xiangqi.dart';
 import 'engine_analysis_state.dart';
 
@@ -44,6 +45,7 @@ class BoardState with ChangeNotifier {
   late ArrowState arrowState;
   late NavigationState navigationState;
   late AppLocalizations lang;
+  StreamSubscription<String>? _engineOutputSubscription;
 
   BoardState(this.engineFileName, this.engineAnalysisState, this.arrowState,
       this.bookState, this.navigationState) {
@@ -260,10 +262,12 @@ class BoardState with ChangeNotifier {
     _isEngineInitializing = true;
     try {
       if (_roseEngine == null || _roseEngine?.state.value == RoseState.error) {
-        _roseEngine = await getIt.getAsync<Rose>();
+        _roseEngine = await roseAsync();
       }
+
       if (_roseEngine != null) {
-        _roseEngine?.stdout.listen((line) {
+        _engineOutputSubscription?.cancel();
+        _engineOutputSubscription =_roseEngine?.stdout.listen((line) {
           if (line.trim() == 'readyok') {
             if (true) {
               _readyOkReceived = true;
@@ -275,8 +279,13 @@ class BoardState with ChangeNotifier {
 
             if (info.moves != '') {
               // engineAnalysis.insert(0, info);
-              engineAnalysisState.addAnalysis(info);
-              _extractMoves(line);
+              try {
+                engineAnalysisState.addAnalysis(info);
+                _extractMoves(line);
+              } catch (e) {
+                print('co loi');
+              }
+
               // notifyListeners(); // Thông báo cho UI cập nhật
             }
           }
@@ -364,8 +373,11 @@ class BoardState with ChangeNotifier {
 
   @override
   void dispose() {
-    pauseGame();
+    _engineOutputSubscription?.cancel();
     _roseEngine?.dispose();
+    _roseEngine = null;
+    _isEngineInitializing = false;
+    // getIt.unregister<Rose>();
     super.dispose();
   }
 }
