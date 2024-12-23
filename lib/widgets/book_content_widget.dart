@@ -21,7 +21,7 @@ class BookContent extends StatelessWidget {
           delegate: _SliverAppBarDelegate(
             child: Container(
               height: 40,
-              color: userSettingsProvider.currentTheme.scaffoldBackgroundColor,
+              color: userSettingsProvider.currentTheme?.scaffoldBackgroundColor,
               padding: const EdgeInsets.all(4.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -35,7 +35,7 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
 
         final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
         final isDarkMode =
-            userSettingsProvider.currentTheme.brightness == Brightness.dark;
+            userSettingsProvider.currentTheme!.brightness == Brightness.dark;
 
         return Center(
           child: Container(

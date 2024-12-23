@@ -1361,8 +1361,8 @@ class Xiangqi {
     return true;
   }
 
-  Move? move(dynamic moveInput, AppLocalizations lang,
-      {bool sloppy = false, List<Move>? canMoves}) {
+  Move? move(dynamic moveInput,
+      {bool sloppy = false, List<Move>? canMoves,AppLocalizations? lang}) {
     bool sloppy_ = sloppy;
     Move? moveObj;
     if (moveInput is String) {
@@ -1386,7 +1386,7 @@ class Xiangqi {
       moveNumber++;
     }
 
-    moveObj.san = moveToJsChinese(moveObj, lang);
+    moveObj.san = moveToJsChinese(moveObj, lang: lang);
     Move prettyMove = makePretty(moveObj);
 
     makeMove(moveObj);
@@ -1519,12 +1519,12 @@ class Xiangqi {
     return {'row': row, 'col': col};
   }
 
-  String getSanfromNotation(String notation, AppLocalizations? lang) {
+  String getSanfromNotation(String notation, {AppLocalizations? lang}) {
     Move move = _buildMoveFromInput(input: notation);
-    return moveToJsChinese(move, lang);
+    return moveToJsChinese(move, lang: lang);
   }
 
-  String moveToJsChinese(Move move, AppLocalizations? lang) {
+  String moveToJsChinese(Move move, {AppLocalizations? lang}) {
     Map<String, String> figureNames = {
       'P': lang!.P,
       'C': lang.C,
@@ -1687,9 +1687,9 @@ class Xiangqi {
     return s1 + s2;
   }
 
-  String simpleMove(dynamic input, AppLocalizations? lang) {
+  String simpleMove(dynamic input, {AppLocalizations? lang}) {
     final move = _buildMoveFromInput(input: input);
-    final san = moveToJsChinese(move, lang);
+    final san = moveToJsChinese(move, lang: lang);
     if (getCurrentTurn() == 'r') {
       moveNumber++;
     }
@@ -1710,7 +1710,7 @@ String getSanMovesFromfenAndNotations(
   final List<String> moves = chainNotation.split(" ");
   String sans = '';
   for (int i = 0; i < moves.length; i++) {
-    String san = xiangqi.simpleMove(moves[i], lang);
+    String san = xiangqi.simpleMove(moves[i], lang: lang);
     sans += ' $san';
   }
   return sans;

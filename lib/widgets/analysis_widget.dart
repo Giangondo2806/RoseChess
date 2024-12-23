@@ -44,7 +44,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
       children: [
         Container(
           color: theme == darkTheme
-              ? theme.appBarTheme.backgroundColor
+              ? theme!.appBarTheme.backgroundColor
               : Color.fromARGB(255, 239, 232, 223),
           child: TabBar(
             controller: _tabController,

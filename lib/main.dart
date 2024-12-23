@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:rose_chess/generated/l10n.dart';
+
+import 'generated/l10n.dart';
+import 'providers/isar_service.dart';
 import 'providers/user_settings_provider.dart';
 import 'screens/engine_loader_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final isarService = await IsarService.create();
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => UserSettingsProvider(),
+    MultiProvider(
+      providers: [
+        Provider<IsarService>(
+          create: (_) => isarService, // Cung cấp IsarService
+        ),
+        ChangeNotifierProvider<UserSettingsProvider>(
+          create: (context) => UserSettingsProvider(
+            Provider.of<IsarService>(context,
+                listen: false), // Truyền IsarService vào UserSettingsProvider
+          ),
+        ),
+      ],
       child: const MyApp(),
     ),
   );
@@ -20,6 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
+   
     return MaterialApp(
       localizationsDelegates: [
         AppLocalizationDelegate(),
@@ -37,4 +52,6 @@ class MyApp extends StatelessWidget {
       home: const EngineLoaderScreen(), // Dẫn đến EngineLoaderScreen
     );
   }
+
+
 }

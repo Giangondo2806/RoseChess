@@ -8,6 +8,7 @@
     "test": "test"
   },
   "scripts": {
+    "gendb": "dart run build_runner build"
    
   },
   "keywords": [],

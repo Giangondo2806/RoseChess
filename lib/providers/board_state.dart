@@ -189,7 +189,7 @@ class BoardState with ChangeNotifier {
                 .clearAnalysis(); // Use directly instead of Provider
             xiangqi.simpleMove(
                 {'from': selectedPosition!.notation, 'to': position.notation},
-                lang);
+                lang: lang);
             bookState.getbook(xiangqi.generateFen(), lang);
             _movePiece(selectedPosition!, position, selectedPiece);
             _engineSearch(
