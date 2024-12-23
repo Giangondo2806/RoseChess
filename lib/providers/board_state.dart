@@ -49,6 +49,7 @@ class BoardState with ChangeNotifier {
     pauseGame();
     engineAnalysisState.clearAnalysis();
     arrowState.clearArrows();
+    navigationState.clearNavigation();
     _isBoardInitialized = false;
     _initializeBoard();
     notifyListeners();
@@ -185,7 +186,7 @@ class BoardState with ChangeNotifier {
             _engineSearch(
                 '$initFen - - moves ${xiangqi.getHistory().join(' ')}');
             arrowState.clearArrows();
-            navigationState.setMove(xiangqi.getHistory(verbose: true));
+            navigationState.setNavigation(xiangqi.getHistory(verbose: true));
             canMoves = [];
           } else {
             selectedPosition = null;

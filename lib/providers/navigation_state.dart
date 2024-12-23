@@ -13,12 +13,13 @@ class NavigationState with ChangeNotifier {
   List<Map<String, Move?>> _moves = [];
   List<Map<String, Move?>> get moves => _moves;
 
-  void clearBooks() {
+  void clearNavigation() {
     _moves.clear();
     notifyListeners();
   }
 
-  void setMove(List<dynamic> data) {
+  void setNavigation(List<dynamic> data) {
     _moves = groupMoves(data);
+    notifyListeners();
   }
 }
