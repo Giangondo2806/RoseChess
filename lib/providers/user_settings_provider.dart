@@ -1,6 +1,7 @@
+import 'dart:ui';
+
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:rose_chess/database/database.dart';
 import 'package:rose_chess/services/service_locator.dart';
 import '../database/repositories/config_repository.dart';
@@ -8,7 +9,8 @@ import '../themes/dark_theme.dart';
 import '../themes/light_theme.dart';
 
 class UserSettingsProvider with ChangeNotifier {
-  late Locale _currentLocale = Locale(Intl.systemLocale.substring(0, 2));
+  // Sử dụng Localizations để lấy locale từ context
+  late Locale _currentLocale = const Locale('en'); // Giá trị mặc định
   late ThemeData _currentTheme = darkTheme;
   bool _isLoading = true;
 
@@ -24,7 +26,11 @@ class UserSettingsProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    var langSystem = Intl.systemLocale.substring(0, 2);
+    // Lấy ngôn ngữ từ hệ thống
+    // Lấy danh sách các ngôn ngữ ưu tiên
+    String langSystem = PlatformDispatcher.instance.locale.languageCode;
+
+
     final configRepo = getIt<ConfigRepository>();
     ConfigData? config = await configRepo.getLastConfig();
 
@@ -47,6 +53,7 @@ class UserSettingsProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
 
   Future<void> changeLanguage(String newLang) async {
     final configRepo = getIt<ConfigRepository>();
