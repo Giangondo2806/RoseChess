@@ -35,7 +35,6 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
     final themeProvider = Provider.of<ThemeProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final navigationWidth = screenWidth / 2;
-    final contentWidth = screenWidth - navigationWidth;
 
     return Column(
       children: [
@@ -53,66 +52,57 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
         Expanded(
           child: Stack(
             children: [
+              // Row chứa TabBarView
               Row(
                 children: [
                   Expanded(
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: _showNavigation ? contentWidth : screenWidth,
-                      child: TabBarView(
-                        controller: _tabController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          EngineAnalysisContent(),
-                          const BookContent(),
-                          const GraphContent(),
-                        ],
-                      ),
+                    child: TabBarView(
+                      controller: _tabController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        EngineAnalysisContent(),
+                        const BookContent(),
+                        const GraphContent(),
+                      ],
                     ),
                   ),
                 ],
               ),
-              Positioned(
-                right: 0,
+              // NavigationContent
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                right: _showNavigation ? 0 : -navigationWidth,
                 top: 0,
                 bottom: 0,
                 width: navigationWidth,
-                child: _showNavigation
-                    ? const NavigationContent()
-                    : Container(), // Ẩn NavigationContent khi _showNavigation là false
+                curve: Curves.easeInOut,
+                child: const NavigationContent(),
               ),
+              // Nút toggle
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
                 bottom: 10,
-                right: _showNavigation ? navigationWidth : 10,
-                // left: _showNavigation ? 5 : null,
-                // Đặt width cố định cho AnimatedPositioned
+                right: _showNavigation ? navigationWidth + 10 : 10,
                 width: 40,
+                curve: Curves.easeInOut,
                 child: SizedBox(
                   height: 40,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    decoration: BoxDecoration(
-                        color: _showNavigation
-                            ? Colors.red
-                            : Colors.grey, // Màu đỏ khi mở, xám khi đóng
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () {
-                          setState(() {
-                            _showNavigation = !_showNavigation;
-                          });
-                        },
-                        child: Icon(
-                          _showNavigation
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          size: 20,
-                          color: Colors.white,
-                        ),
+                  child: Material(
+                    color: _showNavigation ? Colors.red : Colors.grey,
+                    borderRadius: BorderRadius.circular(8),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        setState(() {
+                          _showNavigation = !_showNavigation;
+                        });
+                      },
+                      child: Icon(
+                        _showNavigation
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        size: 20,
+                        color: Colors.white,
                       ),
                     ),
                   ),
