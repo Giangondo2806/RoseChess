@@ -33,5 +33,8 @@
   "horizontally": "-",
   "front": "t",
   "rear": "s",
-  "middle": "8g"
+  "middle": "8g",
+  "depth": "Độ sâu",
+  "score": "điểm số",
+  "knps": "nps"
 }

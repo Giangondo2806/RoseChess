@@ -240,10 +240,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Score`
+  /// `score`
   String get score {
     return Intl.message(
-      'Score',
+      'score',
       name: 'score',
       desc: '',
       args: [],
@@ -385,6 +385,26 @@ class AppLocalizations {
     return Intl.message(
       '=',
       name: 'middle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Depth`
+  String get depth {
+    return Intl.message(
+      'Depth',
+      name: 'depth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `nps`
+  String get nps {
+    return Intl.message(
+      'nps',
+      name: 'nps',
       desc: '',
       args: [],
     );

@@ -15,7 +15,7 @@ class BookState with ChangeNotifier {
   }
 
   Future<void> getbook(String fen, AppLocalizations lang) async {
-    await getChessdbMoves(fen, lang).then((data) => {_moves = data});
+    await getChessdbMoves(fen, lang: lang).then((data) => {_moves = data});
     notifyListeners();
   }
 }

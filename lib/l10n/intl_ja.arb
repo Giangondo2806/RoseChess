@@ -32,5 +32,8 @@
   "horizontally": "平",
   "front": "前",
   "rear": "後",
-  "middle": "中"
+  "middle": "中",
+  "depth": "深さ",
+  "score": "評価値",
+  "nps": "nps"
 }

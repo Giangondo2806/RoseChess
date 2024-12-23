@@ -33,5 +33,8 @@
   "horizontally": "=",
   "front": "+",
   "rear": "-",
-  "middle": "="
+  "middle": "=",
+  "depth":"Depth",
+  "score": "score",
+  "nps": "nps"
 }

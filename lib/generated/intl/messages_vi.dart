@@ -38,6 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Cài đặt Book"),
         "comingSoon": MessageLookupByLibrary.simpleMessage("Sắp ra mắt..."),
         "currentLang": MessageLookupByLibrary.simpleMessage("vi"),
+        "depth": MessageLookupByLibrary.simpleMessage("Độ sâu"),
         "engine": MessageLookupByLibrary.simpleMessage("Máy cờ"),
         "english": MessageLookupByLibrary.simpleMessage("Tiếng Anh"),
         "evaluation": MessageLookupByLibrary.simpleMessage("Phân tích"),
@@ -52,7 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "move": MessageLookupByLibrary.simpleMessage("Nước đi"),
         "pieceSet": MessageLookupByLibrary.simpleMessage("Bộ quân cờ"),
         "rear": MessageLookupByLibrary.simpleMessage("s"),
-        "score": MessageLookupByLibrary.simpleMessage("Điểm"),
+        "score": MessageLookupByLibrary.simpleMessage("điểm số"),
         "settingsTitle": MessageLookupByLibrary.simpleMessage("Cài đặt"),
         "theme": MessageLookupByLibrary.simpleMessage("Giao diện"),
         "userSettingsTitle":

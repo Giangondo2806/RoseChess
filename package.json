@@ -8,6 +8,8 @@
     "test": "test"
   },
   "scripts": {
+    "gendb": "dart run build_runner build",
+    "i18n": "flutter pub run intl_utils:generate"
    
   },
   "keywords": [],

@@ -11,9 +11,8 @@ class BookContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bookState = Provider.of<BookState>(context);
-    final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
+    final theme = Provider.of<UserSettingsProvider>(context).currentTheme;
     final lang = AppLocalizations.of(context);
-
     return CustomScrollView(
       slivers: <Widget>[
         SliverPersistentHeader(
@@ -21,7 +20,7 @@ class BookContent extends StatelessWidget {
           delegate: _SliverAppBarDelegate(
             child: Container(
               height: 40,
-              color: userSettingsProvider.currentTheme.scaffoldBackgroundColor,
+              color: theme.scaffoldBackgroundColor,
               padding: const EdgeInsets.all(4.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -37,7 +36,7 @@ class BookContent extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center),
                   ),
-                   Expanded(
+                  Expanded(
                     child: Text(lang.winrate,
                         style: TextStyle(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center),
@@ -45,6 +44,7 @@ class BookContent extends StatelessWidget {
                 ],
               ),
             ),
+            theme: theme,
           ),
         ),
         SliverList(
@@ -69,9 +69,10 @@ class BookContent extends StatelessWidget {
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate({required this.child});
+  _SliverAppBarDelegate({required this.child, required this.theme});
 
   final Widget child;
+  final ThemeData theme;
 
   @override
   double get minExtent => 40; // Chiều cao tối thiểu của header
@@ -87,6 +88,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
+    return oldDelegate.theme != theme;
   }
 }

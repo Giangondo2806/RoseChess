@@ -38,17 +38,17 @@ class _SoftwareScreenState extends State<SoftwareScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    final boardState = Provider.of<BoardState>(context, listen: false);
-    if (state == AppLifecycleState.resumed) {
-      // boardState.initEngine();
-      if (boardState.isBoardInitialized) {
-        boardState.resumeGame();
-      }
-    } else if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.paused) {
-      boardState.pauseGame();
-    }
+    // super.didChangeAppLifecycleState(state);
+    // final boardState = Provider.of<BoardState>(context, listen: false);
+    // if (state == AppLifecycleState.resumed) {
+    //   // boardState.initEngine();
+    //   if (boardState.isBoardInitialized) {
+    //     boardState.resumeGame();
+    //   }
+    // } else if (state == AppLifecycleState.inactive ||
+    //     state == AppLifecycleState.paused) {
+    //   boardState.pauseGame();
+    // }
   }
 
   @override
@@ -93,7 +93,7 @@ class _SoftwareScreenState extends State<SoftwareScreen>
 
               if (!_initialized) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  // boardState.initEngine();
+                  boardState.initEngine();
 
                   if (!boardState.isBoardInitialized) {
                      boardState.setLang(lang);
