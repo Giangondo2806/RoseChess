@@ -1,38 +1,73 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart'; // Xóa import shared_preferences
+import 'package:intl/intl.dart';
+import 'package:rose_chess/database/database.dart';
+import 'package:rose_chess/services/service_locator.dart';
+import '../database/repositories/config_repository.dart';
 import '../themes/dark_theme.dart';
 import '../themes/light_theme.dart';
 
 class UserSettingsProvider with ChangeNotifier {
-  // Ngôn ngữ
-  Locale _currentLocale = Locale('en'); // Ngôn ngữ mặc định
+  late Locale _currentLocale = Locale(Intl.systemLocale.substring(0, 2));
+  late ThemeData _currentTheme = darkTheme;
+  bool _isLoading = true;
+
   Locale get currentLocale => _currentLocale;
-
-  // Theme
-  ThemeData _currentTheme = lightTheme; // Theme mặc định
   ThemeData get currentTheme => _currentTheme;
+  bool get isLoading => _isLoading;
 
-  // Các cài đặt khác của người dùng có thể thêm vào đây
-  // ...
+  UserSettingsProvider() {
+    _loadSettings();
+  }
 
-  // Bỏ hàm _loadSettings() vì không dùng SharedPreferences nữa
+  Future<void> _loadSettings() async {
+    _isLoading = true;
+    notifyListeners();
 
-  // Thay đổi ngôn ngữ
-  void changeLanguage(String languageCode) {
-    _currentLocale = Locale(languageCode);
-    // final prefs = await SharedPreferences.getInstance(); // Xóa dòng này
-    // await prefs.setString('languageCode', languageCode); // Xóa dòng này
+    var langSystem = Intl.systemLocale.substring(0, 2);
+    final configRepo = getIt<ConfigRepository>();
+    ConfigData? config = await configRepo.getLastConfig();
+
+    if (config != null) {
+      _currentLocale = Locale(config.lang);
+      _currentTheme = config.theme == 'dark' ? darkTheme : lightTheme;
+    } else {
+      if (!['en', 'vi', 'ja'].contains(langSystem)) {
+        langSystem = 'en';
+      }
+      _currentTheme = darkTheme;
+      _currentLocale = Locale(langSystem);
+      final defaultConfig = ConfigCompanion(
+        lang: Value(langSystem),
+        theme: const Value('dark'),
+      );
+      await configRepo.saveConfig(defaultConfig);
+    }
+
+    _isLoading = false;
     notifyListeners();
   }
 
-  // Thay đổi theme
-  void toggleTheme() {
-    _currentTheme = _currentTheme == lightTheme ? darkTheme : lightTheme;
-    // final prefs = await SharedPreferences.getInstance(); // Xóa dòng này
-    // await prefs.setBool('isDarkMode', _currentTheme == darkTheme); // Xóa dòng này
-    notifyListeners();
+  Future<void> changeLanguage(String newLang) async {
+    final configRepo = getIt<ConfigRepository>();
+    ConfigData? config = await configRepo.getLastConfig(); // Lấy ConfigData có id lớn nhất
+    if (config != null) {
+      final updatedConfig = config.copyWith(lang: newLang);
+      await configRepo.saveConfig(updatedConfig);
+      _currentLocale = Locale(newLang);
+      notifyListeners();
+    }
   }
 
-  // Các hàm thay đổi cài đặt khác
-  // ...
+  Future<void> toggleTheme() async {
+    final configRepo = getIt<ConfigRepository>();
+    ConfigData? config = await configRepo.getLastConfig(); // Lấy ConfigData có id lớn nhất
+    if (config != null) {
+      final newTheme = _currentTheme == darkTheme ? 'light' : 'dark';
+      final updatedConfig = config.copyWith(theme: newTheme);
+      _currentTheme = _currentTheme == darkTheme ? lightTheme : darkTheme;
+      await configRepo.saveConfig(updatedConfig);
+      notifyListeners();
+    }
+  }
 }

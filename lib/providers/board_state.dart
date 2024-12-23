@@ -11,6 +11,7 @@ import '../generated/l10n.dart';
 import '../models/piece.dart';
 import '../models/board_position.dart';
 import '../constants.dart';
+import '../services/service_locator.dart';
 import '../utils/xiangqi.dart';
 import 'engine_analysis_state.dart';
 
@@ -259,7 +260,7 @@ class BoardState with ChangeNotifier {
     _isEngineInitializing = true;
     try {
       if (_roseEngine == null || _roseEngine?.state.value == RoseState.error) {
-        _roseEngine = await roseAsync();
+        _roseEngine  = await getIt.getAsync<Rose>();
       }
       if (_roseEngine != null) {
         _roseEngine?.stdout.listen((line) {

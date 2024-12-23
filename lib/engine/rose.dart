@@ -19,7 +19,8 @@ class Rose {
   late StreamSubscription _mainSubscription;
   late StreamSubscription _stdoutSubscription;
 
-  Rose._({this.completer}) {
+  Rose({this.completer}) {
+    debugPrint('[Rose] Constructor called'); 
     _mainSubscription =
         _mainPort.listen((message) => _cleanUp(message is int ? message : 1));
     _stdoutSubscription = _stdoutPort.listen((message) {
@@ -43,21 +44,6 @@ class Rose {
         _cleanUp(1);
       },
     );
-  }
-
-  static Rose? _instance;
-
-  /// Creates a C++ engine.
-  ///
-  /// This may throws a [StateError] if an active instance is being used.
-  /// Owner must [dispose] it before a new instance can be created.
-  factory Rose() {
-    if (_instance != null) {
-      throw StateError('Multiple instances are not supported, yet.');
-    }
-
-    _instance = Rose._();
-    return _instance!;
   }
 
   /// The current state of the underlying C++ engine.
@@ -85,24 +71,11 @@ class Rose {
 
   void _cleanUp(int exitCode) {
     _stdoutController.close();
-
     _mainSubscription.cancel();
     _stdoutSubscription.cancel();
 
     _state._setValue(exitCode == 0 ? RoseState.disposed : RoseState.error);
-
-    _instance = null;
   }
-}
-
-Future<Rose> roseAsync() {
-  if (Rose._instance != null) {
-    return Future.error(StateError('Only one instance can be used at a time'));
-  }
-
-  final completer = Completer<Rose>();
-  Rose._instance = Rose._(completer: completer);
-  return completer.future;
 }
 
 class _RoseState extends ChangeNotifier implements ValueListenable<RoseState> {

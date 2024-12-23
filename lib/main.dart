@@ -6,8 +6,27 @@ import 'providers/user_settings_provider.dart';
 import 'screens/engine_loader_screen.dart';
 import 'services/service_locator.dart';
 
-void main() {
-  setupDatabase();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  setupLocator();
+  await getIt.allReady();
+  assert(() {
+    // This code will only run in debug mode
+    void hotReload() async {
+      print('Hot reloading...');
+      await resetLocator();
+      print('Hot reload completed.');
+    }
+
+    // This is a hack to get the hot reload to work
+    // by calling the hotReload function whenever the
+    // application is reloaded.
+    hotReload();
+    
+
+    return true;
+  }());
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => UserSettingsProvider(),
