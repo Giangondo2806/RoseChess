@@ -34,6 +34,8 @@ class BoardState with ChangeNotifier {
   bool _isEngineInitializing = false;
 
   Rose? get roseEngine => _roseEngine;
+
+  bool get isEngineInitializing => _isEngineInitializing;
   bool get engineConnected => _connectedEngine;
   bool get engineReady => _readyOkReceived;
   bool get isBoardInitialized => _isBoardInitialized;
@@ -47,8 +49,6 @@ class BoardState with ChangeNotifier {
       this.bookState, this.navigationState) {
     board = {};
   }
-
-
 
   setLang(AppLocalizations inputLang) {
     lang = inputLang;
@@ -260,7 +260,7 @@ class BoardState with ChangeNotifier {
     _isEngineInitializing = true;
     try {
       if (_roseEngine == null || _roseEngine?.state.value == RoseState.error) {
-        _roseEngine  = await getIt.getAsync<Rose>();
+        _roseEngine = await getIt.getAsync<Rose>();
       }
       if (_roseEngine != null) {
         _roseEngine?.stdout.listen((line) {
@@ -322,7 +322,11 @@ class BoardState with ChangeNotifier {
   }
 
   void _extractMoves(String line) {
-    arrowState.addArrows(line);
+    try {
+      arrowState.addArrows(line);
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> _settingEngine() async {

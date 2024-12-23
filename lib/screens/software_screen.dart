@@ -36,20 +36,13 @@ class _SoftwareScreenState extends State<SoftwareScreen>
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // super.didChangeAppLifecycleState(state);
-    // final boardState = Provider.of<BoardState>(context, listen: false);
-    // if (state == AppLifecycleState.resumed) {
-    //   // boardState.initEngine();
-    //   if (boardState.isBoardInitialized) {
-    //     boardState.resumeGame();
-    //   }
-    // } else if (state == AppLifecycleState.inactive ||
-    //     state == AppLifecycleState.paused) {
-    //   boardState.pauseGame();
-    // }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   super.didChangeAppLifecycleState(state);
+  //   if (state == AppLifecycleState.resumed) {
+  //     _initialized = false;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -93,13 +86,10 @@ class _SoftwareScreenState extends State<SoftwareScreen>
 
               if (!_initialized) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
+                  boardState.setLang(lang);
                   boardState.initEngine();
-
                   if (!boardState.isBoardInitialized) {
-                     boardState.setLang(lang);
                     boardState.newGame();
-
-                   
                   }
                 });
                 _initialized = true;
