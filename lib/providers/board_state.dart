@@ -7,6 +7,7 @@ import 'package:rose_chess/providers/navigation_state.dart';
 
 import '../engine/rose.dart';
 import '../engine/rose_state.dart';
+import '../generated/l10n.dart';
 import '../models/piece.dart';
 import '../models/board_position.dart';
 import '../constants.dart';
@@ -39,10 +40,17 @@ class BoardState with ChangeNotifier {
   late BookState bookState;
   late ArrowState arrowState;
   late NavigationState navigationState;
+  late AppLocalizations lang;
 
   BoardState(this.engineFileName, this.engineAnalysisState, this.arrowState,
       this.bookState, this.navigationState) {
     board = {};
+  }
+
+
+
+  setLang(AppLocalizations inputLang) {
+    lang = inputLang;
   }
 
   void newGame() {
@@ -57,12 +65,12 @@ class BoardState with ChangeNotifier {
 
   void _initializeBoard() {
     if (_isBoardInitialized) return;
-
+    print(lang);
     piecePositions = {};
     board = {};
     xiangqi = Xiangqi();
     initFen = xiangqi.generateFen();
-    bookState.getbook(initFen);
+    bookState.getbook(initFen, lang);
 
     var initialBoard = xiangqi.getBoard();
     int idCounter = 0;
@@ -180,8 +188,9 @@ class BoardState with ChangeNotifier {
             engineAnalysisState
                 .clearAnalysis(); // Use directly instead of Provider
             xiangqi.simpleMove(
-                {'from': selectedPosition!.notation, 'to': position.notation});
-            bookState.getbook(xiangqi.generateFen());
+                {'from': selectedPosition!.notation, 'to': position.notation},
+                lang);
+            bookState.getbook(xiangqi.generateFen(), lang);
             _movePiece(selectedPosition!, position, selectedPiece);
             _engineSearch(
                 '$initFen - - moves ${xiangqi.getHistory().join(' ')}');
@@ -260,8 +269,8 @@ class BoardState with ChangeNotifier {
               notifyListeners();
             }
           } else if (line.startsWith('info depth')) {
-            final info =
-                parseEngineInfo(fen: xiangqi.generateFen(), input: line);
+            final info = parseEngineInfo(
+                fen: xiangqi.generateFen(), input: line, lang: lang);
 
             if (info.moves != '') {
               // engineAnalysis.insert(0, info);

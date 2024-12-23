@@ -22,24 +22,42 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "A": MessageLookupByLibrary.simpleMessage("S"),
+        "B": MessageLookupByLibrary.simpleMessage("V"),
+        "C": MessageLookupByLibrary.simpleMessage("P"),
+        "K": MessageLookupByLibrary.simpleMessage("Tg"),
+        "N": MessageLookupByLibrary.simpleMessage("M"),
+        "P": MessageLookupByLibrary.simpleMessage("B"),
+        "R": MessageLookupByLibrary.simpleMessage("X"),
         "applicationSettingsTitle":
             MessageLookupByLibrary.simpleMessage("Cài đặt phần mềm"),
+        "backward": MessageLookupByLibrary.simpleMessage("/"),
         "boardColor": MessageLookupByLibrary.simpleMessage("Màu bàn cờ"),
         "book": MessageLookupByLibrary.simpleMessage("Book"),
         "bookSettingsTitle":
             MessageLookupByLibrary.simpleMessage("Cài đặt Book"),
         "comingSoon": MessageLookupByLibrary.simpleMessage("Sắp ra mắt..."),
+        "currentLang": MessageLookupByLibrary.simpleMessage("vi"),
         "engine": MessageLookupByLibrary.simpleMessage("Máy cờ"),
         "english": MessageLookupByLibrary.simpleMessage("Tiếng Anh"),
         "evaluation": MessageLookupByLibrary.simpleMessage("Phân tích"),
+        "forward": MessageLookupByLibrary.simpleMessage("."),
+        "front": MessageLookupByLibrary.simpleMessage("t"),
+        "graph": MessageLookupByLibrary.simpleMessage("Biểu đồ"),
         "hashSize": MessageLookupByLibrary.simpleMessage("Kích thước băm"),
+        "horizontally": MessageLookupByLibrary.simpleMessage("-"),
         "japanese": MessageLookupByLibrary.simpleMessage("Tiếng Nhật"),
         "language": MessageLookupByLibrary.simpleMessage("Ngôn ngữ"),
+        "middle": MessageLookupByLibrary.simpleMessage("8g"),
+        "move": MessageLookupByLibrary.simpleMessage("Nước đi"),
         "pieceSet": MessageLookupByLibrary.simpleMessage("Bộ quân cờ"),
+        "rear": MessageLookupByLibrary.simpleMessage("s"),
+        "score": MessageLookupByLibrary.simpleMessage("Điểm"),
         "settingsTitle": MessageLookupByLibrary.simpleMessage("Cài đặt"),
         "theme": MessageLookupByLibrary.simpleMessage("Giao diện"),
         "userSettingsTitle":
             MessageLookupByLibrary.simpleMessage("Cài đặt người dùng"),
-        "vietnamese": MessageLookupByLibrary.simpleMessage("Tiếng Việt")
+        "vietnamese": MessageLookupByLibrary.simpleMessage("Tiếng Việt"),
+        "winrate": MessageLookupByLibrary.simpleMessage("Tỉ lệ")
       };
 }

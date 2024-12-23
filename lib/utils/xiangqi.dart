@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import '../generated/l10n.dart';
+
 class XiangqiColor {
   static const b = 'b';
   static const r = 'r';
@@ -1357,7 +1361,8 @@ class Xiangqi {
     return true;
   }
 
-  Move? move(dynamic moveInput, {bool sloppy = false, List<Move>? canMoves}) {
+  Move? move(dynamic moveInput, AppLocalizations lang,
+      {bool sloppy = false, List<Move>? canMoves}) {
     bool sloppy_ = sloppy;
     Move? moveObj;
     if (moveInput is String) {
@@ -1381,7 +1386,7 @@ class Xiangqi {
       moveNumber++;
     }
 
-    moveObj.san = moveToJsChinese(moveObj);
+    moveObj.san = moveToJsChinese(moveObj, lang);
     Move prettyMove = makePretty(moveObj);
 
     makeMove(moveObj);
@@ -1514,32 +1519,32 @@ class Xiangqi {
     return {'row': row, 'col': col};
   }
 
-  String getSanfromNotation(String notation) {
+  String getSanfromNotation(String notation, AppLocalizations? lang) {
     Move move = _buildMoveFromInput(input: notation);
-    return moveToJsChinese(move);
+    return moveToJsChinese(move, lang);
   }
 
-  String moveToJsChinese(Move move) {
+  String moveToJsChinese(Move move, AppLocalizations? lang) {
     Map<String, String> figureNames = {
-      'P': 'B',
-      'C': 'P',
-      'R': 'X',
-      'N': 'M',
-      'B': 'V',
-      'A': 'S',
-      'K': 'Tg',
+      'P': lang!.P,
+      'C': lang.C,
+      'R': lang.R,
+      'N': lang.N,
+      'B': lang.B,
+      'A': lang.A,
+      'K': lang.K,
     };
 
     Map<String, List<String>> figureDir = {
-      'r': ['.', '/'], // [forward, backward]
-      'b': ['/', '.'], // [forward, backward]
-      'p': ['-']
+      'r': [lang.forward, lang.backward], // [forward, backward]
+      'b': [lang.backward, lang.forward], // [forward, backward]
+      'p': [lang.horizontally]
     };
 
     Map<String, List<String>> figureOrd = {
-      'r': ['前', '後'], // [front, rear]
-      'b': ['後', '前'], // [front, rear]
-      'm': ['中']
+      'r': [lang.front, lang.rear], // [front, rear]
+      'b': [lang.rear, lang.front], // [front, rear]
+      'm': [lang.middle]
     };
 
     Map<String, List<String>> figureValues = {
@@ -1610,11 +1615,15 @@ class Xiangqi {
         if (y.compareTo(fromY) * (turn == 'r' ? -1 : 1) > 0) {
           // Nằm trước quân đang xét
           if (cr == 0) {
-            s1 = figureOrd[turn]![0] + pieceName; // tr/s + tên quân
+            s1 = lang.currentLang== 'vi'
+                ? pieceName + figureOrd[turn]![0]
+                : figureOrd[turn]![0] + pieceName; // tr/s + tên quân
             c++;
           } else {
-            s1 = figureOrd[turn]![0] +
-                figureValues[turn]![8 - fromX]; // tr/s + số thứ tự cột
+            s1 = lang.currentLang== 'vi'
+                ? figureValues[turn]![8 - fromX] + figureOrd[turn]![0]
+                : figureOrd[turn]![0] +
+                    figureValues[turn]![8 - fromX]; // tr/s + số thứ tự cột
             c++;
           }
         } else if (y == fromY) {
@@ -1628,7 +1637,9 @@ class Xiangqi {
           // Nằm sau quân đang xét
           if (cr == 0) {
             if (c == 0) {
-              s1 = figureOrd[turn]![1] + pieceName; // s/tr + tên quân
+              s1 = lang.currentLang== 'vi'
+                  ? pieceName + figureOrd[turn]![1]
+                  : figureOrd[turn]![1] + pieceName; // s/tr + tên quân
             } else {
               // Giữ nguyên 'g' + tên quân
               s1 = 'g$pieceName';
@@ -1636,8 +1647,10 @@ class Xiangqi {
             }
           } else {
             if (c == 0) {
-              s1 = figureOrd[turn]![1] +
-                  figureValues[turn]![8 - fromX]; // s/tr + số thứ tự cột
+              s1 = lang.currentLang== 'vi'
+                  ? figureValues[turn]![8 - fromX] + figureOrd[turn]![1]
+                  : figureOrd[turn]![1] +
+                      figureValues[turn]![8 - fromX]; // s/tr + số thứ tự cột
             } else {
               // Giữ nguyên 'g' + số thứ tự cột
               s1 = 'g${figureValues[turn]![8 - fromX]}';
@@ -1674,9 +1687,9 @@ class Xiangqi {
     return s1 + s2;
   }
 
-  String simpleMove(dynamic input) {
+  String simpleMove(dynamic input, AppLocalizations? lang) {
     final move = _buildMoveFromInput(input: input);
-    final san = moveToJsChinese(move);
+    final san = moveToJsChinese(move, lang);
     if (getCurrentTurn() == 'r') {
       moveNumber++;
     }
@@ -1690,26 +1703,26 @@ class Xiangqi {
 }
 
 String getSanMovesFromfenAndNotations(
-    {required String fen, required String chainNotation}) {
+    {required String fen,
+    required String chainNotation,
+    AppLocalizations? lang}) {
   final xiangqi = Xiangqi(fen: fen);
   final List<String> moves = chainNotation.split(" ");
   String sans = '';
   for (int i = 0; i < moves.length; i++) {
-    String san = xiangqi.simpleMove(moves[i]);
+    String san = xiangqi.simpleMove(moves[i], lang);
     sans += ' $san';
   }
   return sans;
 }
 
 List<Map<String, Move?>> groupMoves(List<dynamic> moves) {
-
   final groupedMoves = <Map<String, Move?>>[];
   // Thay đổi kiểu dữ liệu của movesByNumber
   Map<int, List<Move?>> movesByNumber = {};
 
   // Nhóm các nước đi theo số nước đi
   for (final move in moves) {
-    print(move.moveNumber);
     final moveNumber = move.moveNumber;
     if (!movesByNumber.containsKey(moveNumber)) {
       movesByNumber[moveNumber] = [];

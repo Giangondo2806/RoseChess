@@ -1,5 +1,6 @@
 {
   "@@locale": "vi",
+  "currentLang": "vi",
   "settingsTitle": "Cài đặt",
   "userSettingsTitle": "Cài đặt người dùng",
   "language": "Ngôn ngữ",
@@ -15,5 +16,22 @@
   "bookSettingsTitle": "Cài đặt Book",
   "comingSoon": "Sắp ra mắt...",
   "book": "Book",
-  "evaluation": "Phân tích"
+  "evaluation": "Phân tích",
+  "graph":"Biểu đồ",
+  "move": "Nước đi",
+  "score": "Điểm",
+  "winrate": "Tỉ lệ",
+  "P": "B",
+  "C": "P",
+  "R": "X",
+  "N": "M",
+  "B": "V",
+  "A": "S",
+  "K": "Tg",
+  "forward": ".",
+  "backward": "/",
+  "horizontally": "-",
+  "front": "t",
+  "rear": "s",
+  "middle": "8g"
 }

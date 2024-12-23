@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../generated/l10n.dart';
 import '../providers/book_state.dart';
 import '../providers/user_settings_provider.dart';
 import 'book_item_widget.dart';
@@ -11,6 +12,7 @@ class BookContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final bookState = Provider.of<BookState>(context);
     final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
+    final lang = AppLocalizations.of(context);
 
     return CustomScrollView(
       slivers: <Widget>[
@@ -24,19 +26,19 @@ class BookContent extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
+                children: [
                   Expanded(
-                    child: Text('Move',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(lang.move,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center),
                   ),
                   Expanded(
-                    child: Text('Score',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(lang.score,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center),
                   ),
-                  Expanded(
-                    child: Text('Winrate',
+                   Expanded(
+                    child: Text(lang.winrate,
                         style: TextStyle(fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center),
                   ),

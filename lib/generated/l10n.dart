@@ -50,6 +50,16 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
+  /// `en`
+  String get currentLang {
+    return Intl.message(
+      'en',
+      name: 'currentLang',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Settings`
   String get settingsTitle {
     return Intl.message(
@@ -205,6 +215,176 @@ class AppLocalizations {
     return Intl.message(
       'Evaluation',
       name: 'evaluation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Graph`
+  String get graph {
+    return Intl.message(
+      'Graph',
+      name: 'graph',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Move`
+  String get move {
+    return Intl.message(
+      'Move',
+      name: 'move',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Score`
+  String get score {
+    return Intl.message(
+      'Score',
+      name: 'score',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Winrate`
+  String get winrate {
+    return Intl.message(
+      'Winrate',
+      name: 'winrate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `P`
+  String get P {
+    return Intl.message(
+      'P',
+      name: 'P',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `C`
+  String get C {
+    return Intl.message(
+      'C',
+      name: 'C',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `R`
+  String get R {
+    return Intl.message(
+      'R',
+      name: 'R',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `N`
+  String get N {
+    return Intl.message(
+      'N',
+      name: 'N',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `B`
+  String get B {
+    return Intl.message(
+      'B',
+      name: 'B',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A`
+  String get A {
+    return Intl.message(
+      'A',
+      name: 'A',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `K`
+  String get K {
+    return Intl.message(
+      'K',
+      name: 'K',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+`
+  String get forward {
+    return Intl.message(
+      '+',
+      name: 'forward',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `-`
+  String get backward {
+    return Intl.message(
+      '-',
+      name: 'backward',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `=`
+  String get horizontally {
+    return Intl.message(
+      '=',
+      name: 'horizontally',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+`
+  String get front {
+    return Intl.message(
+      '+',
+      name: 'front',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `-`
+  String get rear {
+    return Intl.message(
+      '-',
+      name: 'rear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `=`
+  String get middle {
+    return Intl.message(
+      '=',
+      name: 'middle',
       desc: '',
       args: [],
     );

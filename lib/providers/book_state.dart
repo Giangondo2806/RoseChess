@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rose_chess/models/chessdb_move.dart';
 
+import '../generated/l10n.dart';
 import '../services/chess_db_service.dart';
 
 class BookState with ChangeNotifier {
@@ -13,8 +14,8 @@ class BookState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getbook(String fen) async {
-    await getChessdbMoves(fen).then((data) => {_moves = data});
+  Future<void> getbook(String fen, AppLocalizations lang) async {
+    await getChessdbMoves(fen, lang).then((data) => {_moves = data});
     notifyListeners();
   }
 }

@@ -22,24 +22,42 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "A": MessageLookupByLibrary.simpleMessage("A"),
+        "B": MessageLookupByLibrary.simpleMessage("B"),
+        "C": MessageLookupByLibrary.simpleMessage("C"),
+        "K": MessageLookupByLibrary.simpleMessage("K"),
+        "N": MessageLookupByLibrary.simpleMessage("N"),
+        "P": MessageLookupByLibrary.simpleMessage("P"),
+        "R": MessageLookupByLibrary.simpleMessage("R"),
         "applicationSettingsTitle":
             MessageLookupByLibrary.simpleMessage("Application Settings"),
+        "backward": MessageLookupByLibrary.simpleMessage("-"),
         "boardColor": MessageLookupByLibrary.simpleMessage("Board Color"),
         "book": MessageLookupByLibrary.simpleMessage("Book"),
         "bookSettingsTitle":
             MessageLookupByLibrary.simpleMessage("Book Settings"),
         "comingSoon": MessageLookupByLibrary.simpleMessage("Coming Soon..."),
+        "currentLang": MessageLookupByLibrary.simpleMessage("en"),
         "engine": MessageLookupByLibrary.simpleMessage("Engine"),
         "english": MessageLookupByLibrary.simpleMessage("English"),
         "evaluation": MessageLookupByLibrary.simpleMessage("Evaluation"),
+        "forward": MessageLookupByLibrary.simpleMessage("+"),
+        "front": MessageLookupByLibrary.simpleMessage("+"),
+        "graph": MessageLookupByLibrary.simpleMessage("Graph"),
         "hashSize": MessageLookupByLibrary.simpleMessage("Hash Size"),
+        "horizontally": MessageLookupByLibrary.simpleMessage("="),
         "japanese": MessageLookupByLibrary.simpleMessage("Japanese"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
+        "middle": MessageLookupByLibrary.simpleMessage("="),
+        "move": MessageLookupByLibrary.simpleMessage("Move"),
         "pieceSet": MessageLookupByLibrary.simpleMessage("Piece Set"),
+        "rear": MessageLookupByLibrary.simpleMessage("-"),
+        "score": MessageLookupByLibrary.simpleMessage("Score"),
         "settingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
         "theme": MessageLookupByLibrary.simpleMessage("Theme"),
         "userSettingsTitle":
             MessageLookupByLibrary.simpleMessage("User Settings"),
-        "vietnamese": MessageLookupByLibrary.simpleMessage("Vietnamese")
+        "vietnamese": MessageLookupByLibrary.simpleMessage("Vietnamese"),
+        "winrate": MessageLookupByLibrary.simpleMessage("Winrate")
       };
 }

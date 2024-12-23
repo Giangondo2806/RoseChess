@@ -2,7 +2,10 @@ import 'package:http/http.dart' as http;
 import 'package:rose_chess/models/chessdb_move.dart';
 import 'package:rose_chess/utils/xiangqi.dart';
 
-Future<List<ChessdbMove>> getChessdbMoves(String fen) async {
+import '../generated/l10n.dart';
+
+Future<List<ChessdbMove>> getChessdbMoves(
+    String fen, AppLocalizations lang) async {
   final Xiangqi xiangqi = Xiangqi(fen: fen);
   final response = await http.get(
     Uri.parse(
@@ -21,7 +24,7 @@ Future<List<ChessdbMove>> getChessdbMoves(String fen) async {
           .map((el) => ChessdbMove.fromString(el))
           .map((el) {
             el.san = el.notation != ''
-                ? xiangqi.getSanfromNotation(el.notation!)
+                ? xiangqi.getSanfromNotation(el.notation!, lang)
                 : '';
             return el;
           })

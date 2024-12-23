@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/providers/book_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
+import '../generated/l10n.dart';
 import '../providers/arrow_state.dart';
 import '../providers/board_state.dart';
 import '../providers/engine_analysis_state.dart';
@@ -52,6 +53,7 @@ class _SoftwareScreenState extends State<SoftwareScreen>
 
   @override
   Widget build(BuildContext context) {
+    final lang = AppLocalizations.of(context);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -88,11 +90,16 @@ class _SoftwareScreenState extends State<SoftwareScreen>
           child: Consumer<BoardState>(
             builder: (context, boardState, child) {
               // Di chuyển logic khởi tạo vào đây
+
               if (!_initialized) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   // boardState.initEngine();
+
                   if (!boardState.isBoardInitialized) {
+                     boardState.setLang(lang);
                     boardState.newGame();
+
+                   
                   }
                 });
                 _initialized = true;

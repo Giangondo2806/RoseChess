@@ -1,5 +1,6 @@
 {
   "@@locale": "en",
+  "currentLang": "en",
   "settingsTitle": "Settings",
   "userSettingsTitle": "User Settings",
   "language": "Language",
@@ -15,5 +16,22 @@
   "bookSettingsTitle": "Book Settings",
   "comingSoon": "Coming Soon...",
   "book": "Book",
-  "evaluation": "Evaluation"
+  "evaluation": "Evaluation",
+  "graph": "Graph",
+  "move": "Move",
+  "score": "Score",
+  "winrate": "Winrate",
+  "P": "P",
+  "C": "C",
+  "R": "R",
+  "N": "N",
+  "B": "B",
+  "A": "A",
+  "K": "K",
+  "forward": "+",
+  "backward": "-",
+  "horizontally": "=",
+  "front": "+",
+  "rear": "-",
+  "middle": "="
 }
