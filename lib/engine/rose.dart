@@ -3,7 +3,7 @@ import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get_it/get_it.dart';
+import 'package:rose_chess/services/service_locator.dart';
 
 import 'ffi.dart';
 import 'rose_state.dart';
@@ -77,11 +77,12 @@ class Rose {
   /// Stops the C++ engine.
   void dispose() {
     _shouldDispose = true; // Indicate that dispose was called intentionally
-    stdin = 'quit';
+    stdin = 'quit\n';
   }
 
   Future<void> _initIsolates() async {
-    await compute(_spawnIsolates, [_mainPort.sendPort, _stdoutPort.sendPort]).then(
+    await compute(_spawnIsolates, [_mainPort.sendPort, _stdoutPort.sendPort])
+        .then(
       (success) {
         final state = success ? RoseState.ready : RoseState.error;
         _state._setValue(state);
@@ -107,7 +108,8 @@ class Rose {
     _state._setValue(RoseState.starting);
 
     // Reinitialize the isolates
-    _mainSubscription = _mainPort.listen((message) => _cleanUp(message is int ? message : 1));
+    _mainSubscription =
+        _mainPort.listen((message) => _cleanUp(message is int ? message : 1));
     _stdoutSubscription = _stdoutPort.listen((message) {
       if (message is String) {
         _stdoutController.sink.add(message);
@@ -127,12 +129,9 @@ class Rose {
 
   void _cleanUp(int exitCode, {bool restarting = false}) {
     _stdoutController.close();
-
     _mainSubscription.cancel();
     _stdoutSubscription.cancel();
-
     _state._setValue(exitCode == 0 ? RoseState.disposed : RoseState.error);
-
     if (!restarting && _shouldDispose) {
       _unregisterInstance();
       _instance = null; // Only set to null if not restarting and should dispose
@@ -140,16 +139,32 @@ class Rose {
   }
 
   void _registerInstance() {
-    if (GetIt.instance.isRegistered<Rose>()) {
-      GetIt.instance.unregister<Rose>();
+    if (getIt.isRegistered<Rose>()) {
+      getIt.unregister<Rose>();
     }
-    GetIt.instance.registerSingleton<Rose>(this);
+    getIt.registerSingleton<Rose>(this);
   }
 
   void _unregisterInstance() {
-    if (GetIt.instance.isRegistered<Rose>()) {
-      GetIt.instance.unregister<Rose>();
+    if (getIt.isRegistered<Rose>()) {
+      getIt.unregister<Rose>();
     }
+  }
+
+  forceClean() async {
+    _shouldDispose = true;
+
+    stdin = 'quit\n';
+    _stdoutController.close();
+    _mainSubscription.cancel();
+    _stdoutSubscription.cancel();
+    _mainPort.close();
+    _stdoutPort.close();
+    _unregisterInstance();
+    _instance = null;
+    _shouldDispose = false;
+    _restartCompleter = null;
+    _state._setValue(RoseState.disposed);
   }
 }
 
@@ -204,7 +219,8 @@ void _isolateStdout(SendPort stdoutPort) {
         stdoutPort.send(line);
       } else if (line.startsWith('bestmove')) {
         stdoutPort.send(line);
-      } else if (line.startsWith('info depth') && !line.contains('currmovenumber')) {
+      } else if (line.startsWith('info depth') &&
+          !line.contains('currmovenumber')) {
         try {
           final depthStr = line.split('depth ')[1].split(' ')[0];
           final depth = int.parse(depthStr);

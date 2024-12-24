@@ -409,6 +409,36 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Connecting to engine...`
+  String get engineLoading {
+    return Intl.message(
+      'Connecting to engine...',
+      name: 'engineLoading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connect to engine failed`
+  String get loadFailed {
+    return Intl.message(
+      'Connect to engine failed',
+      name: 'loadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reload`
+  String get reload {
+    return Intl.message(
+      'Reload',
+      name: 'reload',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

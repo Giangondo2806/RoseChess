@@ -40,6 +40,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "currentLang": MessageLookupByLibrary.simpleMessage("vi"),
         "depth": MessageLookupByLibrary.simpleMessage("Độ sâu"),
         "engine": MessageLookupByLibrary.simpleMessage("Máy cờ"),
+        "engineLoading":
+            MessageLookupByLibrary.simpleMessage("Connecting to engine..."),
         "english": MessageLookupByLibrary.simpleMessage("Tiếng Anh"),
         "evaluation": MessageLookupByLibrary.simpleMessage("Phân tích"),
         "forward": MessageLookupByLibrary.simpleMessage("."),
@@ -49,10 +51,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "horizontally": MessageLookupByLibrary.simpleMessage("-"),
         "japanese": MessageLookupByLibrary.simpleMessage("Tiếng Nhật"),
         "language": MessageLookupByLibrary.simpleMessage("Ngôn ngữ"),
+        "loadFailed":
+            MessageLookupByLibrary.simpleMessage("Connect to engine failed"),
         "middle": MessageLookupByLibrary.simpleMessage("8g"),
         "move": MessageLookupByLibrary.simpleMessage("Nước đi"),
         "pieceSet": MessageLookupByLibrary.simpleMessage("Bộ quân cờ"),
         "rear": MessageLookupByLibrary.simpleMessage("s"),
+        "reload": MessageLookupByLibrary.simpleMessage("Reload"),
         "score": MessageLookupByLibrary.simpleMessage("điểm số"),
         "settingsTitle": MessageLookupByLibrary.simpleMessage("Cài đặt"),
         "theme": MessageLookupByLibrary.simpleMessage("Giao diện"),

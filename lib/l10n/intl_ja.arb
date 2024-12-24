@@ -35,5 +35,8 @@
   "middle": "中",
   "depth": "深さ",
   "score": "評価値",
-  "nps": "nps"
+  "nps": "nps",
+  "engineLoading": "Connecting to engine...",
+  "loadFailed": "Connect to engine failed",
+  "reload": "Reload"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/generated/l10n.dart';
 import 'providers/user_settings_provider.dart';
@@ -10,29 +11,29 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
   await getIt.allReady();
-  assert(() {
-    // This code will only run in debug mode
-    void hotReload() async {
-      print('Hot reloading...');
-      await resetLocator();
-      print('Hot reload completed.');
-    }
+  // assert(() {
+  //   // This code will only run in debug mode
+  //   void hotReload() async {
+  //     print('Hot reloading...');
+  //     await resetLocator();
+  //     print('Hot reload completed.');
+  //   }
 
-    // This is a hack to get the hot reload to work
-    // by calling the hotReload function whenever the
-    // application is reloaded.
-    hotReload();
+  //   // This is a hack to get the hot reload to work
+  //   // by calling the hotReload function whenever the
+  //   // application is reloaded.
+  //   hotReload();
+
+  //   return true;
+  // }());
+
+  runApp(Phoenix(
     
-
-    return true;
-  }());
-
-  runApp(
-    ChangeNotifierProvider(
+    child: ChangeNotifierProvider(
       create: (context) => UserSettingsProvider(),
-      child: const MyApp(),
+      child: MyApp(),
     ),
-  );
+  ));
 }
 
 class MyApp extends StatelessWidget {

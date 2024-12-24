@@ -39,6 +39,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "currentLang": MessageLookupByLibrary.simpleMessage("ja"),
         "depth": MessageLookupByLibrary.simpleMessage("深さ"),
         "engine": MessageLookupByLibrary.simpleMessage("エンジン"),
+        "engineLoading":
+            MessageLookupByLibrary.simpleMessage("Connecting to engine..."),
         "english": MessageLookupByLibrary.simpleMessage("英語"),
         "evaluation": MessageLookupByLibrary.simpleMessage("分析"),
         "forward": MessageLookupByLibrary.simpleMessage("進"),
@@ -48,11 +50,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "horizontally": MessageLookupByLibrary.simpleMessage("平"),
         "japanese": MessageLookupByLibrary.simpleMessage("日本語"),
         "language": MessageLookupByLibrary.simpleMessage("言語"),
+        "loadFailed":
+            MessageLookupByLibrary.simpleMessage("Connect to engine failed"),
         "middle": MessageLookupByLibrary.simpleMessage("中"),
         "move": MessageLookupByLibrary.simpleMessage("指し手"),
         "nps": MessageLookupByLibrary.simpleMessage("nps"),
         "pieceSet": MessageLookupByLibrary.simpleMessage("駒セット"),
         "rear": MessageLookupByLibrary.simpleMessage("後"),
+        "reload": MessageLookupByLibrary.simpleMessage("Reload"),
         "score": MessageLookupByLibrary.simpleMessage("評価値"),
         "settingsTitle": MessageLookupByLibrary.simpleMessage("設定"),
         "theme": MessageLookupByLibrary.simpleMessage("テーマ"),

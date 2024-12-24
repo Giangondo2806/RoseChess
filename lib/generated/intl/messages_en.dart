@@ -40,6 +40,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "currentLang": MessageLookupByLibrary.simpleMessage("en"),
         "depth": MessageLookupByLibrary.simpleMessage("Depth"),
         "engine": MessageLookupByLibrary.simpleMessage("Engine"),
+        "engineLoading":
+            MessageLookupByLibrary.simpleMessage("Connecting to engine..."),
         "english": MessageLookupByLibrary.simpleMessage("English"),
         "evaluation": MessageLookupByLibrary.simpleMessage("Evaluation"),
         "forward": MessageLookupByLibrary.simpleMessage("+"),
@@ -49,11 +51,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "horizontally": MessageLookupByLibrary.simpleMessage("="),
         "japanese": MessageLookupByLibrary.simpleMessage("Japanese"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
+        "loadFailed":
+            MessageLookupByLibrary.simpleMessage("Connect to engine failed"),
         "middle": MessageLookupByLibrary.simpleMessage("="),
         "move": MessageLookupByLibrary.simpleMessage("Move"),
         "nps": MessageLookupByLibrary.simpleMessage("nps"),
         "pieceSet": MessageLookupByLibrary.simpleMessage("Piece Set"),
         "rear": MessageLookupByLibrary.simpleMessage("-"),
+        "reload": MessageLookupByLibrary.simpleMessage("Reload"),
         "score": MessageLookupByLibrary.simpleMessage("score"),
         "settingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
         "theme": MessageLookupByLibrary.simpleMessage("Theme"),

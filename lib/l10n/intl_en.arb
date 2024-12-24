@@ -34,7 +34,10 @@
   "front": "+",
   "rear": "-",
   "middle": "=",
-  "depth":"Depth",
+  "depth": "Depth",
   "score": "score",
-  "nps": "nps"
+  "nps": "nps",
+  "engineLoading": "Connecting to engine...",
+  "loadFailed": "Connect to engine failed",
+  "reload": "Reload"
 }

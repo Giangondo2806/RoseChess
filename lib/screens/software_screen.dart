@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
-import 'package:rose_chess/engine/rose.dart';
 import 'package:rose_chess/providers/book_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
+import 'package:rose_chess/services/service_locator.dart';
+import '../engine/rose.dart';
 import '../engine/rose_state.dart';
 import '../generated/l10n.dart';
 import '../providers/arrow_state.dart';
@@ -56,33 +60,11 @@ class _SoftwareScreenState extends State<SoftwareScreen> {
                   bookState, navigationState),
         ),
       ],
-      child: EngineWrapper( // Wrap the Scaffold with EngineWrapper
+      child: const EngineWrapper(
+        // Wrap the Scaffold with EngineWrapper
         child: Scaffold(
-          body: Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-            child: Consumer<BoardState>(
-              builder: (context, boardState, child) {
-                // Initialize board state only once after the first frame
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  boardState.setLang(lang);
-                  if (!boardState.isBoardInitialized) {
-                    boardState.newGame();
-                  }
-                });
-
-                return Column(
-                  children: [
-                    MenuBarWidget(
-                      onMenuAction: boardState.handleMenuAction,
-                    ),
-                    ChessBoardWidget(boardState: boardState),
-                    Expanded(child: AnalysisWidget()),
-                  ],
-                );
-              },
+            // Scaffold is now inside EngineWrapper, which handles loading state
             ),
-          ),
-        ),
       ),
     );
   }
@@ -98,8 +80,12 @@ class EngineWrapper extends StatefulWidget {
   _EngineWrapperState createState() => _EngineWrapperState();
 }
 
-class _EngineWrapperState extends State<EngineWrapper> with WidgetsBindingObserver {
+class _EngineWrapperState extends State<EngineWrapper>
+    with WidgetsBindingObserver {
   late BoardState _boardState;
+  bool _isLoading = true;
+  bool _loadFailed = false;
+  Timer? _loadingTimer;
 
   @override
   void initState() {
@@ -107,17 +93,38 @@ class _EngineWrapperState extends State<EngineWrapper> with WidgetsBindingObserv
     WidgetsBinding.instance.addObserver(this);
     _boardState = Provider.of<BoardState>(context, listen: false);
     _initEngineIfNeeded();
+
+    // Start a timer to check for engine loading status
+    _loadingTimer = Timer(const Duration(seconds: 10), () {
+      if (mounted && !_boardState.engineReady) {
+        setState(() {
+          _isLoading = false;
+          _loadFailed = true;
+        });
+      }
+    });
+    _boardState.addListener(_engineReadyListener);
+  }
+
+  void _engineReadyListener() {
+    if (mounted && _boardState.engineReady) {
+      setState(() {
+        _isLoading = false;
+      });
+      _loadingTimer?.cancel();
+    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _boardState.removeListener(_engineReadyListener);
+    _loadingTimer?.cancel();
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print('AppLifecycleState changed to: $state');
     if (state == AppLifecycleState.resumed) {
       _initEngineIfNeeded();
     } else if (state == AppLifecycleState.paused) {
@@ -128,13 +135,82 @@ class _EngineWrapperState extends State<EngineWrapper> with WidgetsBindingObserv
   void _initEngineIfNeeded() {
     if (_boardState.roseEngine == null ||
         _boardState.roseEngine!.state.value != RoseState.ready) {
-      print('Initializing or re-initializing engine');
+      if (mounted) {
+        setState(() {
+          _isLoading = true;
+          _loadFailed = false;
+        });
+      }
       _boardState.initEngine();
     }
   }
 
+  Future<void> _reloadApp() async {
+    _boardState.dispose();
+    getIt.get<Rose>().forceClean();
+    Phoenix.rebirth(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    final lang = AppLocalizations.of(context);
+
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 20),
+              Text(lang.engineLoading),
+            ],
+          ),
+        ),
+      );
+    } else if (_loadFailed) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(lang.loadFailed),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _reloadApp,
+                child: Text(lang.reload),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Scaffold(
+        body: Padding(
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          child: Consumer<BoardState>(
+            builder: (context, boardState, child) {
+              // Initialize board state only once after the first frame
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                boardState.setLang(lang);
+                if (!boardState.isBoardInitialized) {
+                  boardState.newGame();
+                }
+              });
+
+              return Column(
+                children: [
+                  MenuBarWidget(
+                    onMenuAction: boardState.handleMenuAction,
+                  ),
+                  ChessBoardWidget(boardState: boardState),
+                  Expanded(child: AnalysisWidget()),
+                ],
+              );
+            },
+          ),
+        ),
+      );
+    }
   }
 }

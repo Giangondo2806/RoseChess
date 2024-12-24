@@ -36,5 +36,8 @@
   "middle": "8g",
   "depth": "Độ sâu",
   "score": "điểm số",
-  "knps": "nps"
+  "knps": "nps",
+  "engineLoading": "Connecting to engine...",
+  "loadFailed": "Connect to engine failed",
+  "reload": "Reload"
 }
