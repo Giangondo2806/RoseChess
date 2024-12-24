@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rose_chess/engine/rose.dart';
 import 'package:rose_chess/providers/book_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
-import 'package:rose_chess/screens/engine_loader_screen.dart';
+import '../engine/rose_state.dart';
 import '../generated/l10n.dart';
 import '../providers/arrow_state.dart';
 import '../providers/board_state.dart';
@@ -21,35 +22,7 @@ class SoftwareScreen extends StatefulWidget {
   State<SoftwareScreen> createState() => _SoftwareScreenState();
 }
 
-class _SoftwareScreenState extends State<SoftwareScreen>
-    with WidgetsBindingObserver {
-  bool _initialized = false; // Thêm biến flag để đánh dấu
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => EngineLoaderScreen(),
-        ),
-      );
-      // Navigator.of(context).popUntil((route) => route.isFirst);
-    }
-  }
-
+class _SoftwareScreenState extends State<SoftwareScreen> {
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context);
@@ -83,42 +56,85 @@ class _SoftwareScreenState extends State<SoftwareScreen>
                   bookState, navigationState),
         ),
       ],
-      child: Scaffold(
-        body: Padding(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-          child: Consumer<BoardState>(
-            builder: (context, boardState, child) {
-              // Di chuyển logic khởi tạo vào đây
-
-              if (!_initialized) {
-                WidgetsBinding.instance.addPostFrameCallback((_) async {
-                  if (boardState.isEngineInitializing) {
-                    boardState.dispose();
-                    await Future.delayed(Duration(milliseconds: 1000));
-                  }
-
+      child: EngineWrapper( // Wrap the Scaffold with EngineWrapper
+        child: Scaffold(
+          body: Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: Consumer<BoardState>(
+              builder: (context, boardState, child) {
+                // Initialize board state only once after the first frame
+                WidgetsBinding.instance.addPostFrameCallback((_) {
                   boardState.setLang(lang);
-                  boardState.initEngine();
                   if (!boardState.isBoardInitialized) {
                     boardState.newGame();
                   }
                 });
-                _initialized = true;
-              }
 
-              return Column(
-                children: [
-                  MenuBarWidget(
-                    onMenuAction: boardState.handleMenuAction,
-                  ),
-                  ChessBoardWidget(boardState: boardState),
-                  Expanded(child: AnalysisWidget()),
-                ],
-              );
-            },
+                return Column(
+                  children: [
+                    MenuBarWidget(
+                      onMenuAction: boardState.handleMenuAction,
+                    ),
+                    ChessBoardWidget(boardState: boardState),
+                    Expanded(child: AnalysisWidget()),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
     );
+  }
+}
+
+// EngineWrapper widget to handle engine initialization and app lifecycle events
+class EngineWrapper extends StatefulWidget {
+  final Widget child;
+
+  const EngineWrapper({Key? key, required this.child}) : super(key: key);
+
+  @override
+  _EngineWrapperState createState() => _EngineWrapperState();
+}
+
+class _EngineWrapperState extends State<EngineWrapper> with WidgetsBindingObserver {
+  late BoardState _boardState;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _boardState = Provider.of<BoardState>(context, listen: false);
+    _initEngineIfNeeded();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('AppLifecycleState changed to: $state');
+    if (state == AppLifecycleState.resumed) {
+      _initEngineIfNeeded();
+    } else if (state == AppLifecycleState.paused) {
+      _boardState.pauseGame();
+    }
+  }
+
+  void _initEngineIfNeeded() {
+    if (_boardState.roseEngine == null ||
+        _boardState.roseEngine!.state.value != RoseState.ready) {
+      print('Initializing or re-initializing engine');
+      _boardState.initEngine();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }

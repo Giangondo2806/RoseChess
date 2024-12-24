@@ -10,12 +10,17 @@ final getIt = GetIt.instance;
 
 void setupLocator() {
   getIt.registerLazySingleton<RoseDatabase>(() => RoseDatabase());
+  if (!getIt.isRegistered<Rose>()) {
+    getIt.registerLazySingleton<Rose>(() => Rose());
+  }
+
   // getIt.registerLazySingletonAsync<Rose>(() async {
   //   final completer = Completer<Rose>();
   //   Rose(completer: completer);
   //   return await completer.future;
   // });
-  getIt.registerLazySingleton<ConfigRepository>(() => ConfigRepository(getIt())); // Thêm dòng này
+  getIt.registerLazySingleton<ConfigRepository>(
+      () => ConfigRepository(getIt())); // Thêm dòng này
 }
 
 Future<void> resetLocator() async {

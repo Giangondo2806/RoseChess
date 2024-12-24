@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 
 import 'ffi.dart';
 import 'rose_state.dart';
@@ -19,30 +20,25 @@ class Rose {
   late StreamSubscription _mainSubscription;
   late StreamSubscription _stdoutSubscription;
 
+  bool _shouldDispose = false; // Flag to control disposal
+  Completer<void>? _restartCompleter; // Completer for restarting
+
   Rose._({this.completer}) {
+    _registerInstance();
     _mainSubscription =
         _mainPort.listen((message) => _cleanUp(message is int ? message : 1));
     _stdoutSubscription = _stdoutPort.listen((message) {
       if (message is String) {
         _stdoutController.sink.add(message);
+      } else if (message == RoseState.error) {
+        debugPrint('[rose] Received error signal from stdout isolate');
+        _restart(); // Restart the engine
       } else {
         debugPrint('[rose] The stdout isolate sent $message');
       }
     });
 
-    compute(_spawnIsolates, [_mainPort.sendPort, _stdoutPort.sendPort]).then(
-      (success) {
-        final state = success ? RoseState.ready : RoseState.error;
-        _state._setValue(state);
-        if (state == RoseState.ready) {
-          completer?.complete(this);
-        }
-      },
-      onError: (error) {
-        debugPrint('[rose] The init isolate encountered an error $error');
-        _cleanUp(1);
-      },
-    );
+    _initIsolates();
   }
 
   static Rose? _instance;
@@ -80,10 +76,56 @@ class Rose {
 
   /// Stops the C++ engine.
   void dispose() {
+    _shouldDispose = true; // Indicate that dispose was called intentionally
     stdin = 'quit';
   }
 
-  void _cleanUp(int exitCode) {
+  Future<void> _initIsolates() async {
+    await compute(_spawnIsolates, [_mainPort.sendPort, _stdoutPort.sendPort]).then(
+      (success) {
+        final state = success ? RoseState.ready : RoseState.error;
+        _state._setValue(state);
+        if (state == RoseState.ready) {
+          completer?.complete(this);
+        }
+      },
+      onError: (error) {
+        debugPrint('[rose] The init isolate encountered an error $error');
+        _cleanUp(1);
+      },
+    );
+  }
+
+  Future<void> _restart() async {
+    if (_restartCompleter != null && !_restartCompleter!.isCompleted) {
+      return; // Already restarting
+    }
+    _restartCompleter = Completer<void>();
+
+    debugPrint('[rose] Restarting engine...');
+    _cleanUp(1, restarting: true); // Clean up without setting _instance to null
+    _state._setValue(RoseState.starting);
+
+    // Reinitialize the isolates
+    _mainSubscription = _mainPort.listen((message) => _cleanUp(message is int ? message : 1));
+    _stdoutSubscription = _stdoutPort.listen((message) {
+      if (message is String) {
+        _stdoutController.sink.add(message);
+      } else if (message == RoseState.error) {
+        debugPrint('[rose] Received error signal from stdout isolate');
+        _restart(); // Restart the engine if still error
+      } else {
+        debugPrint('[rose] The stdout isolate sent $message');
+      }
+    });
+
+    await _initIsolates();
+    debugPrint('[rose] Engine restarted.');
+    _restartCompleter!.complete();
+    _restartCompleter = null;
+  }
+
+  void _cleanUp(int exitCode, {bool restarting = false}) {
     _stdoutController.close();
 
     _mainSubscription.cancel();
@@ -91,7 +133,23 @@ class Rose {
 
     _state._setValue(exitCode == 0 ? RoseState.disposed : RoseState.error);
 
-    _instance = null;
+    if (!restarting && _shouldDispose) {
+      _unregisterInstance();
+      _instance = null; // Only set to null if not restarting and should dispose
+    }
+  }
+
+  void _registerInstance() {
+    if (GetIt.instance.isRegistered<Rose>()) {
+      GetIt.instance.unregister<Rose>();
+    }
+    GetIt.instance.registerSingleton<Rose>(this);
+  }
+
+  void _unregisterInstance() {
+    if (GetIt.instance.isRegistered<Rose>()) {
+      GetIt.instance.unregister<Rose>();
+    }
   }
 }
 
@@ -133,6 +191,8 @@ void _isolateStdout(SendPort stdoutPort) {
 
     if (pointer.address == 0) {
       debugPrint('[rose] nativeStdoutRead returns NULL');
+      // Send a message to the main isolate to indicate an error and request restart
+      stdoutPort.send(RoseState.error); // Use RoseState.error as a signal
       return;
     }
 

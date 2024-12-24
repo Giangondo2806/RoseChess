@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:rose_chess/models/engine_info.dart';
 import 'package:rose_chess/providers/arrow_state.dart';
 import 'package:rose_chess/providers/book_state.dart';
@@ -57,7 +58,10 @@ class BoardState with ChangeNotifier {
   }
 
   void newGame() {
-    pauseGame();
+    if (roseEngine?.state.value == RoseState.ready) {
+      pauseGame();
+    }
+
     engineAnalysisState.clearAnalysis();
     arrowState.clearArrows();
     navigationState.clearNavigation();
@@ -261,13 +265,11 @@ class BoardState with ChangeNotifier {
 
     _isEngineInitializing = true;
     try {
-      if (_roseEngine == null || _roseEngine?.state.value == RoseState.error) {
-        _roseEngine = await roseAsync();
-      }
+      _roseEngine = GetIt.instance.get<Rose>();
 
       if (_roseEngine != null) {
         _engineOutputSubscription?.cancel();
-        _engineOutputSubscription =_roseEngine?.stdout.listen((line) {
+        _engineOutputSubscription = _roseEngine?.stdout.listen((line) {
           if (line.trim() == 'readyok') {
             if (true) {
               _readyOkReceived = true;
@@ -323,8 +325,10 @@ class BoardState with ChangeNotifier {
       print("Engine has error");
       if (true) {
         _connectedEngine = false;
+        _readyOkReceived = false;
         notifyListeners();
       }
+      initEngine();
     } else {
       print('Engine state update to ${_roseEngine?.state.value}');
     }
@@ -346,10 +350,8 @@ class BoardState with ChangeNotifier {
     _roseEngine?.stdin = 'setoption name Hash value 128\n';
     _roseEngine?.stdin = 'setoption name Evalfile value $engineFileName \n';
     _roseEngine?.stdin = 'isready\n';
-    if (true) {
-      _isSettingEngine = false;
-      notifyListeners();
-    }
+    _isSettingEngine = false;
+    notifyListeners();
   }
 
   void pauseGame() {
@@ -374,10 +376,8 @@ class BoardState with ChangeNotifier {
   @override
   void dispose() {
     _engineOutputSubscription?.cancel();
-    _roseEngine?.dispose();
     _roseEngine = null;
     _isEngineInitializing = false;
-    // getIt.unregister<Rose>();
     super.dispose();
   }
 }
