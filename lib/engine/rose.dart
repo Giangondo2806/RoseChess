@@ -8,6 +8,9 @@ import '../services/service_locator.dart';
 import 'ffi.dart';
 import 'rose_state.dart';
 
+Isolate? _mainIsolate;
+Isolate? _stdoutIsolate;
+
 class Rose {
   final Completer<Rose>? completer;
   final _state = _RoseState();
@@ -46,9 +49,8 @@ class Rose {
     if (_state.value != RoseState.ready) {
       throw StateError('Rose is not ready (${_state.value})');
     }
-    final pointer = '$line'.toNativeUtf8();
-    int kq =  nativeStdinWrite(pointer);
-    print('kq $line');
+    final pointer = '$line\n'.toNativeUtf8();
+    nativeStdinWrite(pointer); // Send data to engine
     calloc.free(pointer);
   }
 
@@ -57,7 +59,6 @@ class Rose {
         _mainPort.listen((message) => _cleanUp(message is int ? message : 1));
 
     _stdoutSubscription = _stdoutPort.listen((message) {
-      print('message: stdout $message');
       if (message is String) {
         _stdoutController.sink.add(message);
       } else if (message == RoseState.error) {
@@ -122,14 +123,10 @@ class Rose {
 
   Future<void> _cleanUpResources() async {
     try {
-      stdin = 'quit\n';
+      stdin = 'quit\n'; // Bỏ dòng này, thay bằng Isolate.kill
     } catch (e) {
       debugPrint('[rose] Error sending quit command: $e');
     }
-    // _mainIsolate?.kill(priority: Isolate.immediate);
-    // _stdoutIsolate?.kill(priority: Isolate.immediate);
-    // _mainIsolate = null;
-    // _stdoutIsolate = null;
 
     await _mainSubscription.cancel();
     await _stdoutSubscription.cancel();
@@ -152,6 +149,13 @@ class Rose {
     await _disposeLock.synchronized(() async {
       _shouldDispose = true;
       await _cleanUpResources();
+      if (_mainIsolate != null) {
+        _mainIsolate?.kill(priority: Isolate.immediate);
+        _mainIsolate = null;
+        _stdoutIsolate?.kill(
+            priority: Isolate.immediate); // Có thể không cần thiết
+        _stdoutIsolate = null;
+      }
       _unregisterInstance();
       _instance = null;
       _shouldDispose = false;
@@ -203,8 +207,8 @@ Future<bool> _spawnIsolates(List<SendPort> ports) async {
   }
 
   try {
-    await Isolate.spawn(_isolateStdout, ports[1]);
-    await Isolate.spawn(_isolateMain, ports[0]);
+    _mainIsolate = await Isolate.spawn(_isolateStdout, ports[1]);
+    _stdoutIsolate = await Isolate.spawn(_isolateMain, ports[0]);
     return true;
   } catch (error) {
     debugPrint('[rose] Spawn isolate error: $error');
@@ -213,9 +217,14 @@ Future<bool> _spawnIsolates(List<SendPort> ports) async {
 }
 
 void _isolateMain(SendPort mainPort) {
-  final exitCode = nativeMain();
-  mainPort.send(exitCode);
-  debugPrint('[rose] nativeMain returns $exitCode');
+  try {
+    final exitCode = nativeMain();
+    mainPort.send(exitCode);
+    debugPrint('[rose] nativeMain returns $exitCode');
+  } catch (e) {
+    debugPrint('[rose] Error in _isolateMain: $e');
+    mainPort.send(RoseState.error); // Gửi tín hiệu lỗi
+  }
 }
 
 void _isolateStdout(SendPort stdoutPort) {
@@ -235,7 +244,6 @@ void _isolateStdout(SendPort stdoutPort) {
 
     for (final line in lines) {
       final trimmed = line.trim();
-
       if (trimmed == 'readyok' || line.startsWith('bestmove')) {
         stdoutPort.send(line);
       } else if (line.startsWith('info depth')) {

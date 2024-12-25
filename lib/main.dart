@@ -3,32 +3,20 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/generated/l10n.dart';
+import 'engine/rose.dart';
 import 'providers/user_settings_provider.dart';
 import 'screens/engine_loader_screen.dart';
 import 'services/service_locator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (getIt.isRegistered<Rose>()) {
+    // Thay YourService bằng một service bất kỳ để check
+    await getIt.reset();
+  }
   setupLocator();
   await getIt.allReady();
-  // assert(() {
-  //   // This code will only run in debug mode
-  //   void hotReload() async {
-  //     print('Hot reloading...');
-  //     await resetLocator();
-  //     print('Hot reload completed.');
-  //   }
-
-  //   // This is a hack to get the hot reload to work
-  //   // by calling the hotReload function whenever the
-  //   // application is reloaded.
-  //   hotReload();
-
-  //   return true;
-  // }());
-
   runApp(Phoenix(
-    
     child: ChangeNotifierProvider(
       create: (context) => UserSettingsProvider(),
       child: MyApp(),

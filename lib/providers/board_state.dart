@@ -339,7 +339,6 @@ class BoardState with ChangeNotifier {
 
   Future<void> _settingEngine() async {
     if (_isSettingEngine) return;
-    print('setting engine');
     _isSettingEngine = true;
     _roseEngine?.stdin = 'uci\n';
     _roseEngine?.stdin = 'setoption name Threads value 2\n';

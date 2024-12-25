@@ -96,7 +96,7 @@ class _EngineWrapperState extends State<EngineWrapper>
       _boardState = Provider.of<BoardState>(context, listen: false);
       _initEngineIfNeeded();
       // Start a timer to check for engine loading status
-      _loadingTimer = Timer(const Duration(seconds: 10), () {
+      _loadingTimer = Timer(const Duration(seconds: 12), () {
         if (mounted && !_boardState.engineReady) {
           setState(() {
             _isLoading = false;
@@ -139,7 +139,7 @@ class _EngineWrapperState extends State<EngineWrapper>
         _boardState.roseEngine!.state.value != RoseState.ready) {
       if (!getIt.isRegistered<Rose>()) {
         // print(' _boardState.roseEngine!.state.value; ${ _boardState.roseEngine!.state.value}');
-       
+
         print('create rose instance if dispose');
         // await Future.delayed(Duration(milliseconds: 20));
         // getIt.unregister<Rose>();
@@ -162,9 +162,11 @@ class _EngineWrapperState extends State<EngineWrapper>
 
   Future<void> _reloadApp() async {
     // _boardState.dispose();
-
-    print('force clean');
     getIt.get<Rose>().forceClean();
+    await Future.delayed(Duration(milliseconds: 5000));
+    await getIt.reset();
+    setupLocator();
+    await getIt.allReady();
     Phoenix.rebirth(context);
   }
 
