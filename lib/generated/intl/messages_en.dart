@@ -36,10 +36,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "book": MessageLookupByLibrary.simpleMessage("Book"),
         "bookSettingsTitle":
             MessageLookupByLibrary.simpleMessage("Book Settings"),
+        "closeApp": MessageLookupByLibrary.simpleMessage("engineCannotConnect"),
         "comingSoon": MessageLookupByLibrary.simpleMessage("Coming Soon..."),
         "currentLang": MessageLookupByLibrary.simpleMessage("en"),
         "depth": MessageLookupByLibrary.simpleMessage("Depth"),
         "engine": MessageLookupByLibrary.simpleMessage("Engine"),
+        "engineCannotConnect":
+            MessageLookupByLibrary.simpleMessage("engineCannotConnect"),
         "engineLoading":
             MessageLookupByLibrary.simpleMessage("Connecting to engine..."),
         "english": MessageLookupByLibrary.simpleMessage("English"),

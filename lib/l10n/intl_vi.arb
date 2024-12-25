@@ -39,5 +39,7 @@
   "knps": "nps",
   "engineLoading": "Connecting to engine...",
   "loadFailed": "Connect to engine failed",
-  "reload": "Reload"
+  "reload": "Reload",
+    "engineCannotConnect": "engineCannotConnect",
+  "closeApp": "engineCannotConnect"
 }

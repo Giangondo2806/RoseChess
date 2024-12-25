@@ -35,10 +35,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "boardColor": MessageLookupByLibrary.simpleMessage("ボードの色"),
         "book": MessageLookupByLibrary.simpleMessage("定跡書"),
         "bookSettingsTitle": MessageLookupByLibrary.simpleMessage("棋譜設定"),
+        "closeApp": MessageLookupByLibrary.simpleMessage("engineCannotConnect"),
         "comingSoon": MessageLookupByLibrary.simpleMessage("近日公開予定..."),
         "currentLang": MessageLookupByLibrary.simpleMessage("ja"),
         "depth": MessageLookupByLibrary.simpleMessage("深さ"),
         "engine": MessageLookupByLibrary.simpleMessage("エンジン"),
+        "engineCannotConnect":
+            MessageLookupByLibrary.simpleMessage("engineCannotConnect"),
         "engineLoading":
             MessageLookupByLibrary.simpleMessage("Connecting to engine..."),
         "english": MessageLookupByLibrary.simpleMessage("英語"),

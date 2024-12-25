@@ -439,6 +439,26 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `engineCannotConnect`
+  String get engineCannotConnect {
+    return Intl.message(
+      'engineCannotConnect',
+      name: 'engineCannotConnect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `engineCannotConnect`
+  String get closeApp {
+    return Intl.message(
+      'engineCannotConnect',
+      name: 'closeApp',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

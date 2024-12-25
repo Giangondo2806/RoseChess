@@ -267,6 +267,7 @@ class BoardState with ChangeNotifier {
     try {
       _roseEngine = GetIt.instance.get<Rose>();
 
+      debugPrint("state engine: ${_roseEngine!.state.value}");
       if (_roseEngine != null) {
         _engineOutputSubscription?.cancel();
         _engineOutputSubscription = _roseEngine?.stdout.listen((line) {
