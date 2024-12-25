@@ -91,19 +91,21 @@ class _EngineWrapperState extends State<EngineWrapper>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _boardState = Provider.of<BoardState>(context, listen: false);
-    _initEngineIfNeeded();
 
-    // Start a timer to check for engine loading status
-    _loadingTimer = Timer(const Duration(seconds: 10), () {
-      if (mounted && !_boardState.engineReady) {
-        setState(() {
-          _isLoading = false;
-          _loadFailed = true;
-        });
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _boardState = Provider.of<BoardState>(context, listen: false);
+      _initEngineIfNeeded();
+      // Start a timer to check for engine loading status
+      _loadingTimer = Timer(const Duration(seconds: 10), () {
+        if (mounted && !_boardState.engineReady) {
+          setState(() {
+            _isLoading = false;
+            _loadFailed = true;
+          });
+        }
+      });
+      _boardState.addListener(_engineReadyListener);
     });
-    _boardState.addListener(_engineReadyListener);
   }
 
   void _engineReadyListener() {
@@ -132,9 +134,20 @@ class _EngineWrapperState extends State<EngineWrapper>
     }
   }
 
-  void _initEngineIfNeeded() {
+  Future<void> _initEngineIfNeeded() async {
     if (_boardState.roseEngine == null ||
         _boardState.roseEngine!.state.value != RoseState.ready) {
+      if (!getIt.isRegistered<Rose>()) {
+        // print(' _boardState.roseEngine!.state.value; ${ _boardState.roseEngine!.state.value}');
+       
+        print('create rose instance if dispose');
+        // await Future.delayed(Duration(milliseconds: 20));
+        // getIt.unregister<Rose>();
+        await Future.delayed(Duration(milliseconds: 20));
+        getIt.registerLazySingleton(() => Rose());
+        await Future.delayed(Duration(milliseconds: 20));
+      }
+
       if (mounted) {
         setState(() {
           _isLoading = true;
@@ -143,10 +156,14 @@ class _EngineWrapperState extends State<EngineWrapper>
       }
       _boardState.initEngine();
     }
+
+    // (if (getIt.is<Rose>()))
   }
 
   Future<void> _reloadApp() async {
-    _boardState.dispose();
+    // _boardState.dispose();
+
+    print('force clean');
     getIt.get<Rose>().forceClean();
     Phoenix.rebirth(context);
   }

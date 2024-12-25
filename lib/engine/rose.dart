@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
@@ -45,8 +46,9 @@ class Rose {
     if (_state.value != RoseState.ready) {
       throw StateError('Rose is not ready (${_state.value})');
     }
-    final pointer = '$line\n'.toNativeUtf8();
-    nativeStdinWrite(pointer);
+    final pointer = '$line'.toNativeUtf8();
+    int kq =  nativeStdinWrite(pointer);
+    print('kq $line');
     calloc.free(pointer);
   }
 
@@ -55,6 +57,7 @@ class Rose {
         _mainPort.listen((message) => _cleanUp(message is int ? message : 1));
 
     _stdoutSubscription = _stdoutPort.listen((message) {
+      print('message: stdout $message');
       if (message is String) {
         _stdoutController.sink.add(message);
       } else if (message == RoseState.error) {
@@ -200,7 +203,7 @@ Future<bool> _spawnIsolates(List<SendPort> ports) async {
   }
 
   try {
-   await Isolate.spawn(_isolateStdout, ports[1]);
+    await Isolate.spawn(_isolateStdout, ports[1]);
     await Isolate.spawn(_isolateMain, ports[0]);
     return true;
   } catch (error) {
@@ -232,10 +235,14 @@ void _isolateStdout(SendPort stdoutPort) {
 
     for (final line in lines) {
       final trimmed = line.trim();
+
       if (trimmed == 'readyok' || line.startsWith('bestmove')) {
         stdoutPort.send(line);
       } else if (line.startsWith('info depth')) {
         _processInfoDepth(line, stdoutPort);
+      } else if (line.startsWith('Pikafish')) {
+        // stdin = 'uci\n';
+        stdoutPort.send('started');
       }
     }
   }

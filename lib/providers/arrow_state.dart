@@ -39,8 +39,6 @@ class ArrowState with ChangeNotifier {
         }
 
         if (!listEquals(_notations, [moves[0], moves[1]])) {
-          print('notation ${_notations}');
-          print('new ${moves[0]}${moves[1]}');
           clearArrows();
           _notations.addAll([moves[0], moves[1]]);
           _arrows.addAll(newArrows);

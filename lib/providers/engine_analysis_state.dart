@@ -6,10 +6,8 @@ class EngineAnalysisState with ChangeNotifier {
   final List<EngineInfo> engineAnalysis = [];
 
   void addAnalysis(EngineInfo info) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      engineAnalysis.insert(0, info);
-      notifyListeners();
-    });
+    engineAnalysis.insert(0, info);
+    notifyListeners();
   }
 
   void clearAnalysis() {

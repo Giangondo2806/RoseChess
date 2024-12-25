@@ -38,7 +38,6 @@ class BoardState with ChangeNotifier {
   Rose? get roseEngine => _roseEngine;
 
   bool get isEngineInitializing => _isEngineInitializing;
-  bool get engineConnected => _connectedEngine;
   bool get engineReady => _readyOkReceived;
   bool get isBoardInitialized => _isBoardInitialized;
   late EngineAnalysisState engineAnalysisState;
@@ -261,7 +260,9 @@ class BoardState with ChangeNotifier {
   }
 
   Future<void> initEngine() async {
-    if (_isEngineInitializing) return;
+    if (_isEngineInitializing) {
+      return;
+    }
 
     _isEngineInitializing = true;
     try {
@@ -271,7 +272,11 @@ class BoardState with ChangeNotifier {
       if (_roseEngine != null) {
         _engineOutputSubscription?.cancel();
         _engineOutputSubscription = _roseEngine?.stdout.listen((line) {
-          if (line.trim() == 'readyok') {
+          if (line.startsWith('started')) {
+            if (_roseEngine!.state.value == RoseState.ready) {
+              _settingEngine();
+            }
+          } else if (line == 'readyok') {
             if (true) {
               _readyOkReceived = true;
               notifyListeners();
@@ -294,13 +299,7 @@ class BoardState with ChangeNotifier {
           }
         });
         if (_roseEngine!.state.value == RoseState.ready) {
-          if (true) {
-            _connectedEngine = true;
-            notifyListeners();
-          }
-          if (!_isSettingEngine) {
-            _settingEngine();
-          }
+          _connectedEngine = true;
         } else {
           _roseEngine?.state.addListener(_engineStateListener);
         }
@@ -315,13 +314,8 @@ class BoardState with ChangeNotifier {
   void _engineStateListener() {
     if (_roseEngine?.state.value == RoseState.ready) {
       print("Engine is ready");
-      if (true) {
-        _connectedEngine = true;
-        notifyListeners();
-      }
-      if (!_isSettingEngine && _connectedEngine) {
-        _settingEngine();
-      }
+      _connectedEngine = true;
+      notifyListeners();
     } else if (_roseEngine?.state.value == RoseState.error) {
       print("Engine has error");
       if (true) {
@@ -345,6 +339,7 @@ class BoardState with ChangeNotifier {
 
   Future<void> _settingEngine() async {
     if (_isSettingEngine) return;
+    print('setting engine');
     _isSettingEngine = true;
     _roseEngine?.stdin = 'uci\n';
     _roseEngine?.stdin = 'setoption name Threads value 2\n';
