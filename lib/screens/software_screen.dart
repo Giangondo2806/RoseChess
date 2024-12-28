@@ -162,12 +162,6 @@ class _EngineWrapperState extends State<EngineWrapper>
 
   Future<void> _reloadApp() async {
     // _boardState.dispose();
-    getIt.get<Rose>().forceClean();
-    await Future.delayed(Duration(milliseconds: 5000));
-    await getIt.reset();
-    setupLocator();
-    await getIt.allReady();
-    Phoenix.rebirth(context);
   }
 
   @override
