@@ -33,11 +33,6 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
   }
 
   Future<void> _checkEngine() async {
-    // final hasPermission = await _requestStoragePermission();
-    // if (!hasPermission) {
-    //   return;
-    // }
-
     final engineFile = await EngineUtils.getEngineFile(engineFileName);
 
     if (await engineFile.exists()) {

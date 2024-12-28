@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/providers/book_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
-import 'package:rose_chess/services/service_locator.dart';
-import '../engine/rose.dart';
 import '../engine/rose_state.dart';
 import '../generated/l10n.dart';
 import '../providers/arrow_state.dart';
@@ -136,17 +134,6 @@ class _EngineWrapperState extends State<EngineWrapper>
   Future<void> _initEngineIfNeeded() async {
     if (_boardState.roseEngine == null ||
         _boardState.roseEngine!.state.value != RoseState.ready) {
-      if (!getIt.isRegistered<Rose>()) {
-        // print(' _boardState.roseEngine!.state.value; ${ _boardState.roseEngine!.state.value}');
-
-        print('create rose instance if dispose');
-        // await Future.delayed(Duration(milliseconds: 20));
-        // getIt.unregister<Rose>();
-        await Future.delayed(Duration(milliseconds: 20));
-        getIt.registerLazySingleton(() => Rose());
-        await Future.delayed(Duration(milliseconds: 20));
-      }
-
       if (mounted) {
         setState(() {
           _isLoading = true;
@@ -155,12 +142,9 @@ class _EngineWrapperState extends State<EngineWrapper>
       }
       _boardState.initEngine();
     }
-
-    // (if (getIt.is<Rose>()))
   }
 
   Future<void> _reloadApp() async {
-    // _boardState.dispose();
   }
 
   @override
