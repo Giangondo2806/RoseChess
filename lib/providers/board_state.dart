@@ -342,7 +342,7 @@ class BoardState with ChangeNotifier {
     _isSettingEngine = true;
     _roseEngine?.stdin = 'uci\n';
     _roseEngine?.stdin = 'setoption name Threads value 2\n';
-    _roseEngine?.stdin = 'setoption name Hash value 128\n';
+    _roseEngine?.stdin = 'setoption name Hash value 64\n';
     _roseEngine?.stdin = 'setoption name Evalfile value $engineFileName \n';
     _roseEngine?.stdin = 'isready\n';
     _isSettingEngine = false;

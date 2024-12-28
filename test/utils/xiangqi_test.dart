@@ -109,7 +109,7 @@ void main() {
         'P2-5',
         'P8-5',
         'M2.3',
-        '前P.4',
+        'Pt.4',
       ];
 
       // expect(xiangqi.getHistory(), equals(['h2e2', 'h9g7', 'h0g2','i9h9']));

@@ -1362,7 +1362,7 @@ class Xiangqi {
   }
 
   Move? move(dynamic moveInput,
-      {bool sloppy = false, List<Move>? canMoves,AppLocalizations? lang}) {
+      {bool sloppy = false, List<Move>? canMoves, AppLocalizations? lang}) {
     bool sloppy_ = sloppy;
     Move? moveObj;
     if (moveInput is String) {
@@ -1526,25 +1526,25 @@ class Xiangqi {
 
   String moveToJsChinese(Move move, {AppLocalizations? lang}) {
     Map<String, String> figureNames = {
-      'P': lang!.P,
-      'C': lang.C,
-      'R': lang.R,
-      'N': lang.N,
-      'B': lang.B,
-      'A': lang.A,
-      'K': lang.K,
+      'P': lang?.P ?? 'B',
+      'C': lang?.C ?? 'P',
+      'R': lang?.R ?? 'X',
+      'N': lang?.N ?? 'M',
+      'B': lang?.B ?? 'V',
+      'A': lang?.A ?? 'S',
+      'K': lang?.K ?? 'Tg',
     };
 
     Map<String, List<String>> figureDir = {
-      'r': [lang.forward, lang.backward], // [forward, backward]
-      'b': [lang.backward, lang.forward], // [forward, backward]
-      'p': [lang.horizontally]
+      'r': [lang?.forward ?? '.', lang?.backward ?? '/'], // [forward, backward]
+      'b': [lang?.backward ?? '/', lang?.forward ?? '.'], // [forward, backward]
+      'p': [lang?.horizontally ?? '-']
     };
 
     Map<String, List<String>> figureOrd = {
-      'r': [lang.front, lang.rear], // [front, rear]
-      'b': [lang.rear, lang.front], // [front, rear]
-      'm': [lang.middle]
+      'r': [lang?.front ?? 't', lang?.rear ?? 's'], // [front, rear]
+      'b': [lang?.rear ?? 's', lang?.front ?? 't'], // [front, rear]
+      'm': [lang?.middle ?? 'g']
     };
 
     Map<String, List<String>> figureValues = {
@@ -1615,12 +1615,12 @@ class Xiangqi {
         if (y.compareTo(fromY) * (turn == 'r' ? -1 : 1) > 0) {
           // Nằm trước quân đang xét
           if (cr == 0) {
-            s1 = lang.currentLang== 'vi'
+            s1 = (lang == null || lang.currentLang == 'vi')
                 ? pieceName + figureOrd[turn]![0]
                 : figureOrd[turn]![0] + pieceName; // tr/s + tên quân
             c++;
           } else {
-            s1 = lang.currentLang== 'vi'
+            s1 = (lang == null || lang.currentLang == 'vi')
                 ? figureValues[turn]![8 - fromX] + figureOrd[turn]![0]
                 : figureOrd[turn]![0] +
                     figureValues[turn]![8 - fromX]; // tr/s + số thứ tự cột
@@ -1637,7 +1637,7 @@ class Xiangqi {
           // Nằm sau quân đang xét
           if (cr == 0) {
             if (c == 0) {
-              s1 = lang.currentLang== 'vi'
+              s1 = (lang == null || lang.currentLang == 'vi')
                   ? pieceName + figureOrd[turn]![1]
                   : figureOrd[turn]![1] + pieceName; // s/tr + tên quân
             } else {
@@ -1647,7 +1647,7 @@ class Xiangqi {
             }
           } else {
             if (c == 0) {
-              s1 = lang.currentLang== 'vi'
+              s1 = (lang == null || lang.currentLang == 'vi')
                   ? figureValues[turn]![8 - fromX] + figureOrd[turn]![1]
                   : figureOrd[turn]![1] +
                       figureValues[turn]![8 - fromX]; // s/tr + số thứ tự cột
