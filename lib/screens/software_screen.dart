@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/providers/book_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';

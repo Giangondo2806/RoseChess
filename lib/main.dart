@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/generated/l10n.dart';
 import 'engine/rose.dart';
@@ -16,11 +15,10 @@ Future<void> main() async {
   }
   setupLocator();
   await getIt.allReady();
-  runApp(Phoenix(
-    child: ChangeNotifierProvider(
-      create: (context) => UserSettingsProvider(),
-      child: MyApp(),
-    ),
+  runApp(
+  ChangeNotifierProvider(
+    create: (context) => UserSettingsProvider(),
+    child: MyApp(),
   ));
 }
 
