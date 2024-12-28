@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../utils/engine_utils.dart';
 import 'software_screen.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+
 
 class EngineLoaderScreen extends StatefulWidget {
   const EngineLoaderScreen({Key? key}) : super(key: key);
@@ -16,7 +13,7 @@ class EngineLoaderScreen extends StatefulWidget {
 
 class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
   // Thêm .nnue vào tên file
-  final String engineFileName = 'stockfish.nnue';
+  final String engineFileName = 'pikafish.nnue';
   // Sửa URL download, thêm .nnue vào cuối
   final String engineDownloadUrl =
       'https://github.com/official-pikafish/Networks/releases/download/master-net/pikafish.nnue';
@@ -36,10 +33,10 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
   }
 
   Future<void> _checkEngine() async {
-    final hasPermission = await _requestStoragePermission();
-    if (!hasPermission) {
-      return;
-    }
+    // final hasPermission = await _requestStoragePermission();
+    // if (!hasPermission) {
+    //   return;
+    // }
 
     final engineFile = await EngineUtils.getEngineFile(engineFileName);
 
@@ -58,66 +55,6 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
     }
   }
 
-  Future<bool> _requestStoragePermission() async {
-    // Chỉ xử lý logic cho Android
-    if (Platform.isAndroid) {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      var androidInfo = await deviceInfo.androidInfo;
-      var sdkInt = androidInfo.version.sdkInt;
-
-      if (sdkInt >= 33) {
-        var manageStorageStatus = await Permission.manageExternalStorage.status;
-        if (manageStorageStatus.isGranted) {
-          return true;
-        } else {
-          var status = await Permission.manageExternalStorage.request();
-          if (status.isGranted) {
-            return true;
-          } else {
-            if (status.isPermanentlyDenied) {
-              openAppSettings();
-            } else {
-              setState(() {
-                _message = 'Ứng dụng cần quyền quản lý bộ nhớ để lưu engine.';
-              });
-            }
-            return false;
-          }
-        }
-      } else {
-        var storageStatus = await Permission.storage.status;
-        var manageStorageStatus = await Permission.manageExternalStorage.status;
-
-        if (storageStatus.isGranted && manageStorageStatus.isGranted) {
-          return true;
-        } else {
-          Map<Permission, PermissionStatus> statuses = await [
-            Permission.storage,
-            Permission.manageExternalStorage,
-          ].request();
-
-          if (statuses[Permission.storage]!.isGranted &&
-              statuses[Permission.manageExternalStorage]!.isGranted) {
-            return true;
-          } else {
-            if (statuses[Permission.storage]!.isPermanentlyDenied ||
-                statuses[Permission.manageExternalStorage]!.isPermanentlyDenied) {
-              openAppSettings();
-            } else {
-              setState(() {
-                _message =
-                    'Ứng dụng cần quyền truy cập bộ nhớ để lưu engine.';
-              });
-            }
-            return false;
-          }
-        }
-      }
-    } else {
-      // Đối với iOS, không cần xin quyền đặc biệt, trả về true luôn
-      return true;
-    }
-  }
 
   Future<void> _downloadEngine() async {
     setState(() {

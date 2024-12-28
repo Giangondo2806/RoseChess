@@ -147,7 +147,6 @@ void _isolateStdout(SendPort stdoutPort) {
     buffer = lines.removeLast();
 
     for (final line in lines) {
-      debugPrint('[rose] engine out: $line');
       final trimmed = line.trim();
       if (trimmed == 'readyok' || line.startsWith('bestmove')) {
         stdoutPort.send(line);
@@ -169,7 +168,7 @@ void _processInfoDepth(String line, SendPort stdoutPort) {
   try {
     final depthStr = line.split('depth ')[1].split(' ')[0];
     final depth = int.parse(depthStr);
-    if (depth > 14) {
+    if (depth >=12) {
       stdoutPort.send(line);
     }
   } catch (e) {
