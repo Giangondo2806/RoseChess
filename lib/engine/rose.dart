@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'ffi.dart';
 import 'rose_state.dart';
 
+final RegExp checkDepthRegex = RegExp(r"-?\d+\s+nodes");
 /// A wrapper for C++ engine.
 class Rose {
   final Completer<Rose>? completer;
@@ -146,6 +147,7 @@ void _isolateStdout(SendPort stdoutPort) {
     buffer = lines.removeLast();
 
     for (final line in lines) {
+      debugPrint('[rose] engine out: $line');
       final trimmed = line.trim();
       if (trimmed == 'readyok' || line.startsWith('bestmove')) {
         stdoutPort.send(line);
@@ -160,12 +162,14 @@ void _isolateStdout(SendPort stdoutPort) {
 }
 
 void _processInfoDepth(String line, SendPort stdoutPort) {
-  if (line.contains('currmovenumber')) return;
+   if(!checkDepthRegex.hasMatch(line)){
+    return;
+   }
 
   try {
     final depthStr = line.split('depth ')[1].split(' ')[0];
     final depth = int.parse(depthStr);
-    if (depth > 12) {
+    if (depth > 14) {
       stdoutPort.send(line);
     }
   } catch (e) {

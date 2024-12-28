@@ -56,7 +56,7 @@ EngineInfo parseEngineInfo(
       score > 0 ? calcEval(score).round() : (-calcEval(score.abs()).round());
 
   // Tạo title
-  final title = '${lang!.depth} $depth, ${lang.score} $calculatedScore, ${lang.nps} ${npsK}k';
+  final title = '${lang!.depth} ${depth+2}, ${lang.score} $calculatedScore, ${lang.nps} ${npsK}k';
 
   return EngineInfo(title: title, moves: sans);
 }
