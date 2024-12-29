@@ -51,10 +51,13 @@ class _SoftwareScreenState extends State<SoftwareScreen> {
             Provider.of<NavigationState>(context, listen: false),
           ),
           update: (context, engineAnalysisState, arrowState, bookState,
-                  navigationState, previous) =>
-              previous ??
-              BoardState(widget.engineFileName, engineAnalysisState, arrowState,
-                  bookState, navigationState),
+              navigationState, previous) {
+            final boardState = previous ??
+                BoardState(widget.engineFileName, engineAnalysisState,
+                    arrowState, bookState, navigationState);
+             navigationState.setBoardState(boardState: boardState);
+            return boardState;
+          },
         ),
       ],
       child: const EngineWrapper(
@@ -144,8 +147,7 @@ class _EngineWrapperState extends State<EngineWrapper>
     }
   }
 
-  Future<void> _reloadApp() async {
-  }
+  Future<void> _reloadApp() async {}
 
   @override
   Widget build(BuildContext context) {

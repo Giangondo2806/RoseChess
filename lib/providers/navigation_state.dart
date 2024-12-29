@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:rose_chess/providers/board_state.dart';
 import 'package:rose_chess/utils/xiangqi.dart';
 
 // class MoveData {
@@ -10,8 +11,9 @@ import 'package:rose_chess/utils/xiangqi.dart';
 // }
 
 class NavigationState with ChangeNotifier {
-  List<Map<String, Move?>> _moves = [];
-  List<Map<String, Move?>> get moves => _moves;
+  List<dynamic> _moves = [];
+  List<Map<String, Move?>> get moves => groupMoves(_moves);
+  late BoardState _boardState;
 
   void clearNavigation() {
     _moves.clear();
@@ -19,7 +21,15 @@ class NavigationState with ChangeNotifier {
   }
 
   void setNavigation(List<dynamic> data) {
-    _moves = groupMoves(data);
+    _moves =  data;
     notifyListeners();
+  }
+
+  void setBoardState({required boardState}){
+    _boardState = boardState;
+  }
+
+  void previousMove() {
+    
   }
 }

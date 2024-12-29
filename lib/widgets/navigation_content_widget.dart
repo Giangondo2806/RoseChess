@@ -32,7 +32,9 @@ class NavigationContent extends StatelessWidget {
                 Expanded(
                   child: FittedBox(
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        navigationState.previousMove();
+                      },
                       icon: const Icon(Icons.arrow_back),
                       tooltip: 'Lùi lại',
                     ),

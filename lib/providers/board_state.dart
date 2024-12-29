@@ -34,9 +34,7 @@ class BoardState with ChangeNotifier {
   String engineFileName;
   bool _isBoardInitialized = false;
   bool _isEngineInitializing = false;
-
   Rose? get roseEngine => _roseEngine;
-
   bool get isEngineInitializing => _isEngineInitializing;
   bool get engineReady => _readyOkReceived;
   bool get isBoardInitialized => _isBoardInitialized;
@@ -46,6 +44,7 @@ class BoardState with ChangeNotifier {
   late NavigationState navigationState;
   late AppLocalizations lang;
   StreamSubscription<String>? _engineOutputSubscription;
+  final List<Map<BoardPosition, Piece?>> boardHistory = [];
 
   BoardState(this.engineFileName, this.engineAnalysisState, this.arrowState,
       this.bookState, this.navigationState) {
