@@ -15,14 +15,17 @@ class NavigationState with ChangeNotifier {
   List<Map<String, Move?>> get moves => groupMoves(_moves);
   late BoardState _boardState;
   int _currentMove =0;
+  get currentMove => _currentMove;
 
   void clearNavigation() {
     _moves.clear();
+    _currentMove = 0;
     notifyListeners();
   }
 
   void setNavigation(List<dynamic> data) {
     _moves =  data;
+    print('[rose] data: $_moves');
     _currentMove = _moves.length;
     notifyListeners();
   }
@@ -48,7 +51,6 @@ class NavigationState with ChangeNotifier {
   void gotoMove(Move move) {
     final index = _moves.indexOf(move)+1;
       _currentMove = index;
-      print('[rose] index: $index');
       _boardState.gotoBoard(index: _currentMove);
   }
 

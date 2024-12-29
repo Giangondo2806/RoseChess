@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import '../generated/l10n.dart';
 
@@ -98,7 +97,7 @@ class Xiangqi {
   static const KING = XiangqiPieceType.k;
   static const SYMBOLS = 'pcrnbakPCRNBAK';
   static const DEFAULT_POSITION =
-      'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
+      'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w';
   static const POSSIBLE_RESULTS = ['1-0', '0-1', '1/2-1/2', '*'];
   static const PAWN_OFFSETS = {
     XiangqiColor.b: [0x10, -0x01, 0x01],
@@ -236,10 +235,11 @@ class Xiangqi {
   List<Move> futures = [];
   Map<String, String> header = {};
   int moveNumber = 0;
+  String initFen = DEFAULT_POSITION;
 
   Xiangqi({String? fen}) {
     if (fen == null) {
-      load(Xiangqi.DEFAULT_POSITION);
+      load(initFen);
     } else {
       load(fen);
     }
@@ -260,7 +260,7 @@ class Xiangqi {
   }
 
   void reset() {
-    load(Xiangqi.DEFAULT_POSITION);
+    load(initFen);
   }
 
   bool load(String fen, {bool keepHeaders = false}) {
@@ -294,7 +294,7 @@ class Xiangqi {
     turn = (tokens[1] == Xiangqi.BLACK) ? Xiangqi.BLACK : Xiangqi.RED;
     moveNumber = turn == 'b' ? 1 : 0;
 
-    updateSetup(generateFen());
+    // updateSetup(generateFen());
 
     return true;
   }
@@ -1699,6 +1699,16 @@ class Xiangqi {
       (history.last as dynamic)['move'].moveNumber = moveNumber;
     }
     return san;
+  }
+
+  void setCurrentMove({required int currentMove}) {
+    final histories = getHistory();
+    reset();
+    for(int i = 0; i < currentMove; i++) {
+      simpleMove(histories[i]);
+    }
+    // setMove(history.removeLast());
+
   }
 }
 

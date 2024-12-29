@@ -7,13 +7,11 @@ import 'package:rose_chess/models/engine_info.dart';
 import 'package:rose_chess/providers/arrow_state.dart';
 import 'package:rose_chess/providers/book_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
-
 import '../engine/rose.dart';
 import '../engine/rose_state.dart';
 import '../generated/l10n.dart';
 import '../models/piece.dart';
 import '../models/board_position.dart';
-import '../constants.dart';
 import '../utils/xiangqi.dart';
 import 'engine_analysis_state.dart';
 
@@ -44,7 +42,7 @@ class BoardState with ChangeNotifier {
   late NavigationState navigationState;
   late AppLocalizations lang;
   StreamSubscription<String>? _engineOutputSubscription;
-  final List<Map<BoardPosition, Piece?>> boardHistory = [];
+  final List<Map<BoardPosition, Piece?>> _boardHistory = [];
 
   BoardState(this.engineFileName, this.engineAnalysisState, this.arrowState,
       this.bookState, this.navigationState) {
@@ -60,10 +58,11 @@ class BoardState with ChangeNotifier {
       pauseGame();
     }
 
-    boardHistory.clear();
+    _boardHistory.clear();
     engineAnalysisState.clearAnalysis();
     arrowState.clearArrows();
     navigationState.clearNavigation();
+    selectedPosition = null;
     _isBoardInitialized = false;
     _initializeBoard();
     notifyListeners();
@@ -71,7 +70,6 @@ class BoardState with ChangeNotifier {
 
   void _initializeBoard() {
     if (_isBoardInitialized) return;
-    print(lang);
     piecePositions = {};
     board = {};
     xiangqi = Xiangqi();
@@ -88,7 +86,7 @@ class BoardState with ChangeNotifier {
           if (pieceData.notion == null) {
             throw Exception("Piece data notion is null at i=$i, j=$j");
           }
-          final piece = _createPieceFromData(pieceData, idCounter);
+          final piece = createPieceFromData(pieceData, idCounter);
           board[BoardPosition(pieceData.notion!)] = piece;
           piecePositions[piece.id] = BoardPosition(pieceData.notion!);
           idCounter++;
@@ -96,78 +94,16 @@ class BoardState with ChangeNotifier {
       }
     }
 
-    boardHistory.add(Map.from(board));
+    _boardHistory.add(Map.from(board));
     _isBoardInitialized = true;
   }
 
-  Piece _createPieceFromData(XiangqiPiece pieceData, int idCounter) {
-    final type = _getPieceType(pieceData.type);
-    final color = _getPieceColor(pieceData.color);
-    final assetPath = _getAssetPath(type, color);
-    final piece = Piece(
-      id: "piece_$idCounter",
-      type: type,
-      color: color,
-      assetPath: assetPath,
-    );
-    return piece;
-  }
 
-  PieceType _getPieceType(String type) {
-    switch (type) {
-      case 'r':
-        return PieceType.rook;
-      case 'n':
-        return PieceType.knight;
-      case 'b':
-        return PieceType.bishop;
-      case 'a':
-        return PieceType.advisor;
-      case 'k':
-        return PieceType.king;
-      case 'c':
-        return PieceType.cannon;
-      case 'p':
-        return PieceType.pawn;
-      default:
-        return PieceType.none;
-    }
-  }
-
-  PieceColor _getPieceColor(String color) {
-    switch (color) {
-      case 'r':
-        return PieceColor.red;
-      case 'b':
-        return PieceColor.black;
-      default:
-        return PieceColor.red;
-    }
-  }
-
-  String _getAssetPath(PieceType type, PieceColor color) {
-    switch (type) {
-      case PieceType.rook:
-        return color == PieceColor.red ? RR : BR;
-      case PieceType.knight:
-        return color == PieceColor.red ? RN : BN;
-      case PieceType.bishop:
-        return color == PieceColor.red ? RB : BB;
-      case PieceType.advisor:
-        return color == PieceColor.red ? RA : BA;
-      case PieceType.king:
-        return color == PieceColor.red ? RK : BK;
-      case PieceType.cannon:
-        return color == PieceColor.red ? RC : BC;
-      case PieceType.pawn:
-        return color == PieceColor.red ? RP : BP;
-      default:
-        return '';
-    }
-  }
 
   void onPieceTapped(BoardPosition position) {
-    if (selectedPosition == null) {
+ 
+    
+    if (selectedPosition== null) {
       _handleNewPieceSelection(position);
     } else {
       _handleExistingPieceSelection(position);
@@ -208,7 +144,9 @@ class BoardState with ChangeNotifier {
 // Chọn một quân cờ
   void _selectPiece(BoardPosition position) {
     selectedPosition = position;
-    canMoves = xiangqi
+    final current = navigationState.currentMove-1;
+    final xiangqiCanmove  = current>=0? Xiangqi(fen:xiangqi.getHistory(verbose: true)[current].fen):Xiangqi(fen:xiangqi.initFen);
+    canMoves =  xiangqiCanmove
         .generatePrettyMoves(square: selectedPosition!.notation)
         .map((el) => el.iccs!)
         .toList();
@@ -235,6 +173,10 @@ class BoardState with ChangeNotifier {
 
 // Di chuyển quân cờ
   void _handleMovePiece(BoardPosition from, BoardPosition to, Piece piece) {
+       if(_boardHistory.length-1 !=navigationState.currentMove){
+      _handleSyncXiangqiMove();
+    }
+    
     engineAnalysisState.clearAnalysis();
     xiangqi.simpleMove({'from': from.notation, 'to': to.notation}, lang: lang);
     bookState.getbook(xiangqi.generateFen(), lang);
@@ -242,8 +184,14 @@ class BoardState with ChangeNotifier {
     _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
     arrowState.clearArrows();
     navigationState.setNavigation(xiangqi.getHistory(verbose: true));
-    boardHistory.add(Map.from(board));
+    _boardHistory.add(Map.from(board));
     _deselectPiece();
+  }
+
+  _handleSyncXiangqiMove(){
+    final currentMove = navigationState.currentMove;
+    xiangqi.setCurrentMove(currentMove: currentMove);
+    _boardHistory.removeRange(currentMove+1, _boardHistory.length);
   }
 
   void _movePiece(BoardPosition from, BoardPosition to, Piece piece) {
@@ -257,8 +205,8 @@ class BoardState with ChangeNotifier {
     pauseGame();
     engineAnalysisState.clearAnalysis();
     arrowState.clearArrows();
-    if (index < boardHistory.length) {
-      board = Map.from(boardHistory[index]);
+    if (index < _boardHistory.length) {
+      board = Map.from(_boardHistory[index]);
       selectedPosition = null;
       notifyListeners();
     }

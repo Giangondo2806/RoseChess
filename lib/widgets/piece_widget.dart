@@ -21,14 +21,13 @@ class PieceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final boardState = Provider.of<BoardState>(context, listen: false);
     final pieceSize = squareSize - 3; // Điều chỉnh kích thước quân cờ
     return InkWell(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           
-          border: isSelected && piece.color.name== boardState.xiangqi.turn?  Border.all(color: Colors.blue, width: 2) : null,
+          border: isSelected?  Border.all(color: Colors.blue, width: 2) : null,
         ),
         alignment: Alignment.center, // Căn giữa quân cờ
         child: SvgPicture.asset(
