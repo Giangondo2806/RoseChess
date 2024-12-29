@@ -23,7 +23,9 @@ class NavigationContent extends StatelessWidget {
                 Expanded(
                   child: FittedBox(
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        navigationState.gotoFistMove();
+                      },
                       icon: const Icon(Icons.fast_rewind),
                       tooltip: 'Về đầu',
                     ),
@@ -43,7 +45,9 @@ class NavigationContent extends StatelessWidget {
                 Expanded(
                   child: FittedBox(
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        navigationState.nextMove();
+                      },
                       icon: const Icon(Icons.arrow_forward),
                       tooltip: 'Tiến lên',
                     ),
@@ -52,7 +56,9 @@ class NavigationContent extends StatelessWidget {
                 Expanded(
                   child: FittedBox(
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        navigationState.gotoLastMove();
+                      },
                       icon: const Icon(Icons.fast_forward),
                       tooltip: 'Đến cuối',
                     ),
@@ -90,8 +96,7 @@ class NavigationContent extends StatelessWidget {
                                       horizontal: 0, vertical: 4.0),
                                 ),
                                 onPressed: () {
-                                  print(
-                                      "Đã nhấn vào nước đi: ${move['move1']!.san!}");
+                                  navigationState.gotoMove(move['move1']!);
                                 },
                                 child: Text(move['move1']!.san!),
                               )
@@ -106,8 +111,7 @@ class NavigationContent extends StatelessWidget {
                                       horizontal: 0, vertical: 4.0),
                                 ),
                                 onPressed: () {
-                                  print(
-                                      "Đã nhấn vào nước đi: ${move['move2']!.san!}");
+                                  navigationState.gotoMove(move['move2']!);
                                 },
                                 child: Text(move['move2']!.san!),
                               )

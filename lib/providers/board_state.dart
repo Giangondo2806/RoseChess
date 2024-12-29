@@ -60,6 +60,7 @@ class BoardState with ChangeNotifier {
       pauseGame();
     }
 
+    boardHistory.clear();
     engineAnalysisState.clearAnalysis();
     arrowState.clearArrows();
     navigationState.clearNavigation();
@@ -94,6 +95,8 @@ class BoardState with ChangeNotifier {
         }
       }
     }
+
+    boardHistory.add(Map.from(board));
     _isBoardInitialized = true;
   }
 
@@ -165,72 +168,82 @@ class BoardState with ChangeNotifier {
 
   void onPieceTapped(BoardPosition position) {
     if (selectedPosition == null) {
-      if (board[position] != null) {
-        selectedPosition = position;
-        if (selectedPosition != null) {
-          canMoves = xiangqi
-              .generatePrettyMoves(square: selectedPosition!.notation)
-              .map((el) => el.iccs!)
-              .toList();
-          if (canMoves.isEmpty) return;
-        } else {
-          canMoves = [];
-          return;
-        }
-      } else {
-        return;
-      }
+      _handleNewPieceSelection(position);
     } else {
-      if (position != selectedPosition) {
-        final selectedPiece = board[selectedPosition];
-        final targetPiece = board[position];
+      _handleExistingPieceSelection(position);
+    }
 
-        if (selectedPiece != null &&
-            (targetPiece == null || targetPiece.color != selectedPiece.color) &&
-            selectedPosition != null) {
-          if (canMoves
-              .contains(selectedPosition!.notation + position.notation)) {
-            engineAnalysisState
-                .clearAnalysis(); // Use directly instead of Provider
-            xiangqi.simpleMove(
-                {'from': selectedPosition!.notation, 'to': position.notation},
-                lang: lang);
-            bookState.getbook(xiangqi.generateFen(), lang);
-            _movePiece(selectedPosition!, position, selectedPiece);
-            _engineSearch(
-                '$initFen - - moves ${xiangqi.getHistory().join(' ')}');
-            arrowState.clearArrows();
-            navigationState.setNavigation(xiangqi.getHistory(verbose: true));
-            canMoves = [];
-          } else {
-            selectedPosition = null;
-            canMoves = [];
-            return;
-          }
-        } else {
-          if (board[position] != null) {
-            selectedPosition = position;
-            if (selectedPosition != null) {
-              canMoves = xiangqi
-                  .generatePrettyMoves(square: selectedPosition!.notation)
-                  .map((el) => el.iccs!)
-                  .toList();
-              if (canMoves.isEmpty) return;
-            } else {
-              canMoves = [];
-              return;
-            }
-          } else {
-            selectedPosition = null;
-            canMoves = [];
-            return;
-          }
-        }
-      } else {
-        return;
+    notifyListeners();
+  }
+
+// Xử lý khi chưa có quân cờ nào được chọn
+  void _handleNewPieceSelection(BoardPosition position) {
+    if (board[position] != null) {
+      _selectPiece(position);
+      if (canMoves.isEmpty) {
+        _deselectPiece();
       }
     }
-    notifyListeners();
+  }
+
+// Xử lý khi đã có quân cờ được chọn
+  void _handleExistingPieceSelection(BoardPosition position) {
+    if (position == selectedPosition) {
+      _deselectPiece();
+    } else {
+      final selectedPiece = board[selectedPosition];
+      final targetPiece = board[position];
+
+      if (_isValidMove(selectedPiece, targetPiece, position)) {
+        _handleMovePiece(selectedPosition!, position, selectedPiece!);
+      } else if (_canSelectNewPiece(targetPiece, selectedPiece)) {
+        _selectPiece(position);
+        if (canMoves.isEmpty) {
+          _deselectPiece();
+        }
+      }
+    }
+  }
+
+// Chọn một quân cờ
+  void _selectPiece(BoardPosition position) {
+    selectedPosition = position;
+    canMoves = xiangqi
+        .generatePrettyMoves(square: selectedPosition!.notation)
+        .map((el) => el.iccs!)
+        .toList();
+  }
+
+// Bỏ chọn quân cờ
+  void _deselectPiece() {
+    selectedPosition = null;
+    canMoves = [];
+  }
+
+// Kiểm tra nước đi hợp lệ
+  bool _isValidMove(
+      Piece? selectedPiece, Piece? targetPiece, BoardPosition targetPosition) {
+    return selectedPiece != null &&
+        (targetPiece == null || targetPiece.color != selectedPiece.color) &&
+        canMoves.contains(selectedPosition!.notation + targetPosition.notation);
+  }
+
+// Kiểm tra xem có thể chọn quân cờ mới hay không
+  bool _canSelectNewPiece(Piece? targetPiece, Piece? selectedPiece) {
+    return targetPiece != null && targetPiece.color == selectedPiece?.color;
+  }
+
+// Di chuyển quân cờ
+  void _handleMovePiece(BoardPosition from, BoardPosition to, Piece piece) {
+    engineAnalysisState.clearAnalysis();
+    xiangqi.simpleMove({'from': from.notation, 'to': to.notation}, lang: lang);
+    bookState.getbook(xiangqi.generateFen(), lang);
+    _movePiece(from, to, piece); // Hàm _movePiece của bạn để cập nhật giao diện
+    _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
+    arrowState.clearArrows();
+    navigationState.setNavigation(xiangqi.getHistory(verbose: true));
+    boardHistory.add(Map.from(board));
+    _deselectPiece();
   }
 
   void _movePiece(BoardPosition from, BoardPosition to, Piece piece) {
@@ -238,6 +251,17 @@ class BoardState with ChangeNotifier {
     board[from] = null;
     piecePositions[piece.id] = to;
     selectedPosition = null;
+  }
+
+  void gotoBoard({int index = 0}) {
+    pauseGame();
+    engineAnalysisState.clearAnalysis();
+    arrowState.clearArrows();
+    if (index < boardHistory.length) {
+      board = Map.from(boardHistory[index]);
+      selectedPosition = null;
+      notifyListeners();
+    }
   }
 
   void handleMenuAction(String action) {
