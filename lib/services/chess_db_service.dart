@@ -31,7 +31,7 @@ Future<List<ChessdbMove>> getChessdbMoves(
           .where((el) => el.score != '??')
           .toList();
     } catch (e) {
-      print(e);
+      print('[rose] chessdb $e');
       return [];
     }
   } else {

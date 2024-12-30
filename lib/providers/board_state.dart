@@ -60,7 +60,10 @@ class BoardState with ChangeNotifier {
 
     _boardHistory.clear();
     engineAnalysisState.clearAnalysis();
-    arrowState.clearArrows();
+    Future.delayed(Duration(milliseconds: 10), () {
+     arrowState.clearArrows();
+    });
+    
     navigationState.clearNavigation();
     selectedPosition = null;
     _isBoardInitialized = false;
@@ -204,7 +207,9 @@ class BoardState with ChangeNotifier {
   void gotoBoard({int index = 0}) {
     pauseGame();
     engineAnalysisState.clearAnalysis();
-    arrowState.clearArrows();
+     Future.delayed(Duration(milliseconds: 10), () {
+     arrowState.clearArrows();
+    });
     if (index < _boardHistory.length) {
       board = Map.from(_boardHistory[index]);
       selectedPosition = null;
@@ -304,7 +309,7 @@ class BoardState with ChangeNotifier {
     try {
       arrowState.addArrows(line);
     } catch (e) {
-      print(e);
+      print('[rose] extract move $e');
     }
   }
 

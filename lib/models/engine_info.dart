@@ -45,7 +45,7 @@ EngineInfo parseEngineInfo(
     sans = getSanMovesFromfenAndNotations(
         fen: fen, chainNotation: moves, lang: lang);
   } catch (e) {
-    print(e);
+    print('[rose]: parse san failed $e');
   }
 
   // Nhân nps với 2 và lấy đơn vị là k
