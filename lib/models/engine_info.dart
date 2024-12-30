@@ -7,8 +7,9 @@ import '../generated/l10n.dart';
 class EngineInfo {
   final String title;
   final String moves;
+  final String bestmove;
 
-  EngineInfo({required this.title, required this.moves});
+  EngineInfo({required this.title, required this.moves, required this.bestmove});
 
   @override
   String toString() {
@@ -25,7 +26,7 @@ double calcEval(num x) {
   }
 }
 
-EngineInfo parseEngineInfo(
+EngineInfo? parseEngineInfo(
     {required String input, required String fen, AppLocalizations? lang}) {
   // Tách chuỗi thành các phần dựa trên các từ khóa
   final depthMatch = RegExp(r'depth (\d+)').firstMatch(input);
@@ -45,7 +46,7 @@ EngineInfo parseEngineInfo(
     sans = getSanMovesFromfenAndNotations(
         fen: fen, chainNotation: moves, lang: lang);
   } catch (e) {
-    print('[rose]: parse san failed $e');
+     return null;
   }
 
   // Nhân nps với 2 và lấy đơn vị là k
@@ -58,5 +59,8 @@ EngineInfo parseEngineInfo(
   // Tạo title
   final title = '${lang!.depth} ${depth+2}, ${lang.score} $calculatedScore, ${lang.nps} ${npsK}k';
 
-  return EngineInfo(title: title, moves: sans);
+  // bestmove
+  final bestmove = moves.split(' ')[0];
+
+  return EngineInfo(title: title, moves: sans, bestmove: bestmove);
 }

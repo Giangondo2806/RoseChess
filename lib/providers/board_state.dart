@@ -50,8 +50,9 @@ class BoardState with ChangeNotifier {
   bool get automoveRed => _automoveRed;
   bool get automoveBlack => _automoveBlack;
   bool get searchModeEnabled => _searchModeEnabled;
+  bool _enableQuickMove = false;
   String get _currentFen {
-    final current = navigationState.currentMove-1;
+    final current = navigationState.currentMove - 1;
     return current >= 0
         ? xiangqi.getHistory(verbose: true)[current].fen
         : xiangqi.initFen;
@@ -173,7 +174,7 @@ class BoardState with ChangeNotifier {
     engineAnalysisState.clearAnalysis();
     xiangqi.simpleMove({'from': from.notation, 'to': to.notation});
     bookState.getbook(xiangqi.generateFen(), lang);
-      arrowState.clearArrows();
+    arrowState.clearArrows();
     navigationState.setNavigation(xiangqi.getHistory(verbose: true));
     _movePiece(from, to, piece);
     _boardHistory.add(Map.from(board));
@@ -189,7 +190,7 @@ class BoardState with ChangeNotifier {
     if (_automoveRed && turn == XiangqiColor.RED) {
       _handleEngineSearchRed();
     }
-  
+
     _deselectPiece();
   }
 
@@ -235,7 +236,7 @@ class BoardState with ChangeNotifier {
         _enableEngine();
         break;
       case 'quick_move':
-        // Handle Quick Move
+        _handleQuickMove();
         break;
       case 'edit':
         // Handle Edit
@@ -296,17 +297,12 @@ class BoardState with ChangeNotifier {
             final info = parseEngineInfo(
                 fen: xiangqi.generateFen(), input: line, lang: lang);
 
-            if (info.moves != '') {
-              try {
-                engineAnalysisState.addAnalysis(info);
-                _extractMoves(line);
-              } catch (e) {
-                print('co loi');
-              }
+            if (info != null) {
+              engineAnalysisState.addAnalysis(info);
+              _extractMoves(line);
             }
-          } else if(line.startsWith('bestmove')){
-             
-             _handleEngineBestMove(line);
+          } else if (line.startsWith('bestmove')) {
+            _handleEngineBestMove(line);
           }
         });
         if (_roseEngine!.state.value == RoseState.ready) {
@@ -327,7 +323,7 @@ class BoardState with ChangeNotifier {
     if (_searchModeEnabled) {
       _searchModeEnabled = false;
     }
-    if(_automoveRed){
+    if (_automoveRed) {
       _handleEngineSearchRed();
     }
     notifyListeners();
@@ -338,7 +334,7 @@ class BoardState with ChangeNotifier {
     if (_searchModeEnabled) {
       _searchModeEnabled = false;
     }
-    if(_automoveBlack){
+    if (_automoveBlack) {
       _handleEngineSearchBlack();
     }
     notifyListeners();
@@ -351,18 +347,15 @@ class BoardState with ChangeNotifier {
       _automoveBlack = false;
       _engineSearch(_currentFen);
     }
-   
 
     notifyListeners();
   }
 
   void _engineStateListener() {
     if (_roseEngine?.state.value == RoseState.ready) {
-      print("Engine is ready");
       _connectedEngine = true;
       notifyListeners();
     } else if (_roseEngine?.state.value == RoseState.error) {
-      print("Engine has error");
       if (true) {
         _connectedEngine = false;
         _readyOkReceived = false;
@@ -405,7 +398,7 @@ class BoardState with ChangeNotifier {
 
   void _engineSearch(String fen) {
     if (!_connectedEngine || !_readyOkReceived) return;
-    
+
     _roseEngine?.stdin = 'stop\n';
     _roseEngine?.stdin = 'position fen $fen\n';
     _roseEngine?.stdin = 'go\n';
@@ -415,11 +408,11 @@ class BoardState with ChangeNotifier {
 
   void _engineSearchMoveTime(String fen, int moveTime) {
     if (!_connectedEngine || !_readyOkReceived) return;
-   
+
     _roseEngine?.stdin = 'stop\n';
     _roseEngine?.stdin = 'position fen $fen\n';
     _roseEngine?.stdin = 'go movetime $moveTime\n';
-     engineAnalysisState.clearAnalysis();
+    engineAnalysisState.clearAnalysis();
     notifyListeners(); // Cập nhật giao diện
   }
 
@@ -434,17 +427,17 @@ class BoardState with ChangeNotifier {
   void _handleEngineSearchBlack() {
     if (xiangqi.turn == XiangqiColor.BLACK) {
       final _fen = '$initFen - - moves ${xiangqi.getHistory().join(' ')}';
-      _engineSearchMoveTime(_fen,1000);
+      _engineSearchMoveTime(_fen, 1000);
     }
   }
 
   void _handleEngineSearchRed() {
-    if (xiangqi.turn == XiangqiColor.RED) { 
+    if (xiangqi.turn == XiangqiColor.RED) {
       final _fen = '$initFen - - moves ${xiangqi.getHistory().join(' ')}';
-      _engineSearchMoveTime(_fen,1000);
+      _engineSearchMoveTime(_fen, 1000);
     }
   }
-  
+
   void _handleEngineBestMove(String line) {
     final bestMove = line.split(' ')[1];
     final from = bestMove.substring(0, 2);
@@ -452,10 +445,14 @@ class BoardState with ChangeNotifier {
     final fromPosition = BoardPosition(from);
     final toPosition = BoardPosition(to);
     final piece = board[fromPosition];
-    if (piece != null && piece.color.name== xiangqi.turn) {
+    if (piece != null && piece.color.name == xiangqi.turn) {
       _handleMovePiece(fromPosition, toPosition, piece);
     }
 
     notifyListeners();
+  }
+
+  void _handleQuickMove() {
+    _enableQuickMove = true;
   }
 }
