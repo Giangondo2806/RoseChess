@@ -29,7 +29,7 @@ class BoardState with ChangeNotifier {
   bool _connectedEngine = false;
   bool _isSettingEngine = false;
   bool _readyOkReceived = false;
-  String engineFileName;
+  late String engineFileName;
   bool _isBoardInitialized = false;
   bool _isEngineInitializing = false;
   Rose? get roseEngine => _roseEngine;
@@ -43,6 +43,18 @@ class BoardState with ChangeNotifier {
   late AppLocalizations lang;
   StreamSubscription<String>? _engineOutputSubscription;
   final List<Map<BoardPosition, Piece?>> _boardHistory = [];
+  bool _automoveRed = false;
+  bool _automoveBlack = false;
+  bool _searchModeEnabled = false;
+  bool get automoveRed => _automoveRed;
+  bool get automoveBlack => _automoveBlack;
+  bool get searchModeEnabled => _searchModeEnabled;
+  String get _currentFen {
+    final current = navigationState.currentMove - 1;
+    return current >= 0
+        ? xiangqi.getHistory(verbose: true)[current].fen
+        : xiangqi.initFen;
+  }
 
   BoardState(this.engineFileName, this.engineAnalysisState, this.arrowState,
       this.bookState, this.navigationState) {
@@ -51,24 +63,6 @@ class BoardState with ChangeNotifier {
 
   setLang(AppLocalizations inputLang) {
     lang = inputLang;
-  }
-
-  void newGame() {
-    if (roseEngine?.state.value == RoseState.ready) {
-      pauseGame();
-    }
-
-    _boardHistory.clear();
-    engineAnalysisState.clearAnalysis();
-    Future.delayed(Duration(milliseconds: 10), () {
-     arrowState.clearArrows();
-    });
-    
-    navigationState.clearNavigation();
-    selectedPosition = null;
-    _isBoardInitialized = false;
-    _initializeBoard();
-    notifyListeners();
   }
 
   void _initializeBoard() {
@@ -101,12 +95,8 @@ class BoardState with ChangeNotifier {
     _isBoardInitialized = true;
   }
 
-
-
   void onPieceTapped(BoardPosition position) {
- 
-    
-    if (selectedPosition== null) {
+    if (selectedPosition == null) {
       _handleNewPieceSelection(position);
     } else {
       _handleExistingPieceSelection(position);
@@ -147,9 +137,8 @@ class BoardState with ChangeNotifier {
 // Chọn một quân cờ
   void _selectPiece(BoardPosition position) {
     selectedPosition = position;
-    final current = navigationState.currentMove-1;
-    final xiangqiCanmove  = current>=0? Xiangqi(fen:xiangqi.getHistory(verbose: true)[current].fen):Xiangqi(fen:xiangqi.initFen);
-    canMoves =  xiangqiCanmove
+    final xiangqiCanmove = Xiangqi(fen: _currentFen);
+    canMoves = xiangqiCanmove
         .generatePrettyMoves(square: selectedPosition!.notation)
         .map((el) => el.iccs!)
         .toList();
@@ -176,25 +165,31 @@ class BoardState with ChangeNotifier {
 
 // Di chuyển quân cờ
   void _handleMovePiece(BoardPosition from, BoardPosition to, Piece piece) {
-       if(_boardHistory.length-1 !=navigationState.currentMove){
+    if (_boardHistory.length - 1 != navigationState.currentMove) {
       _handleSyncXiangqiMove();
     }
-    
+
     engineAnalysisState.clearAnalysis();
     xiangqi.simpleMove({'from': from.notation, 'to': to.notation}, lang: lang);
     bookState.getbook(xiangqi.generateFen(), lang);
     _movePiece(from, to, piece); // Hàm _movePiece của bạn để cập nhật giao diện
-    _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
+    if (_searchModeEnabled)
+      _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
+
+    final turn = xiangqi.turn;
+    if (_automoveBlack && turn == XiangqiColor.BLACK)
+      _handleEngineSearchBlack();
+    if (_automoveRed && turn == XiangqiColor.RED) _handleEngineSearchRed();
     arrowState.clearArrows();
     navigationState.setNavigation(xiangqi.getHistory(verbose: true));
     _boardHistory.add(Map.from(board));
     _deselectPiece();
   }
 
-  _handleSyncXiangqiMove(){
+  _handleSyncXiangqiMove() {
     final currentMove = navigationState.currentMove;
     xiangqi.setCurrentMove(currentMove: currentMove);
-    _boardHistory.removeRange(currentMove+1, _boardHistory.length);
+    _boardHistory.removeRange(currentMove + 1, _boardHistory.length);
   }
 
   void _movePiece(BoardPosition from, BoardPosition to, Piece piece) {
@@ -207,8 +202,8 @@ class BoardState with ChangeNotifier {
   void gotoBoard({int index = 0}) {
     pauseGame();
     engineAnalysisState.clearAnalysis();
-     Future.delayed(Duration(milliseconds: 10), () {
-     arrowState.clearArrows();
+    Future.delayed(Duration(milliseconds: 10), () {
+      arrowState.clearArrows();
     });
     if (index < _boardHistory.length) {
       board = Map.from(_boardHistory[index]);
@@ -223,8 +218,23 @@ class BoardState with ChangeNotifier {
       case 'new_game':
         newGame();
         break;
-      case 'detect_image':
-        // Xử lý Detect Image
+      case 'auto_red':
+        _autoRed();
+        break;
+      case 'auto_black':
+         _autoBlack();
+        break;
+      case 'enable_engine':
+        _enableEngine();
+        break;
+      case 'quick_move':
+        // Handle Quick Move
+        break;
+      case 'edit':
+        // Handle Edit
+        break;
+      case 'copy':
+        // Handle Copy
         break;
       case 'flip_board':
         // Xử lý Flip Board
@@ -233,6 +243,24 @@ class BoardState with ChangeNotifier {
         // Xử lý Settings
         break;
     }
+  }
+
+  void newGame() {
+    if (roseEngine?.state.value == RoseState.ready) {
+      pauseGame();
+    }
+
+    _boardHistory.clear();
+    engineAnalysisState.clearAnalysis();
+    Future.delayed(Duration(milliseconds: 10), () {
+      arrowState.clearArrows();
+    });
+
+    navigationState.clearNavigation();
+    selectedPosition = null;
+    _isBoardInitialized = false;
+    _initializeBoard();
+    notifyListeners();
   }
 
   Future<void> initEngine() async {
@@ -285,6 +313,33 @@ class BoardState with ChangeNotifier {
     } finally {
       _isEngineInitializing = false;
     }
+  }
+
+  void _autoRed() {
+    _automoveRed = !_automoveRed;
+    if (_searchModeEnabled) {
+      _searchModeEnabled = false;
+    }
+    notifyListeners();
+  }
+
+  void _autoBlack(){
+    _automoveBlack = !_automoveBlack;
+    if (_searchModeEnabled) {
+      _searchModeEnabled = false;
+    }
+    notifyListeners();
+  }
+
+  void _enableEngine(){
+     _searchModeEnabled = !_searchModeEnabled;
+        if (_searchModeEnabled) {
+          _automoveRed = false;
+          _automoveBlack = false;
+          _engineSearch(_currentFen);
+        }
+
+        notifyListeners();
   }
 
   void _engineStateListener() {
@@ -351,4 +406,8 @@ class BoardState with ChangeNotifier {
     _isEngineInitializing = false;
     super.dispose();
   }
+
+  void _handleEngineSearchBlack() {}
+
+  void _handleEngineSearchRed() {}
 }

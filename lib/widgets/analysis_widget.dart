@@ -73,7 +73,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                   Expanded(
                     child: TabBarView(
                       controller: _tabController,
-                      physics: const NeverScrollableScrollPhysics(),
+                      // physics: const NeverScrollableScrollPhysics(),
                       children: [
                             GestureDetector(
                   onTap: hiddenNavigation,

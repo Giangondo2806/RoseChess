@@ -200,6 +200,9 @@ class _EngineWrapperState extends State<EngineWrapper>
                 children: [
                   MenuBarWidget(
                     onMenuAction: boardState.handleMenuAction,
+                    automoveRed: boardState.automoveRed,
+                    automoveBlack: boardState.automoveBlack,
+                    searchModeEnabled: boardState.searchModeEnabled,
                   ),
                   ChessBoardWidget(boardState: boardState),
                   Expanded(child: AnalysisWidget()),

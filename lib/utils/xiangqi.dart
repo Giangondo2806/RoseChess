@@ -2,8 +2,8 @@
 import '../generated/l10n.dart';
 
 class XiangqiColor {
-  static const b = 'b';
-  static const r = 'r';
+  static const BLACK = 'b';
+  static const RED = 'r';
 }
 
 class XiangqiPieceType {
@@ -85,8 +85,8 @@ class ValidationResult {
 
 class Xiangqi {
   static const WHITE = 'w';
-  static const BLACK = XiangqiColor.b;
-  static const RED = XiangqiColor.r;
+  static const BLACK = XiangqiColor.BLACK;
+  static const RED = XiangqiColor.RED;
   static const EMPTY = -1;
   static const PAWN = XiangqiPieceType.p;
   static const CANNON = XiangqiPieceType.c;
@@ -100,8 +100,8 @@ class Xiangqi {
       'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w';
   static const POSSIBLE_RESULTS = ['1-0', '0-1', '1/2-1/2', '*'];
   static const PAWN_OFFSETS = {
-    XiangqiColor.b: [0x10, -0x01, 0x01],
-    XiangqiColor.r: [-0x10, -0x01, 0x01]
+    XiangqiColor.BLACK: [0x10, -0x01, 0x01],
+    XiangqiColor.RED: [-0x10, -0x01, 0x01]
   };
 
   static const PIECE_OFFSETS = {
@@ -227,10 +227,10 @@ class Xiangqi {
 
   List<XiangqiPiece?> board = List.filled(256, null);
   Map<String, int> kings = {
-    XiangqiColor.r: Xiangqi.EMPTY,
-    XiangqiColor.b: Xiangqi.EMPTY
+    XiangqiColor.RED: Xiangqi.EMPTY,
+    XiangqiColor.BLACK: Xiangqi.EMPTY
   };
-  String turn = Xiangqi.RED;
+  String turn = XiangqiColor.RED;
   List<dynamic> history = [];
   List<Move> futures = [];
   Map<String, String> header = {};
@@ -251,7 +251,7 @@ class Xiangqi {
 
   void clear({bool keepHeaders = false}) {
     board = List.filled(256, null);
-    kings = {XiangqiColor.r: Xiangqi.EMPTY, XiangqiColor.b: Xiangqi.EMPTY};
+    kings = {XiangqiColor.RED: Xiangqi.EMPTY, XiangqiColor.BLACK: Xiangqi.EMPTY};
     turn = Xiangqi.RED;
     history = [];
     futures = [];
@@ -283,15 +283,15 @@ class Xiangqi {
         square += int.parse(piece);
       } else {
         final color = piece.codeUnitAt(0) < 'a'.codeUnitAt(0)
-            ? Xiangqi.RED
-            : Xiangqi.BLACK;
+            ? XiangqiColor.RED
+            : XiangqiColor.BLACK;
         put(XiangqiPiece(type: piece.toLowerCase(), color: color),
             algebraic(square));
         square++;
       }
     }
 
-    turn = (tokens[1] == Xiangqi.BLACK) ? Xiangqi.BLACK : Xiangqi.RED;
+    turn = (tokens[1] == XiangqiColor.BLACK) ? XiangqiColor.BLACK : XiangqiColor.RED;
     moveNumber = turn == 'b' ? 1 : 0;
 
     // updateSetup(generateFen());
@@ -414,39 +414,39 @@ class Xiangqi {
       return result(17);
     }
 
-    if (outOfPlace(Xiangqi.KING, pieces['k']!.squares[0], Xiangqi.BLACK)) {
+    if (outOfPlace(Xiangqi.KING, pieces['k']!.squares[0], XiangqiColor.BLACK)) {
       return result(18);
     }
-    if (outOfPlace(Xiangqi.KING, pieces['K']!.squares[0], Xiangqi.RED)) {
+    if (outOfPlace(Xiangqi.KING, pieces['K']!.squares[0], XiangqiColor.RED)) {
       return result(19);
     }
     for (int i = 0; i < pieces['a']!.squares.length; ++i) {
-      if (outOfPlace(Xiangqi.ADVISER, pieces['a']!.squares[i], Xiangqi.BLACK)) {
+      if (outOfPlace(Xiangqi.ADVISER, pieces['a']!.squares[i], XiangqiColor.BLACK)) {
         return result(20);
       }
     }
     for (int i = 0; i < pieces['A']!.squares.length; ++i) {
-      if (outOfPlace(Xiangqi.ADVISER, pieces['A']!.squares[i], Xiangqi.RED)) {
+      if (outOfPlace(Xiangqi.ADVISER, pieces['A']!.squares[i], XiangqiColor.RED)) {
         return result(21);
       }
     }
     for (int i = 0; i < pieces['b']!.squares.length; ++i) {
-      if (outOfPlace(Xiangqi.BISHOP, pieces['b']!.squares[i], Xiangqi.BLACK)) {
+      if (outOfPlace(Xiangqi.BISHOP, pieces['b']!.squares[i], XiangqiColor.BLACK)) {
         return result(22);
       }
     }
     for (int i = 0; i < (pieces['B']!.squares as dynamic).length; ++i) {
-      if (outOfPlace(Xiangqi.BISHOP, pieces['B']!.squares[i], Xiangqi.RED)) {
+      if (outOfPlace(Xiangqi.BISHOP, pieces['B']!.squares[i], XiangqiColor.RED)) {
         return result(23);
       }
     }
     for (int i = 0; i < (pieces['p']!.squares as dynamic).length; ++i) {
-      if (outOfPlace(Xiangqi.PAWN, pieces['p']!.squares[i], Xiangqi.BLACK)) {
+      if (outOfPlace(Xiangqi.PAWN, pieces['p']!.squares[i], XiangqiColor.BLACK)) {
         return result(24);
       }
     }
     for (int i = 0; i < pieces['P']!.squares.length; ++i) {
-      if (outOfPlace(Xiangqi.PAWN, pieces['P']!.squares[i], Xiangqi.RED)) {
+      if (outOfPlace(Xiangqi.PAWN, pieces['P']!.squares[i], XiangqiColor.RED)) {
         return result(25);
       }
     }
@@ -469,7 +469,7 @@ class Xiangqi {
         final color = board[i]!.color;
         final piece = board[i]!.type;
 
-        fen += color == Xiangqi.RED ? piece.toUpperCase() : piece.toLowerCase();
+        fen += color == XiangqiColor.RED ? piece.toUpperCase() : piece.toLowerCase();
       }
 
       if (file(i) >= 8) {
@@ -977,8 +977,10 @@ class Xiangqi {
     return 'abcdefghi'.substring(f, f + 1) + '9876543210'.substring(r, r + 1);
   }
 
+
+
   String swapXiangqiColor(String c) {
-    return c == Xiangqi.RED ? Xiangqi.BLACK : Xiangqi.RED;
+    return c == XiangqiColor.RED ? XiangqiColor.BLACK : XiangqiColor.RED;
   }
 
   bool isDigit(String c) {
