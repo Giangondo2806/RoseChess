@@ -6,7 +6,7 @@ import '../generated/l10n.dart';
 
 Future<List<ChessdbMove>> getChessdbMoves(
     String fen, {AppLocalizations? lang}) async {
-  final Xiangqi xiangqi = Xiangqi(fen: fen);
+  final Xiangqi xiangqi = Xiangqi(fen: fen, lang: lang);
   final response = await http.get(
     Uri.parse(
         'http://www.chessdb.cn/chessdb.php?action=queryall&learn=1&showall=1&board=$fen'),
@@ -24,7 +24,7 @@ Future<List<ChessdbMove>> getChessdbMoves(
           .map((el) => ChessdbMove.fromString(el))
           .map((el) {
             el.san = el.notation != ''
-                ? xiangqi.getSanfromNotation(el.notation!, lang: lang)
+                ? xiangqi.getSanfromNotation(el.notation!)
                 : '';
             return el;
           })

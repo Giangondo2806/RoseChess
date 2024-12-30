@@ -70,7 +70,7 @@ class BoardState with ChangeNotifier {
     if (_isBoardInitialized) return;
     piecePositions = {};
     board = {};
-    xiangqi = Xiangqi();
+    xiangqi = Xiangqi(lang: lang);
     initFen = xiangqi.generateFen();
     bookState.getbook(initFen, lang);
 
@@ -171,12 +171,12 @@ class BoardState with ChangeNotifier {
     }
 
     engineAnalysisState.clearAnalysis();
-    xiangqi.simpleMove({'from': from.notation, 'to': to.notation}, lang: lang);
+    xiangqi.simpleMove({'from': from.notation, 'to': to.notation});
     bookState.getbook(xiangqi.generateFen(), lang);
       arrowState.clearArrows();
     navigationState.setNavigation(xiangqi.getHistory(verbose: true));
+    _movePiece(from, to, piece);
     _boardHistory.add(Map.from(board));
-    _movePiece(from, to, piece); // Hàm _movePiece của bạn để cập nhật giao diện
     if (_searchModeEnabled) {
       _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
     }
@@ -283,7 +283,6 @@ class BoardState with ChangeNotifier {
       if (_roseEngine != null) {
         _engineOutputSubscription?.cancel();
         _engineOutputSubscription = _roseEngine?.stdout.listen((line) {
-          print('[rose] Engine output: $line');
           if (line.startsWith('started')) {
             if (_roseEngine!.state.value == RoseState.ready) {
               _settingEngine();
@@ -434,27 +433,25 @@ class BoardState with ChangeNotifier {
 
   void _handleEngineSearchBlack() {
     if (xiangqi.turn == XiangqiColor.BLACK) {
-      _engineSearchMoveTime(_currentFen,1000);
+      final _fen = '$initFen - - moves ${xiangqi.getHistory().join(' ')}';
+      _engineSearchMoveTime(_fen,1000);
     }
   }
 
   void _handleEngineSearchRed() {
-    if (xiangqi.turn == XiangqiColor.RED) {
-      _engineSearchMoveTime(_currentFen,1000);
+    if (xiangqi.turn == XiangqiColor.RED) { 
+      final _fen = '$initFen - - moves ${xiangqi.getHistory().join(' ')}';
+      _engineSearchMoveTime(_fen,1000);
     }
   }
   
   void _handleEngineBestMove(String line) {
     final bestMove = line.split(' ')[1];
-    print('[rose] best move: $bestMove');
     final from = bestMove.substring(0, 2);
     final to = bestMove.substring(2, 4);
     final fromPosition = BoardPosition(from);
     final toPosition = BoardPosition(to);
     final piece = board[fromPosition];
-
-    print("[rose] piece: ${piece?.color.name} ${piece?.type}");
-  
     if (piece != null && piece.color.name== xiangqi.turn) {
       _handleMovePiece(fromPosition, toPosition, piece);
     }

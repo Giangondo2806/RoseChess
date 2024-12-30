@@ -236,8 +236,12 @@ class Xiangqi {
   Map<String, String> header = {};
   int moveNumber = 0;
   String initFen = DEFAULT_POSITION;
+  AppLocalizations? lang;
 
-  Xiangqi({String? fen}) {
+  Xiangqi({String? fen,AppLocalizations? lang}) {
+    if(lang!=null){
+      this.lang = lang;
+    }
     if (fen == null) {
       load(initFen);
     } else {
@@ -1364,7 +1368,7 @@ class Xiangqi {
   }
 
   Move? move(dynamic moveInput,
-      {bool sloppy = false, List<Move>? canMoves, AppLocalizations? lang}) {
+      {bool sloppy = false, List<Move>? canMoves}) {
     bool sloppy_ = sloppy;
     Move? moveObj;
     if (moveInput is String) {
@@ -1388,7 +1392,7 @@ class Xiangqi {
       moveNumber++;
     }
 
-    moveObj.san = moveToJsChinese(moveObj, lang: lang);
+    moveObj.san = moveToJsChinese(moveObj);
     Move prettyMove = makePretty(moveObj);
 
     makeMove(moveObj);
@@ -1521,12 +1525,12 @@ class Xiangqi {
     return {'row': row, 'col': col};
   }
 
-  String getSanfromNotation(String notation, {AppLocalizations? lang}) {
+  String getSanfromNotation(String notation) {
     Move move = _buildMoveFromInput(input: notation);
-    return moveToJsChinese(move, lang: lang);
+    return moveToJsChinese(move);
   }
 
-  String moveToJsChinese(Move move, {AppLocalizations? lang}) {
+  String moveToJsChinese(Move move) {
     Map<String, String> figureNames = {
       'P': lang?.P ?? 'B',
       'C': lang?.C ?? 'P',
@@ -1617,12 +1621,12 @@ class Xiangqi {
         if (y.compareTo(fromY) * (turn == 'r' ? -1 : 1) > 0) {
           // Nằm trước quân đang xét
           if (cr == 0) {
-            s1 = (lang == null || lang.currentLang == 'vi')
+            s1 = (lang == null || lang?.currentLang == 'vi')
                 ? pieceName + figureOrd[turn]![0]
                 : figureOrd[turn]![0] + pieceName; // tr/s + tên quân
             c++;
           } else {
-            s1 = (lang == null || lang.currentLang == 'vi')
+            s1 = (lang == null || lang?.currentLang == 'vi')
                 ? figureValues[turn]![8 - fromX] + figureOrd[turn]![0]
                 : figureOrd[turn]![0] +
                     figureValues[turn]![8 - fromX]; // tr/s + số thứ tự cột
@@ -1639,7 +1643,7 @@ class Xiangqi {
           // Nằm sau quân đang xét
           if (cr == 0) {
             if (c == 0) {
-              s1 = (lang == null || lang.currentLang == 'vi')
+              s1 = (lang == null || lang?.currentLang == 'vi')
                   ? pieceName + figureOrd[turn]![1]
                   : figureOrd[turn]![1] + pieceName; // s/tr + tên quân
             } else {
@@ -1649,7 +1653,7 @@ class Xiangqi {
             }
           } else {
             if (c == 0) {
-              s1 = (lang == null || lang.currentLang == 'vi')
+              s1 = (lang == null || lang?.currentLang == 'vi')
                   ? figureValues[turn]![8 - fromX] + figureOrd[turn]![1]
                   : figureOrd[turn]![1] +
                       figureValues[turn]![8 - fromX]; // s/tr + số thứ tự cột
@@ -1689,9 +1693,9 @@ class Xiangqi {
     return s1 + s2;
   }
 
-  String simpleMove(dynamic input, {AppLocalizations? lang}) {
+  String simpleMove(dynamic input) {
     final move = _buildMoveFromInput(input: input);
-    final san = moveToJsChinese(move, lang: lang);
+    final san = moveToJsChinese(move);
     if (getCurrentTurn() == 'r') {
       moveNumber++;
     }
@@ -1718,11 +1722,11 @@ String getSanMovesFromfenAndNotations(
     {required String fen,
     required String chainNotation,
     AppLocalizations? lang}) {
-  final xiangqi = Xiangqi(fen: fen);
+  final xiangqi = Xiangqi(fen: fen, lang: lang);
   final List<String> moves = chainNotation.split(" ");
   String sans = '';
   for (int i = 0; i < moves.length; i++) {
-    String san = xiangqi.simpleMove(moves[i], lang: lang);
+    String san = xiangqi.simpleMove(moves[i]);
     sans += ' $san';
   }
   return sans;
