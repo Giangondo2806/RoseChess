@@ -1734,10 +1734,12 @@ List<Map<String, Move?>> groupMoves(List<dynamic> moves) {
   // Nhóm các nước đi theo số nước đi
   for (final move in moves) {
     final moveNumber = move.moveNumber;
-    if (!movesByNumber.containsKey(moveNumber)) {
-      movesByNumber[moveNumber] = [];
+    if (moveNumber != null) {
+      if (!movesByNumber.containsKey(moveNumber)) {
+        movesByNumber[moveNumber] = [];
+      }
+      movesByNumber[moveNumber]!.add(move);
     }
-    movesByNumber[moveNumber]!.add(move);
   }
 
   // Thêm nước đi null vào đầu nếu cần (chỉ cần kiểm tra một lần)

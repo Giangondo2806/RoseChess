@@ -74,6 +74,7 @@ class NavigationContent extends StatelessWidget {
               itemCount: navigationState.moves.length,
               itemBuilder: (context, index) {
                 final move = navigationState.moves[index];
+                final hightLightMove = navigationState.hightLightMove;
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 2.0, horizontal: 4.0),
@@ -94,6 +95,10 @@ class NavigationContent extends StatelessWidget {
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 0, vertical: 4.0),
+                                  backgroundColor:
+                                      move['move1'] == hightLightMove
+                                          ? Color.fromARGB(255, 157, 72, 112)
+                                          : null,
                                 ),
                                 onPressed: () {
                                   navigationState.gotoMove(move['move1']!);
@@ -106,9 +111,14 @@ class NavigationContent extends StatelessWidget {
                       Flexible(
                         flex: 1,
                         child: move['move2'] != null
-                            ? ElevatedButton(                                style: ElevatedButton.styleFrom(
+                            ? ElevatedButton(
+                                style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 0, vertical: 4.0),
+                                  backgroundColor:
+                                      move['move2'] == hightLightMove
+                                          ? Color.fromARGB(255, 157, 72, 112)
+                                          : null,
                                 ),
                                 onPressed: () {
                                   navigationState.gotoMove(move['move2']!);

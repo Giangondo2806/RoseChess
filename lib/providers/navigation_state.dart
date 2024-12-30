@@ -16,6 +16,7 @@ class NavigationState with ChangeNotifier {
   late BoardState _boardState;
   int _currentMove =0;
   get currentMove => _currentMove;
+  Move? get hightLightMove => _currentMove-1>=0? _moves[_currentMove-1]:null;
 
   void clearNavigation() {
     _moves.clear();
@@ -25,7 +26,6 @@ class NavigationState with ChangeNotifier {
 
   void setNavigation(List<dynamic> data) {
     _moves =  data;
-    print('[rose] data: $_moves');
     _currentMove = _moves.length;
     notifyListeners();
   }
@@ -38,6 +38,7 @@ class NavigationState with ChangeNotifier {
     if (_currentMove > 0) {
       _currentMove--;
       _boardState.gotoBoard(index: _currentMove);
+       notifyListeners();
     }
   }
 
@@ -45,6 +46,7 @@ class NavigationState with ChangeNotifier {
     if (_currentMove < _moves.length) {
       _currentMove++;
       _boardState.gotoBoard(index: _currentMove);
+       notifyListeners();
     }
   }
 
@@ -52,15 +54,19 @@ class NavigationState with ChangeNotifier {
     final index = _moves.indexOf(move)+1;
       _currentMove = index;
       _boardState.gotoBoard(index: _currentMove);
+      notifyListeners();
+
   }
 
   void gotoFistMove() {
     _currentMove = 0;
     _boardState.gotoBoard(index: _currentMove);
+     notifyListeners();
   }
 
   void gotoLastMove() {
     _currentMove = _moves.length;
     _boardState.gotoBoard(index: _currentMove);
+     notifyListeners();
   }
 }

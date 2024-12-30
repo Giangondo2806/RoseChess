@@ -24,7 +24,7 @@ void main() {
     test('should make a valid move Move', () {
       xiangqi.simpleMove({'from': 'h2', 'to': 'e2'});
 
-      final moves = xiangqi.getHistory(verbose: true);
+      final moves = xiangqi.getHistory(verbose: true) as List<Move>;
       print(groupMoves(moves));
     });
 
@@ -113,7 +113,7 @@ void main() {
       ];
 
       // expect(xiangqi.getHistory(), equals(['h2e2', 'h9g7', 'h0g2','i9h9']));
-      final moves = xiangqi.getHistory(verbose: true);
+      final moves = xiangqi.getHistory(verbose: true) as List<Move>;
 
       print(groupMoves(moves));
       for (int i = 0; i < moves.length; i++) {

@@ -32,6 +32,14 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
     super.dispose();
   }
 
+  hiddenNavigation() {
+    if(_showNavigation) {
+      setState(() {
+        _showNavigation = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<UserSettingsProvider>(context).currentTheme;
@@ -67,9 +75,18 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                       controller: _tabController,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
-                        EngineAnalysisContent(),
-                        const BookContent(),
-                        const GraphContent(),
+                            GestureDetector(
+                  onTap: hiddenNavigation,
+                  child: const EngineAnalysisContent(),
+                ),
+                GestureDetector(
+                  onTap: hiddenNavigation,
+                  child: const BookContent(),
+                ),
+                GestureDetector(
+                  onTap:hiddenNavigation,
+                  child: const GraphContent(),
+                ),
                       ],
                     ),
                   ),
