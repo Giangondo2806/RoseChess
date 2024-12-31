@@ -33,8 +33,8 @@ class ArrowState with ChangeNotifier {
             from: BoardPosition(moves[i].substring(0, 2)),
             to: BoardPosition(moves[i].substring(2, 4)),
             color: i == 0
-                ? Colors.blue.withOpacity(0.7)
-                : Colors.green.withOpacity(0.7),
+                ? Colors.blue.withAlpha(170)
+                : Colors.green.withAlpha(170),
           ));
         }
 

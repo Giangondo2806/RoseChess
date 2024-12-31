@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,10 +46,12 @@ class BoardState with ChangeNotifier {
   bool _automoveRed = false;
   bool _automoveBlack = false;
   bool _searchModeEnabled = false;
+  bool _isFlipped = false;
   bool get automoveRed => _automoveRed;
   bool get automoveBlack => _automoveBlack;
   bool get searchModeEnabled => _searchModeEnabled;
-  bool _enableQuickMove = false;
+  bool get isFlipped => _isFlipped;
+  late String _lastBestMove;
   String get _currentFen {
     final current = navigationState.currentMove - 1;
     return current >= 0
@@ -245,7 +246,8 @@ class BoardState with ChangeNotifier {
         // Handle Copy
         break;
       case 'flip_board':
-        // Xử lý Flip Board
+        _isFlipped = !_isFlipped;
+        notifyListeners();
         break;
       case 'settings':
         // Xử lý Settings
@@ -300,6 +302,7 @@ class BoardState with ChangeNotifier {
             if (info != null) {
               engineAnalysisState.addAnalysis(info);
               _extractMoves(line);
+              _lastBestMove = info.bestmove;
             }
           } else if (line.startsWith('bestmove')) {
             _handleEngineBestMove(line);
@@ -440,19 +443,25 @@ class BoardState with ChangeNotifier {
 
   void _handleEngineBestMove(String line) {
     final bestMove = line.split(' ')[1];
-    final from = bestMove.substring(0, 2);
-    final to = bestMove.substring(2, 4);
-    final fromPosition = BoardPosition(from);
-    final toPosition = BoardPosition(to);
-    final piece = board[fromPosition];
-    if (piece != null && piece.color.name == xiangqi.turn) {
-      _handleMovePiece(fromPosition, toPosition, piece);
-    }
+    _moveWithNotation(bestMove);
 
     notifyListeners();
   }
 
+  void _moveWithNotation(String notation) {
+    final from = BoardPosition(notation.substring(0, 2));
+    final to = BoardPosition(notation.substring(2, 4));
+    final piece = board[from];
+    if (piece != null && piece.color.name == xiangqi.turn) {
+      _handleMovePiece(from, to, piece);
+    }
+  }
+
   void _handleQuickMove() {
-    _enableQuickMove = true;
+    if (_searchModeEnabled && _lastBestMove.isNotEmpty) {
+      _moveWithNotation(_lastBestMove);
+    }
+
+    notifyListeners();
   }
 }

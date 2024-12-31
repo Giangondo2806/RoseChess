@@ -168,7 +168,7 @@ void _processInfoDepth(String line, SendPort stdoutPort) {
   try {
     final depthStr = line.split('depth ')[1].split(' ')[0];
     final depth = int.parse(depthStr);
-    if (depth >=12) {
+    if (depth >=8) {
       stdoutPort.send(line);
     }
   } catch (e) {

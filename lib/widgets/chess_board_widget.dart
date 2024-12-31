@@ -19,10 +19,6 @@ class ChessBoardWidget extends StatefulWidget {
 }
 
 class _ChessBoardWidgetState extends State<ChessBoardWidget> {
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -59,7 +55,7 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                     Consumer<ArrowState>(
                       builder: (context, arrowState, child) {
                         return ArrowsWidget(
-                            squareSize: squareSize, arrows: arrowState.arrows);
+                            squareSize: squareSize, arrows: arrowState.arrows, isFlipped:  boardState.isFlipped);
                       },
                     ),
                   ],
@@ -77,8 +73,10 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
 
     for (int i = 0; i < boardState.rows; i++) {
       for (int j = 0; j < boardState.cols; j++) {
-        final position = BoardPosition(
-            String.fromCharCode('a'.codeUnitAt(0) + j) + (9 - i).toString());
+        int row = boardState.isFlipped ? (boardState.rows - 1 - i) : i;
+        int col = boardState.isFlipped ? (boardState.cols - 1 - j) : j;
+
+        final position = BoardPosition.fromRowCol(row, col);
         squares.add(_buildSquare(squareSize, boardState, position));
       }
     }
@@ -96,9 +94,13 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
 
   Widget _buildEmptySquare(
       double squareSize, BoardState boardState, BoardPosition position) {
+    final row =
+        boardState.isFlipped ? boardState.rows - 1 - position.row : position.row;
+    final col =
+        boardState.isFlipped ? boardState.cols - 1 - position.col : position.col;
     return Positioned(
-      left: position.col * squareSize,
-      top: position.row * squareSize,
+      left: col * squareSize,
+      top: row * squareSize,
       width: squareSize,
       height: squareSize,
       child: GestureDetector(
@@ -119,12 +121,16 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
       double squareSize,
       BoardState boardState,
       BoardPosition position) {
+    final row =
+        boardState.isFlipped ? boardState.rows - 1 - position.row : position.row;
+    final col =
+        boardState.isFlipped ? boardState.cols - 1 - position.col : position.col;
     return AnimatedPositioned(
       key: ValueKey(piece.id),
       duration: const Duration(milliseconds: 200),
       curve: Curves.ease,
-      left: position.col * squareSize,
-      top: position.row * squareSize,
+      left: col * squareSize,
+      top: row * squareSize,
       width: squareSize,
       height: squareSize,
       child: PieceWidget(

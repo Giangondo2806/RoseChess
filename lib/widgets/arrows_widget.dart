@@ -5,16 +5,17 @@ import 'package:flutter/material.dart';
 import '../providers/arrow_state.dart'; // Import ArrowState
 
 class ArrowsWidget extends StatelessWidget {
+  final bool isFlipped;
   final double squareSize;
   final List<ArrowData> arrows;
 
-  const ArrowsWidget({Key? key, required this.squareSize, required this.arrows})
+  const ArrowsWidget({Key? key, required this.squareSize, required this.arrows, required this.isFlipped})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: ArrowsPainter(arrows: arrows, squareSize: squareSize),
+      painter: ArrowsPainter(arrows: arrows, squareSize: squareSize, isFlipped: isFlipped),
     );
   }
 }
@@ -22,8 +23,9 @@ class ArrowsWidget extends StatelessWidget {
 class ArrowsPainter extends CustomPainter {
   final List<ArrowData> arrows;
   final double squareSize;
+  final bool isFlipped;
 
-  ArrowsPainter({required this.arrows, required this.squareSize});
+  ArrowsPainter({required this.arrows, required this.squareSize, required this.isFlipped});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -39,10 +41,15 @@ class ArrowsPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    double fromCenterX = arrowData.from.col * squareSize + squareSize / 2;
-    double fromCenterY = arrowData.from.row * squareSize + squareSize / 2;
-    double toCenterX = arrowData.to.col * squareSize + squareSize / 2;
-    double toCenterY = arrowData.to.row * squareSize + squareSize / 2;
+    int fromRow = isFlipped ? 9 - arrowData.from.row : arrowData.from.row;
+    int fromCol = isFlipped ? 8 - arrowData.from.col : arrowData.from.col;
+    int toRow = isFlipped ? 9 - arrowData.to.row : arrowData.to.row;
+    int toCol = isFlipped ? 8 - arrowData.to.col : arrowData.to.col;
+
+     double fromCenterX = fromCol * squareSize + squareSize / 2;
+    double fromCenterY = fromRow * squareSize + squareSize / 2;
+    double toCenterX = toCol * squareSize + squareSize / 2;
+    double toCenterY = toRow * squareSize + squareSize / 2;
 
     final path = Path();
     path.moveTo(fromCenterX, fromCenterY);
