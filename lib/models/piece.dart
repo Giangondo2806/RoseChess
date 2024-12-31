@@ -16,8 +16,11 @@ enum PieceColor {
   String toString() => name;
 }
 
+
+
+
 class Piece {
-  final String id; // Thêm ID cho Piece
+  String id; // Thêm ID cho Piece
   final PieceType type;
   final PieceColor color;
   final String assetPath;
