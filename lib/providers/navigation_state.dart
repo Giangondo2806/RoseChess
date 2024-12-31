@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:rose_chess/providers/board_state.dart';
+import 'package:rose_chess/providers/board_engine_state.dart';
 import 'package:rose_chess/utils/xiangqi.dart';
 
 // class MoveData {
@@ -13,7 +13,7 @@ import 'package:rose_chess/utils/xiangqi.dart';
 class NavigationState with ChangeNotifier {
   List<dynamic> _moves = [];
   List<Map<String, Move?>> get moves => groupMoves(_moves);
-  late BoardState _boardState;
+  late BoardEngineState _boardState;
   int _currentMove =0;
   get currentMove => _currentMove;
   Move? get hightLightMove => _currentMove-1>=0? _moves[_currentMove-1]:null;

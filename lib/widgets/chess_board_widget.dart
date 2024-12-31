@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:rose_chess/constants.dart';
+import 'package:rose_chess/providers/board_engine_state.dart';
+import 'package:rose_chess/providers/board_state.dart';
 import 'package:rose_chess/utils/board.dart';
 import 'package:rose_chess/widgets/arrows_widget.dart';
 import '../models/piece.dart';
-import '../providers/board_state.dart';
 import '../providers/arrow_state.dart'; // Import ArrowState
 import '../providers/user_settings_provider.dart';
 import 'piece_widget.dart';
 import '../models/board_position.dart';
 
 class ChessBoardWidget extends StatefulWidget {
-  const ChessBoardWidget({Key? key, required BoardState boardState})
+  final BoardState boardState;
+
+  const ChessBoardWidget({Key? key, required this.boardState})
       : super(key: key);
 
   @override
@@ -25,13 +29,15 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
       builder: (context, constraints) {
         const double paddingValue = 10.0;
         final boardWidth = constraints.maxWidth - (2 * paddingValue);
-        final boardState = Provider.of<BoardState>(context, listen: false);
-        final squareSize = boardWidth / boardState.cols;
-        final boardHeight = boardWidth * (boardState.rows / boardState.cols);
+        final boardState = widget.boardState;
+        final squareSize = boardWidth / MAX_COLS;
+        final boardHeight = boardWidth * (MAX_ROWS / MAX_COLS);
 
         final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
         final isDarkMode =
             userSettingsProvider.currentTheme.brightness == Brightness.dark;
+
+        final bool isShowArrows = boardState is BoardEngineState;
 
         return Center(
           child: Container(
@@ -52,6 +58,7 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
                       ),
                     ),
                     ..._buildBoardSquares(squareSize, boardState),
+                    if(isShowArrows)
                     Consumer<ArrowState>(
                       builder: (context, arrowState, child) {
                         return ArrowsWidget(
@@ -71,10 +78,10 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
   List<Widget> _buildBoardSquares(double squareSize, BoardState boardState) {
     List<Widget> squares = [];
 
-    for (int i = 0; i < boardState.rows; i++) {
-      for (int j = 0; j < boardState.cols; j++) {
-        int row = boardState.isFlipped ? (boardState.rows - 1 - i) : i;
-        int col = boardState.isFlipped ? (boardState.cols - 1 - j) : j;
+    for (int i = 0; i < MAX_ROWS; i++) {
+      for (int j = 0; j < MAX_COLS; j++) {
+        int row = boardState.isFlipped ? (MAX_ROWS - 1 - i) : i;
+        int col = boardState.isFlipped ? (MAX_COLS - 1 - j) : j;
 
         final position = BoardPosition.fromRowCol(row, col);
         squares.add(_buildSquare(squareSize, boardState, position));
@@ -95,9 +102,9 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
   Widget _buildEmptySquare(
       double squareSize, BoardState boardState, BoardPosition position) {
     final row =
-        boardState.isFlipped ? boardState.rows - 1 - position.row : position.row;
+        boardState.isFlipped ? MAX_ROWS - 1 - position.row : position.row;
     final col =
-        boardState.isFlipped ? boardState.cols - 1 - position.col : position.col;
+        boardState.isFlipped ? MAX_COLS - 1 - position.col : position.col;
     return Positioned(
       left: col * squareSize,
       top: row * squareSize,
@@ -122,9 +129,9 @@ class _ChessBoardWidgetState extends State<ChessBoardWidget> {
       BoardState boardState,
       BoardPosition position) {
     final row =
-        boardState.isFlipped ? boardState.rows - 1 - position.row : position.row;
+        boardState.isFlipped ? MAX_ROWS - 1 - position.row : position.row;
     final col =
-        boardState.isFlipped ? boardState.cols - 1 - position.col : position.col;
+        boardState.isFlipped ? MAX_COLS - 1 - position.col : position.col;
     return AnimatedPositioned(
       key: ValueKey(piece.id),
       duration: const Duration(milliseconds: 200),

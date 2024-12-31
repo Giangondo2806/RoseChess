@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/providers/book_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
+import 'package:rose_chess/screens/edit_board_screen.dart';
 import '../engine/rose_state.dart';
 import '../generated/l10n.dart';
 import '../providers/arrow_state.dart';
-import '../providers/board_state.dart';
+import '../providers/board_engine_state.dart';
 import '../providers/engine_analysis_state.dart';
 import '../widgets/analysis_widget.dart';
 import '../widgets/chess_board_widget.dart';
@@ -42,8 +43,8 @@ class _SoftwareScreenState extends State<SoftwareScreen> {
           create: (context) => NavigationState(),
         ),
         ChangeNotifierProxyProvider4<EngineAnalysisState, ArrowState, BookState,
-            NavigationState, BoardState>(
-          create: (context) => BoardState(
+            NavigationState, BoardEngineState>(
+          create: (context) => BoardEngineState(
             widget.engineFileName,
             Provider.of<EngineAnalysisState>(context, listen: false),
             Provider.of<ArrowState>(context, listen: false),
@@ -53,7 +54,7 @@ class _SoftwareScreenState extends State<SoftwareScreen> {
           update: (context, engineAnalysisState, arrowState, bookState,
               navigationState, previous) {
             final boardState = previous ??
-                BoardState(widget.engineFileName, engineAnalysisState,
+                BoardEngineState(widget.engineFileName, engineAnalysisState,
                     arrowState, bookState, navigationState);
              navigationState.setBoardState(boardState: boardState);
             return boardState;
@@ -82,7 +83,7 @@ class EngineWrapper extends StatefulWidget {
 
 class _EngineWrapperState extends State<EngineWrapper>
     with WidgetsBindingObserver {
-  late BoardState _boardState;
+  late BoardEngineState _boardState;
   bool _isLoading = true;
   bool _loadFailed = false;
   Timer? _loadingTimer;
@@ -93,7 +94,7 @@ class _EngineWrapperState extends State<EngineWrapper>
     WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _boardState = Provider.of<BoardState>(context, listen: false);
+      _boardState = Provider.of<BoardEngineState>(context, listen: false);
       _initEngineIfNeeded();
       // Start a timer to check for engine loading status
       _loadingTimer = Timer(const Duration(seconds: 12), () {
@@ -152,7 +153,6 @@ class _EngineWrapperState extends State<EngineWrapper>
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context);
-
     if (_isLoading) {
       return Scaffold(
         body: Center(
@@ -186,7 +186,7 @@ class _EngineWrapperState extends State<EngineWrapper>
       return Scaffold(
         body: Padding(
           padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-          child: Consumer<BoardState>(
+          child: Consumer<BoardEngineState>(
             builder: (context, boardState, child) {
               // Initialize board state only once after the first frame
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -196,13 +196,23 @@ class _EngineWrapperState extends State<EngineWrapper>
                 }
               });
 
+              void onEditBoard() {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BoardEditScreen(fen: boardState.xiangqi.generateFen()),
+                  ),
+                );
+              }
+
               return Column(
                 children: [
                   MenuBarWidget(
                     onMenuAction: boardState.handleMenuAction,
+                    onEditBoard: onEditBoard,
                     automoveRed: boardState.automoveRed,
                     automoveBlack: boardState.automoveBlack,
-                    searchModeEnabled: boardState.searchModeEnabled,
+                    searchModeEnabled: boardState.searchModeEnabled
                   ),
                   ChessBoardWidget(boardState: boardState),
                   Expanded(child: AnalysisWidget()),
@@ -214,4 +224,6 @@ class _EngineWrapperState extends State<EngineWrapper>
       );
     }
   }
+
+
 }

@@ -1,4 +1,5 @@
 
+import '../constants.dart';
 import '../generated/l10n.dart';
 
 class XiangqiColor {
@@ -97,7 +98,7 @@ class Xiangqi {
   static const KING = XiangqiPieceType.k;
   static const SYMBOLS = 'pcrnbakPCRNBAK';
   static const DEFAULT_POSITION =
-      'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w';
+      'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1';
   static const POSSIBLE_RESULTS = ['1-0', '0-1', '1/2-1/2', '*'];
   static const PAWN_OFFSETS = {
     XiangqiColor.BLACK: [0x10, -0x01, 0x01],
@@ -132,99 +133,7 @@ class Xiangqi {
     FlagKeys.CAPTURE: 2,
   };
 
-  static const SQUARES = {
-    'a9': 0x00,
-    'b9': 0x01,
-    'c9': 0x02,
-    'd9': 0x03,
-    'e9': 0x04,
-    'f9': 0x05,
-    'g9': 0x06,
-    'h9': 0x07,
-    'i9': 0x08,
-    'a8': 0x10,
-    'b8': 0x11,
-    'c8': 0x12,
-    'd8': 0x13,
-    'e8': 0x14,
-    'f8': 0x15,
-    'g8': 0x16,
-    'h8': 0x17,
-    'i8': 0x18,
-    'a7': 0x20,
-    'b7': 0x21,
-    'c7': 0x22,
-    'd7': 0x23,
-    'e7': 0x24,
-    'f7': 0x25,
-    'g7': 0x26,
-    'h7': 0x27,
-    'i7': 0x28,
-    'a6': 0x30,
-    'b6': 0x31,
-    'c6': 0x32,
-    'd6': 0x33,
-    'e6': 0x34,
-    'f6': 0x35,
-    'g6': 0x36,
-    'h6': 0x37,
-    'i6': 0x38,
-    'a5': 0x40,
-    'b5': 0x41,
-    'c5': 0x42,
-    'd5': 0x43,
-    'e5': 0x44,
-    'f5': 0x45,
-    'g5': 0x46,
-    'h5': 0x47,
-    'i5': 0x48,
-    'a4': 0x50,
-    'b4': 0x51,
-    'c4': 0x52,
-    'd4': 0x53,
-    'e4': 0x54,
-    'f4': 0x55,
-    'g4': 0x56,
-    'h4': 0x57,
-    'i4': 0x58,
-    'a3': 0x60,
-    'b3': 0x61,
-    'c3': 0x62,
-    'd3': 0x63,
-    'e3': 0x64,
-    'f3': 0x65,
-    'g3': 0x66,
-    'h3': 0x67,
-    'i3': 0x68,
-    'a2': 0x70,
-    'b2': 0x71,
-    'c2': 0x72,
-    'd2': 0x73,
-    'e2': 0x74,
-    'f2': 0x75,
-    'g2': 0x76,
-    'h2': 0x77,
-    'i2': 0x78,
-    'a1': 0x80,
-    'b1': 0x81,
-    'c1': 0x82,
-    'd1': 0x83,
-    'e1': 0x84,
-    'f1': 0x85,
-    'g1': 0x86,
-    'h1': 0x87,
-    'i1': 0x88,
-    'a0': 0x90,
-    'b0': 0x91,
-    'c0': 0x92,
-    'd0': 0x93,
-    'e0': 0x94,
-    'f0': 0x95,
-    'g0': 0x96,
-    'h0': 0x97,
-    'i0': 0x98,
-  };
-
+ 
   List<XiangqiPiece?> board = List.filled(256, null);
   Map<String, int> kings = {
     XiangqiColor.RED: Xiangqi.EMPTY,
@@ -462,7 +371,7 @@ class Xiangqi {
     int empty = 0;
     String fen = '';
 
-    for (int i = Xiangqi.SQUARES['a9']!; i <= Xiangqi.SQUARES['i0']!; ++i) {
+    for (int i = SQUARES['a9']!; i <= SQUARES['i0']!; ++i) {
       if (board[i] == null) {
         empty++;
       } else {
@@ -481,7 +390,7 @@ class Xiangqi {
           fen += empty.toString();
         }
 
-        if (i != Xiangqi.SQUARES['i0']) {
+        if (i != SQUARES['i0']) {
           fen += '/';
         }
 
@@ -511,7 +420,7 @@ class Xiangqi {
   }
 
   XiangqiPiece? get(Square square) {
-    final piece = board[Xiangqi.SQUARES[square]!];
+    final piece = board[SQUARES[square]!];
     return piece != null
         ? XiangqiPiece(type: piece.type, color: piece.color)
         : null;
@@ -526,11 +435,11 @@ class Xiangqi {
       return false;
     }
 
-    if (!Xiangqi.SQUARES.containsKey(square)) {
+    if (!SQUARES.containsKey(square)) {
       return false;
     }
 
-    final sq = Xiangqi.SQUARES[square]!;
+    final sq = SQUARES[square]!;
 
     if (piece.type == Xiangqi.KING &&
         !(kings[piece.color] == Xiangqi.EMPTY || kings[piece.color] == sq)) {
@@ -553,7 +462,7 @@ class Xiangqi {
 
   XiangqiPiece? remove(Square square) {
     final piece = get(square);
-    board[Xiangqi.SQUARES[square]!] = null;
+    board[SQUARES[square]!] = null;
     if (piece != null && piece.type == Xiangqi.KING) {
       kings[piece.color] = Xiangqi.EMPTY;
     }
@@ -589,12 +498,12 @@ class Xiangqi {
     String us = turn;
     String them = swapXiangqiColor(us);
 
-    int firstSq = Xiangqi.SQUARES['a9']!;
-    int lastSq = Xiangqi.SQUARES['i0']!;
+    int firstSq = SQUARES['a9']!;
+    int lastSq = SQUARES['i0']!;
 
     if (square != null) {
-      if (Xiangqi.SQUARES.containsKey(square)) {
-        firstSq = lastSq = Xiangqi.SQUARES[square]!;
+      if (SQUARES.containsKey(square)) {
+        firstSq = lastSq = SQUARES[square]!;
       } else {
         return [];
       }
@@ -774,8 +683,8 @@ class Xiangqi {
     Map<String, int> pieces = {};
     int numXiangqiPieces = 0;
 
-    for (String sq in Xiangqi.SQUARES.keys) {
-      XiangqiPiece? piece = board[Xiangqi.SQUARES[sq]!];
+    for (String sq in SQUARES.keys) {
+      XiangqiPiece? piece = board[SQUARES[sq]!];
       if (piece != null) {
         pieces[piece.type] = (pieces[piece.type] ?? 0) + 1;
         numXiangqiPieces++;
@@ -957,8 +866,8 @@ class Xiangqi {
       } else {
         if (from != null &&
             to != null &&
-            Xiangqi.SQUARES[from] == moves[i].from &&
-            Xiangqi.SQUARES[to] == moves[i].to) {
+            SQUARES[from] == moves[i].from &&
+            SQUARES[to] == moves[i].to) {
           return moves[i];
         }
       }
@@ -1172,7 +1081,7 @@ class Xiangqi {
     List<List<XiangqiPiece?>> output = [];
     List<XiangqiPiece?> row = [];
 
-    for (int i = Xiangqi.SQUARES['a9']!; i <= Xiangqi.SQUARES['i0']!; i++) {
+    for (int i = SQUARES['a9']!; i <= SQUARES['i0']!; i++) {
       if (board[i] == null) {
         row.add(null);
       } else {
@@ -1469,7 +1378,7 @@ class Xiangqi {
 
   String ascii() {
     String s = '   +---------------------------+\n';
-    for (int i = Xiangqi.SQUARES['a9']!; i <= Xiangqi.SQUARES['i0']!; i++) {
+    for (int i = SQUARES['a9']!; i <= SQUARES['i0']!; i++) {
       if (file(i) == 0) {
         s += ' ${'9876543210'[rank(i)]} |';
       }
@@ -1572,7 +1481,7 @@ class Xiangqi {
 
     // Tìm các quân cờ cùng loại, cùng màu và cùng cột
     List<int> sameXiangqiPieces = [];
-    for (int i = Xiangqi.SQUARES['a9']!; i <= Xiangqi.SQUARES['i0']!; ++i) {
+    for (int i = SQUARES['a9']!; i <= SQUARES['i0']!; ++i) {
       if (board[i] != null &&
           board[i]!.type.toUpperCase() == pieceType &&
           board[i]!.color == move.color &&
@@ -1592,10 +1501,10 @@ class Xiangqi {
         if (x == fromX) continue;
         for (int y = 0; y < 10; y++) {
           String sq = '${'abcdefghi'[x]}$y';
-          if (Xiangqi.SQUARES.containsKey(sq) &&
-              board[Xiangqi.SQUARES[sq]!] != null &&
-              board[Xiangqi.SQUARES[sq]!]!.type.toUpperCase() == pieceType &&
-              board[Xiangqi.SQUARES[sq]!]!.color == move.color) {
+          if (SQUARES.containsKey(sq) &&
+              board[SQUARES[sq]!] != null &&
+              board[SQUARES[sq]!]!.type.toUpperCase() == pieceType &&
+              board[SQUARES[sq]!]!.color == move.color) {
             cr++;
           }
         }

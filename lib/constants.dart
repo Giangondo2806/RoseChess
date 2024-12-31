@@ -111,3 +111,6 @@ const Map<String, int> SQUARES = {
 };
 
 // Initial board setup as a 2D array
+
+const MAX_ROWS = 10;
+const MAX_COLS = 9;

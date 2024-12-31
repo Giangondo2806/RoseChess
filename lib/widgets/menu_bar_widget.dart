@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-
 import '../screens/settings_screen.dart';
 
 class MenuBarWidget extends StatelessWidget {
   final Function(String) onMenuAction;
+  final Function() onEditBoard;
   final double iconPadding = 2.0;
   final double iconSize = 24.0;
   final double enabledIconSize = 20.0; // Kích thước icon khi enable
@@ -15,6 +15,7 @@ class MenuBarWidget extends StatelessWidget {
   const MenuBarWidget({
     Key? key,
     required this.onMenuAction,
+    required this.onEditBoard,
     required this.automoveRed,
     required this.automoveBlack,
     required this.searchModeEnabled,
@@ -117,9 +118,7 @@ class MenuBarWidget extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () {
-                onMenuAction('edit');
-              },
+              onTap: onEditBoard,
               child: Padding(
                 padding: EdgeInsets.all(iconPadding),
                 child: Icon(Icons.edit_document, size: iconSize),
