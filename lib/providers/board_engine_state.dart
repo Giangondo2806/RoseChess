@@ -146,7 +146,7 @@ class BoardEngineState extends BoardState {
     _bookState.getbook(xiangqi.generateFen(), lang);
     arrowState.clearArrows();
     navigationState.setNavigation(xiangqi.getHistory(verbose: true));
-    _movePiece(from, to, piece);
+    movePiece(from, to, piece);
     _boardHistory.add(Map.from(board));
     if (_searchModeEnabled) {
       _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
@@ -170,12 +170,12 @@ class BoardEngineState extends BoardState {
     _boardHistory.removeRange(currentMove + 1, _boardHistory.length);
   }
 
-  void _movePiece(BoardPosition from, BoardPosition to, Piece piece) {
-    board[to] = piece;
-    board[from] = null;
-    piecePositions[piece.id] = to;
-    selectedPosition = null;
-  }
+  // void _movePiece(BoardPosition from, BoardPosition to, Piece piece) {
+  //   board[to] = piece;
+  //   board[from] = null;
+  //   piecePositions[piece.id] = to;
+  //   selectedPosition = null;
+  // }
 
   void gotoBoard({int index = 0}) {
     pauseGame();
@@ -239,7 +239,6 @@ class BoardEngineState extends BoardState {
 
     navigationState.clearNavigation();
     selectedPosition = null;
-    _isBoardInitialized = false;
     initializeBoard(lang: lang);
     _isBoardInitialized = true;
     _bookState.getbook(initFen, lang);

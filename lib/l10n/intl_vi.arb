@@ -19,7 +19,6 @@
   "evaluation": "Phân tích",
   "graph":"Biểu đồ",
   "move": "Nước đi",
-  "score": "Điểm",
   "winrate": "Tỉ lệ",
   "P": "B",
   "C": "P",
@@ -40,6 +39,6 @@
   "engineLoading": "Connecting to engine...",
   "loadFailed": "Connect to engine failed",
   "reload": "Reload",
-    "engineCannotConnect": "engineCannotConnect",
+  "engineCannotConnect": "engineCannotConnect",
   "closeApp": "engineCannotConnect"
 }

@@ -30,12 +30,12 @@ class Piece {
 }
 
 
-  Piece createPieceFromData(XiangqiPiece pieceData, int idCounter) {
+  Piece createPieceFromData(XiangqiPiece pieceData, String uniqueKey) {
     final type = _getPieceType(pieceData.type);
     final color = _getPieceColor(pieceData.color);
     final assetPath = _getAssetPath(type, color);
     final piece = Piece(
-      id: "piece_$idCounter",
+      id: uniqueKey,
       type: type,
       color: color,
       assetPath: assetPath,

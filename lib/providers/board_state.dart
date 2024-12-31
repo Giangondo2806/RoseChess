@@ -19,7 +19,6 @@ abstract class BoardState with ChangeNotifier {
     xiangqi = Xiangqi(lang: lang, fen: fen);
     initFen = xiangqi.generateFen();
     var initialBoard = xiangqi.getBoard();
-    int idCounter = 0;
     for (int i = 0; i < initialBoard.length; i++) {
       for (int j = 0; j < initialBoard[i].length; j++) {
         final pieceData = initialBoard[i][j];
@@ -28,12 +27,18 @@ abstract class BoardState with ChangeNotifier {
           if (pieceData.notion == null) {
             throw Exception("Piece data notion is null at i=$i, j=$j");
           }
-          final piece = createPieceFromData(pieceData, idCounter);
+          final piece = createPieceFromData(pieceData, UniqueKey().toString());
           board[BoardPosition(pieceData.notion!)] = piece;
           piecePositions[piece.id] = BoardPosition(pieceData.notion!);
-          idCounter++;
         }
       }
     }
   }
+   void movePiece(BoardPosition from, BoardPosition to, Piece piece) {
+    board[to] = piece;
+    board[from] = null;
+    piecePositions[piece.id] = to;
+    selectedPosition = null;
+  }
+
 }
