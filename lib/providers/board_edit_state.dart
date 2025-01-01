@@ -7,7 +7,6 @@ import '../constants.dart';
 import '../generated/l10n.dart';
 import '../models/board_position.dart';
 import '../models/piece.dart';
-import '../utils/xiangqi.dart';
 import 'board_state.dart';
 
 class BoardEditState extends BoardState {
@@ -49,40 +48,15 @@ class BoardEditState extends BoardState {
     calculatorRemovePieces();
   }
 
-  final fullPiece = [
-    XiangqiPiece(type: 'r', color: 'r'),
-    XiangqiPiece(type: 'n', color: 'r'),
-    XiangqiPiece(type: 'b', color: 'r'),
-    XiangqiPiece(type: 'a', color: 'r'),
-    XiangqiPiece(type: 'k', color: 'r'),
-    XiangqiPiece(type: 'a', color: 'r'),
-    XiangqiPiece(type: 'b', color: 'r'),
-    XiangqiPiece(type: 'n', color: 'r'),
-    XiangqiPiece(type: 'r', color: 'r'),
-    XiangqiPiece(type: 'c', color: 'r'),
-    XiangqiPiece(type: 'c', color: 'r'),
-    XiangqiPiece(type: 'p', color: 'r'),
-    XiangqiPiece(type: 'p', color: 'r'),
-    XiangqiPiece(type: 'p', color: 'r'),
-    XiangqiPiece(type: 'p', color: 'r'),
-    XiangqiPiece(type: 'p', color: 'r'),
-    XiangqiPiece(type: 'r', color: 'b'),
-    XiangqiPiece(type: 'n', color: 'b'),
-    XiangqiPiece(type: 'b', color: 'b'),
-    XiangqiPiece(type: 'a', color: 'b'),
-    XiangqiPiece(type: 'k', color: 'b'),
-    XiangqiPiece(type: 'a', color: 'b'),
-    XiangqiPiece(type: 'b', color: 'b'),
-    XiangqiPiece(type: 'n', color: 'b'),
-    XiangqiPiece(type: 'r', color: 'b'),
-    XiangqiPiece(type: 'c', color: 'b'),
-    XiangqiPiece(type: 'c', color: 'b'),
-    XiangqiPiece(type: 'p', color: 'b'),
-    XiangqiPiece(type: 'p', color: 'b'),
-    XiangqiPiece(type: 'p', color: 'b'),
-    XiangqiPiece(type: 'p', color: 'b'),
-    XiangqiPiece(type: 'p', color: 'b'),
-  ];
+
+
+  String _selectedColor = 'r';
+  set selectedColor(String color) {
+    _selectedColor = color;
+    notifyListeners();
+  }
+
+  String get selectedColor => _selectedColor;
 
   @override
   void onPieceTapped(BoardPosition position) {
@@ -157,7 +131,7 @@ class BoardEditState extends BoardState {
   }
 
   void calculatorRemovePieces() {
-    _removedPieces = fullPiece
+    _removedPieces = FULL_PIECES
         .map((e) => createPieceFromData(e, UniqueKey().toString()))
         .toList();
     // lặp qua toàn bộ board
@@ -181,4 +155,10 @@ class BoardEditState extends BoardState {
       }
     }
   }
+
+  void resetBoard() {}
+
+  void clearBoard() {}
+
+  void saveBoard() {}
 }

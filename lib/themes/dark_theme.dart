@@ -24,13 +24,13 @@ final darkTheme = ThemeData(
   ),
   // Nút (Buttons)
   buttonTheme: ButtonThemeData(
-    buttonColor: const Color(0xFFCD853F), // Peru - Nâu đất
+    buttonColor: const Color.fromARGB(255, 202, 154, 106), // Peru - Nâu đất
     textTheme: ButtonTextTheme.primary,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFFCD853F), // Peru - Nâu đất
+      backgroundColor: const Color.fromARGB(255, 202, 154, 106), // Peru - Nâu đất
       foregroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       elevation: 2,
@@ -38,14 +38,14 @@ final darkTheme = ThemeData(
   ),
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
-      foregroundColor: const Color(0xFFCD853F), // Peru - Nâu đất
+      foregroundColor: const Color.fromARGB(255, 202, 154, 106), // Peru - Nâu đất
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
     ),
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: const Color(0xFFCD853F), // Peru - Nâu đất
-      side: const BorderSide(color: Color(0xFFCD853F)), // Peru - Nâu đất
+      foregroundColor: const Color.fromARGB(255, 202, 154, 106), // Peru - Nâu đất
+      side: const BorderSide(color: Color.fromARGB(255, 202, 154, 106)), // Peru - Nâu đất
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
     ),
   ),

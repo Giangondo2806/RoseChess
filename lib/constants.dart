@@ -1,5 +1,7 @@
 
 // Assets paths
+import 'utils/xiangqi.dart';
+
 const String boardAsset = 'assets/images/xiangqiboards/simple.svg';
 const String RR = 'assets/images/xiangqipieces/wikipedia/rr.svg';
 const String RN = 'assets/images/xiangqipieces/wikipedia/rn.svg';
@@ -114,3 +116,38 @@ const Map<String, int> SQUARES = {
 
 const MAX_ROWS = 10;
 const MAX_COLS = 9;
+
+final FULL_PIECES  = [
+    XiangqiPiece(type: 'r', color: 'r'),
+    XiangqiPiece(type: 'n', color: 'r'),
+    XiangqiPiece(type: 'b', color: 'r'),
+    XiangqiPiece(type: 'a', color: 'r'),
+    XiangqiPiece(type: 'k', color: 'r'),
+    XiangqiPiece(type: 'a', color: 'r'),
+    XiangqiPiece(type: 'b', color: 'r'),
+    XiangqiPiece(type: 'n', color: 'r'),
+    XiangqiPiece(type: 'r', color: 'r'),
+    XiangqiPiece(type: 'c', color: 'r'),
+    XiangqiPiece(type: 'c', color: 'r'),
+    XiangqiPiece(type: 'p', color: 'r'),
+    XiangqiPiece(type: 'p', color: 'r'),
+    XiangqiPiece(type: 'p', color: 'r'),
+    XiangqiPiece(type: 'p', color: 'r'),
+    XiangqiPiece(type: 'p', color: 'r'),
+    XiangqiPiece(type: 'r', color: 'b'),
+    XiangqiPiece(type: 'n', color: 'b'),
+    XiangqiPiece(type: 'b', color: 'b'),
+    XiangqiPiece(type: 'a', color: 'b'),
+    XiangqiPiece(type: 'k', color: 'b'),
+    XiangqiPiece(type: 'a', color: 'b'),
+    XiangqiPiece(type: 'b', color: 'b'),
+    XiangqiPiece(type: 'n', color: 'b'),
+    XiangqiPiece(type: 'r', color: 'b'),
+    XiangqiPiece(type: 'c', color: 'b'),
+    XiangqiPiece(type: 'c', color: 'b'),
+    XiangqiPiece(type: 'p', color: 'b'),
+    XiangqiPiece(type: 'p', color: 'b'),
+    XiangqiPiece(type: 'p', color: 'b'),
+    XiangqiPiece(type: 'p', color: 'b'),
+    XiangqiPiece(type: 'p', color: 'b'),
+  ];

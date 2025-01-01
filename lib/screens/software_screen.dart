@@ -185,7 +185,7 @@ class _EngineWrapperState extends State<EngineWrapper>
     } else {
       return Scaffold(
         body: Padding(
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
           child: Consumer<BoardEngineState>(
             builder: (context, boardState, child) {
               // Initialize board state only once after the first frame
