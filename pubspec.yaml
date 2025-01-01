@@ -21,6 +21,7 @@ dependencies:
   drift: ^2.22.1
   drift_flutter: ^0.1.0
   get_it: ^8.0.3
+  toastification: ^2.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -38,24 +39,22 @@ flutter:
     - assets/images/xiangqiboards/
     - assets/images/xiangqipieces/wikipedia/
 flutter_intl:
-  enabled: true  # Tùy chọn, tên class generated, mặc định là S            
-  class_name: AppLocalizations                # Tùy chọn, tên class generated, mặc định là S
-  main_locale: en              # Tùy chọn, ngôn ngữ mặc định, mặc định là en
-  arb_dir: lib/l10n                # Tùy chọn, thư mục chứa file .arb, mặc định là lib/l10n
-  output_dir: lib/generated     # Tùy chọn, thư mục chứa file generated, mặc định là lib/generated
-  use_deferred_loading: false  # Tùy chọn, có sử dụng deferred loading không, mặc định là false
+  enabled: true  
+  class_name: AppLocalizations                
+  main_locale: en              
+  arb_dir: lib/l10n                
+  output_dir: lib/generated     
+  use_deferred_loading: false  
 
 flutter_launcher_icons:
-  android: true # hoặc true để dùng adaptive icon
+  android: true 
   ios: true
-  image_path: "assets/icons/favicon.512x512.png" # Đường dẫn đến icon của bạn
-  # adaptive_icon_background: "assets/icon/background.png"
-  # adaptive_icon_foreground: "assets/icon/foreground.png"
+  image_path: "assets/icons/favicon.512x512.png" 
 
 android:
   useAndroidX: true
   compileSdkVersion: 33
   targetSdkVersion: 33
-  minSdkVersion: 21 # Giảm xuống 21 nếu có thể
+  minSdkVersion: 21 
 
 requestPermissions: true

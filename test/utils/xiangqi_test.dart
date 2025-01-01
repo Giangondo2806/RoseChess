@@ -191,5 +191,37 @@ void main() {
       expect(move, 'M8.7');
     
     });
+
+       test('from fen and validate move', () {
+      xiangqi.load(
+          'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKABR1 b');
+       expect(xiangqi.generateFen(),'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKABR1 b');
+      final move =xiangqi.simpleMove({'from': 'h9', 'to': 'g7'});
+      expect(move, 'M8.7');
+    
+    });
+
+ test('invalid fen1', () {
+       final xiangqiTest = Xiangqi.validateFen('4k4/9/1c7/9/9/9/9/7C1/9/4K4 w');
+      expect(xiangqiTest.valid, false);
+     
+    
+    });
+
+     test('invalid fen2', () {
+       final xiangqiTest = Xiangqi.validateFen('4k4/9/9/9/9/9/9/4R2C1/9/4K4 w');
+       final xiangqi = Xiangqi(fen:'4k4/9/9/9/9/9/9/4R2C1/9/4K4 b');
+       expect(xiangqi.kingAttacked('b'), true);
+      expect(xiangqiTest.valid, true);
+     
+    
+    });
+
+      test('invalid fen3', () {
+       final xiangqiTest = Xiangqi.validateFen('rnbakabnr/9/1c3p1c1/p1p1p3p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKABR1 b');
+      expect(xiangqiTest.valid, false);
+    
+    });
+
   });
 }

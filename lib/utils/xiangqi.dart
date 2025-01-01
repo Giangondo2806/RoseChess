@@ -1,3 +1,4 @@
+import 'dart:math';
 
 import '../constants.dart';
 import '../generated/l10n.dart';
@@ -133,7 +134,6 @@ class Xiangqi {
     FlagKeys.CAPTURE: 2,
   };
 
- 
   List<XiangqiPiece?> board = List.filled(256, null);
   Map<String, int> kings = {
     XiangqiColor.RED: Xiangqi.EMPTY,
@@ -147,15 +147,15 @@ class Xiangqi {
   String initFen = DEFAULT_POSITION;
   AppLocalizations? lang;
 
-  Xiangqi({String? fen,AppLocalizations? lang}) {
-    if(lang!=null){
+  Xiangqi({String? fen, AppLocalizations? lang, bool editmode=false}) {
+    if (lang != null) {
       this.lang = lang;
     }
-    if (fen !=null){
+    if (fen != null) {
       initFen = fen;
     }
 
-    load(initFen);
+    load(initFen, editmode:editmode);
   }
 
   String getCurrentTurn() {
@@ -164,7 +164,10 @@ class Xiangqi {
 
   void clear({bool keepHeaders = false}) {
     board = List.filled(256, null);
-    kings = {XiangqiColor.RED: Xiangqi.EMPTY, XiangqiColor.BLACK: Xiangqi.EMPTY};
+    kings = {
+      XiangqiColor.RED: Xiangqi.EMPTY,
+      XiangqiColor.BLACK: Xiangqi.EMPTY
+    };
     turn = Xiangqi.RED;
     history = [];
     futures = [];
@@ -176,8 +179,8 @@ class Xiangqi {
     load(initFen);
   }
 
-  bool load(String fen, {bool keepHeaders = false}) {
-    if (!validateFen(fen).valid) {
+  bool load(String fen, {bool keepHeaders = false, bool editmode=false}) {
+    if (!validateFen(fen, editmode:editmode).valid) {
       return false;
     }
 
@@ -204,7 +207,9 @@ class Xiangqi {
       }
     }
 
-    turn = (tokens[1] == XiangqiColor.BLACK) ? XiangqiColor.BLACK : XiangqiColor.RED;
+    turn = (tokens[1] == XiangqiColor.BLACK)
+        ? XiangqiColor.BLACK
+        : XiangqiColor.RED;
     moveNumber = turn == 'b' ? 1 : 0;
 
     // updateSetup(generateFen());
@@ -212,7 +217,7 @@ class Xiangqi {
     return true;
   }
 
-  ValidationResult validateFen(String fen) {
+  static ValidationResult validateFen(String fen, {bool editmode=false} ) {
     final errors = {
       0: 'No errors.',
       1: 'FEN string must contain six space-delimited fields.',
@@ -240,6 +245,7 @@ class Xiangqi {
       23: '1st field (piece positions) is invalid [red bishop should at right position].',
       24: '1st field (piece positions) is invalid [black pawn should at right position].',
       25: '1st field (piece positions) is invalid [red pawn should at right position].',
+      26: 'the kings cannot face each other directly.'
     };
 
     ValidationResult result(int errNum) {
@@ -334,27 +340,32 @@ class Xiangqi {
       return result(19);
     }
     for (int i = 0; i < pieces['a']!.squares.length; ++i) {
-      if (outOfPlace(Xiangqi.ADVISER, pieces['a']!.squares[i], XiangqiColor.BLACK)) {
+      if (outOfPlace(
+          Xiangqi.ADVISER, pieces['a']!.squares[i], XiangqiColor.BLACK)) {
         return result(20);
       }
     }
     for (int i = 0; i < pieces['A']!.squares.length; ++i) {
-      if (outOfPlace(Xiangqi.ADVISER, pieces['A']!.squares[i], XiangqiColor.RED)) {
+      if (outOfPlace(
+          Xiangqi.ADVISER, pieces['A']!.squares[i], XiangqiColor.RED)) {
         return result(21);
       }
     }
     for (int i = 0; i < pieces['b']!.squares.length; ++i) {
-      if (outOfPlace(Xiangqi.BISHOP, pieces['b']!.squares[i], XiangqiColor.BLACK)) {
+      if (outOfPlace(
+          Xiangqi.BISHOP, pieces['b']!.squares[i], XiangqiColor.BLACK)) {
         return result(22);
       }
     }
     for (int i = 0; i < (pieces['B']!.squares as dynamic).length; ++i) {
-      if (outOfPlace(Xiangqi.BISHOP, pieces['B']!.squares[i], XiangqiColor.RED)) {
+      if (outOfPlace(
+          Xiangqi.BISHOP, pieces['B']!.squares[i], XiangqiColor.RED)) {
         return result(23);
       }
     }
     for (int i = 0; i < (pieces['p']!.squares as dynamic).length; ++i) {
-      if (outOfPlace(Xiangqi.PAWN, pieces['p']!.squares[i], XiangqiColor.BLACK)) {
+      if (outOfPlace(
+          Xiangqi.PAWN, pieces['p']!.squares[i], XiangqiColor.BLACK)) {
         return result(24);
       }
     }
@@ -364,8 +375,39 @@ class Xiangqi {
       }
     }
 
-    return result(0);
+   if (!editmode&&pieces['k']!.squares[0] % 0x10 == pieces['K']!.squares[0] % 0x10) {
+    final minRank = min(pieces['k']!.squares[0] >> 4, pieces['K']!.squares[0] >> 4);
+    final maxRank = max(pieces['k']!.squares[0] >> 4, pieces['K']!.squares[0] >> 4);
+    final file = pieces['k']!.squares[0] % 0x10;
+    
+    bool hasPieceBetween = false;
+    for (int rank = minRank + 1; rank < maxRank; rank++) {
+      // Chuyển đổi hàng thành mảng các vị trí
+      int currentFile = 0;
+      for (int i = 0; i < rows[rank].length; i++) {
+        if (isDigit(rows[rank][i])) {
+          if (currentFile <= file && file < currentFile + int.parse(rows[rank][i])) {
+            continue;
+          }
+          currentFile += int.parse(rows[rank][i]);
+        } else {
+          if (currentFile == file) {
+            hasPieceBetween = true;
+            break;
+          }
+          currentFile++;
+        }
+      }
+      if (hasPieceBetween) break;
+    }
+    
+    if (!hasPieceBetween) {
+      return result(26);
+    }
   }
+
+  return result(0);
+}
 
   String generateFen() {
     int empty = 0;
@@ -382,7 +424,9 @@ class Xiangqi {
         final color = board[i]!.color;
         final piece = board[i]!.type;
 
-        fen += color == XiangqiColor.RED ? piece.toUpperCase() : piece.toLowerCase();
+        fen += color == XiangqiColor.RED
+            ? piece.toUpperCase()
+            : piece.toLowerCase();
       }
 
       if (file(i) >= 8) {
@@ -876,11 +920,11 @@ class Xiangqi {
     return null;
   }
 
-  int rank(int i) {
+  static int rank(int i) {
     return i >> 4;
   }
 
-  int file(int i) {
+  static int file(int i) {
     return i & 0x0f;
   }
 
@@ -890,13 +934,11 @@ class Xiangqi {
     return 'abcdefghi'.substring(f, f + 1) + '9876543210'.substring(r, r + 1);
   }
 
-
-
   String swapXiangqiColor(String c) {
     return c == XiangqiColor.RED ? XiangqiColor.BLACK : XiangqiColor.RED;
   }
 
-  bool isDigit(String c) {
+  static isDigit(String c) {
     return '0123456789'.contains(c);
   }
 
@@ -904,11 +946,11 @@ class Xiangqi {
     return c == Xiangqi.RED ? rank(p) < 5 : rank(p) > 4;
   }
 
-  bool outOfBoard(int square) {
+  static bool outOfBoard(int square) {
     return square < 0 || rank(square) > 9 || file(square) > 8;
   }
 
-  bool outOfPlace(String piece, int square, String color) {
+  static bool outOfPlace(String piece, int square, String color) {
     Map<String, List<int>> side = {};
     if (piece == Xiangqi.PAWN) {
       side = {
@@ -956,6 +998,63 @@ class Xiangqi {
     }
 
     return !side[color]!.contains(square);
+  }
+
+  bool isFacingGeneralsInFen(String fen) {
+    final tokens = fen.split(RegExp(r'\s+'));
+    final position = tokens[0];
+    final Map<String, int> kingPositions = {
+      XiangqiColor.RED: -1,
+      XiangqiColor.BLACK: -1,
+    };
+
+    int square = 0;
+    for (int i = 0; i < position.length; i++) {
+      final piece = position[i];
+      if (piece == '/') {
+        square += 0x07;
+      } else if (isDigit(piece)) {
+        square += int.parse(piece);
+      } else {
+        final color = piece.codeUnitAt(0) < 'a'.codeUnitAt(0)
+            ? XiangqiColor.RED
+            : XiangqiColor.BLACK;
+        final type = piece.toLowerCase();
+        if (type == Xiangqi.KING) {
+          kingPositions[color] = square;
+        }
+        square++;
+      }
+    }
+
+    if (kingPositions[Xiangqi.RED] != -1 &&
+        kingPositions[Xiangqi.BLACK] != -1) {
+      if (file(kingPositions[Xiangqi.RED]!) ==
+          file(kingPositions[Xiangqi.BLACK]!)) {
+        bool facing = true;
+        int higherRank = rank(kingPositions[Xiangqi.RED]!) >
+                rank(kingPositions[Xiangqi.BLACK]!)
+            ? kingPositions[Xiangqi.RED]!
+            : kingPositions[Xiangqi.BLACK]!;
+        int lowerRank = rank(kingPositions[Xiangqi.RED]!) <
+                rank(kingPositions[Xiangqi.BLACK]!)
+            ? kingPositions[Xiangqi.RED]!
+            : kingPositions[Xiangqi.BLACK]!;
+
+        Xiangqi tempXiangqi = Xiangqi();
+        tempXiangqi.load(fen);
+
+        for (int i = lowerRank + 0x10; i < higherRank; i += 0x10) {
+          if (tempXiangqi.board[i] != null) {
+            facing = false;
+            break;
+          }
+        }
+        return facing;
+      }
+    }
+
+    return false;
   }
 
   bool hobblingHorseLeg(int square, int index) {
@@ -1276,8 +1375,7 @@ class Xiangqi {
     return true;
   }
 
-  Move? move(dynamic moveInput,
-      {bool sloppy = false, List<Move>? canMoves}) {
+  Move? move(dynamic moveInput, {bool sloppy = false, List<Move>? canMoves}) {
     bool sloppy_ = sloppy;
     Move? moveObj;
     if (moveInput is String) {
@@ -1619,11 +1717,10 @@ class Xiangqi {
   void setCurrentMove({required int currentMove}) {
     final histories = getHistory();
     reset();
-    for(int i = 0; i < currentMove; i++) {
+    for (int i = 0; i < currentMove; i++) {
       simpleMove(histories[i]);
     }
     // setMove(history.removeLast());
-
   }
 }
 
@@ -1642,8 +1739,7 @@ String getSanMovesFromfenAndNotations(
 }
 
 List<Map<String, Move?>> groupMoves(List<dynamic> moves) {
-
-  for(int i = 0; i < moves.length; i++) {
+  for (int i = 0; i < moves.length; i++) {
     print('[rose] $i: ${moves[i].moveNumber}');
   }
 

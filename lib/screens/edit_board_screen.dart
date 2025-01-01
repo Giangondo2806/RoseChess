@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rose_chess/utils/xiangqi.dart';
 import 'package:rose_chess/widgets/chess_board_widget.dart';
 import 'package:rose_chess/widgets/piece_widget.dart';
 import '../constants.dart';
@@ -9,6 +10,7 @@ import '../generated/l10n.dart';
 import '../models/piece.dart';
 import '../providers/board_edit_state.dart';
 import '../utils/board.dart';
+import 'package:toastification/toastification.dart';
 
 class BoardEditScreen extends StatelessWidget {
   final String fen;
@@ -38,8 +40,36 @@ class BoardEditScreen extends StatelessWidget {
               saveBoard() {
                 final fen =
                     generateFen(boardState.board, boardState.selectedColor);
-                    print('FEN before pop: $fen');
-                    Navigator.pop(context, fen);
+                if (!Xiangqi.validateFen(fen).valid) {
+                  toastification.show(
+                    context: context,
+                    title: Text('Sai định dạng!'),
+                    description: Text('Bàn cờ đã chỉnh sửa có vị trí quân không hợp lệ!'),
+                    type: ToastificationType.warning,
+                    style: ToastificationStyle.flatColored,
+                    alignment: Alignment.centerRight,
+                    autoCloseDuration: const Duration(seconds: 2),
+                    animationDuration: const Duration(milliseconds: 300),
+                    animationBuilder: (context, animation, alignment, child) {
+                      return SlideTransition(
+                        position: animation.drive(
+                          Tween<Offset>(
+                            begin:
+                                const Offset(1.0, 0.0), // Bắt đầu từ bên phải
+                            end: Offset.zero,
+                          ).chain(CurveTween(curve: Curves.easeInOut)),
+                        ),
+                        child: child,
+                      );
+                
+                    },
+                    showProgressBar: false
+                  );
+                } else if (fen == boardState.initFen) {
+                  Navigator.pop(context);
+                } else {
+                  Navigator.pop(context, fen);
+                }
               }
 
               return Column(
@@ -102,7 +132,9 @@ class BoardEditScreen extends StatelessWidget {
                           child: const Text("Xóa"),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            boardState.isFlipped = !boardState.isFlipped;
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
@@ -112,7 +144,7 @@ class BoardEditScreen extends StatelessWidget {
                             elevation: 4,
                             textStyle: const TextStyle(fontSize: 16),
                           ),
-                          child: const Text("Đổi bên"),
+                          child: const Text("xoay"),
                         ),
                         ElevatedButton(
                           onPressed: () {

@@ -55,7 +55,7 @@ class _SoftwareScreenState extends State<SoftwareScreen> {
             final boardState = previous ??
                 BoardEngineState(widget.engineFileName, engineAnalysisState,
                     arrowState, bookState, navigationState);
-             navigationState.setBoardState(boardState: boardState);
+            navigationState.setBoardState(boardState: boardState);
             return boardState;
           },
         ),
@@ -94,7 +94,7 @@ class _EngineWrapperState extends State<EngineWrapper>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _boardState = Provider.of<BoardEngineState>(context, listen: false);
-      _initEngineIfNeeded();
+       _initEngineIfNeeded();
       // Start a timer to check for engine loading status
       _loadingTimer = Timer(const Duration(seconds: 12), () {
         if (mounted && !_boardState.engineReady) {
@@ -196,25 +196,27 @@ class _EngineWrapperState extends State<EngineWrapper>
               });
 
               Future<void> onEditBoard() async {
-                String fen = await Navigator.push(
+                final fen = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BoardEditScreen(fen: boardState.xiangqi.generateFen()),
+                    builder: (context) =>
+                        BoardEditScreen(fen: boardState.xiangqi.generateFen()),
                   ),
                 );
 
-                boardState.newGame(fen: fen);
+                if (fen != null) {
+                  boardState.newGame(fen: fen);
+                }
               }
 
               return Column(
                 children: [
                   MenuBarWidget(
-                    onMenuAction: boardState.handleMenuAction,
-                    onEditBoard: onEditBoard,
-                    automoveRed: boardState.automoveRed,
-                    automoveBlack: boardState.automoveBlack,
-                    searchModeEnabled: boardState.searchModeEnabled
-                  ),
+                      onMenuAction: boardState.handleMenuAction,
+                      onEditBoard: onEditBoard,
+                      automoveRed: boardState.automoveRed,
+                      automoveBlack: boardState.automoveBlack,
+                      searchModeEnabled: boardState.searchModeEnabled),
                   ChessBoardWidget(boardState: boardState),
                   Expanded(child: AnalysisWidget()),
                 ],
@@ -225,6 +227,4 @@ class _EngineWrapperState extends State<EngineWrapper>
       );
     }
   }
-
-
 }

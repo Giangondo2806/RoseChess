@@ -61,7 +61,6 @@ class BoardEngineState extends BoardState {
     lang = inputLang;
   }
 
-
   @override
   void onPieceTapped(BoardPosition position) {
     if (selectedPosition == null) {

@@ -10,15 +10,18 @@ abstract class BoardState with ChangeNotifier {
   late Map<BoardPosition, Piece?> board;
   late Map<String, BoardPosition> piecePositions;
   late String initFen;
-  bool isFlipped = false;
+  bool _isFlipped = false;
+  bool get isFlipped => _isFlipped;
+  set isFlipped(bool value) {
+    _isFlipped = value;
+    notifyListeners();
+  }
   BoardPosition? selectedPosition;
   void onPieceTapped(BoardPosition position);
-  void initializeBoard({AppLocalizations? lang, String? fen}) {
+  void initializeBoard({AppLocalizations? lang, String? fen, bool editmode = false}) {
     piecePositions = {};
     board = {};
-
-    print('[new fen] $fen');
-    xiangqi = Xiangqi(lang: lang, fen: fen);
+    xiangqi = Xiangqi(lang: lang, fen: fen, editmode: editmode);
     initFen = xiangqi.generateFen();
     var initialBoard = xiangqi.getBoard();
     for (int i = 0; i < initialBoard.length; i++) {

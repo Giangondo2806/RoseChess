@@ -1,14 +1,10 @@
 import 'dart:math';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:rose_chess/utils/xiangqi.dart';
-
 import '../constants.dart';
 import '../generated/l10n.dart';
 import '../models/board_position.dart';
 import '../models/piece.dart';
-import '../utils/board.dart';
 import 'board_state.dart';
 
 class BoardEditState extends BoardState {
@@ -94,7 +90,7 @@ class BoardEditState extends BoardState {
 
     // Calculate popup position
     double x = position.col * squareSize;
-    double y = position.row * squareSize;
+    double y = position.row * squareSize + squareSize;
 
     // Get screen width
     final screenWidth = (MAX_COLS * squareSize);
@@ -108,7 +104,7 @@ class BoardEditState extends BoardState {
 
     // Adjust y position if needed
     final screenHeight = (MAX_ROWS * squareSize);
-    final estimatedPopupHeight = 50; // Approximate height of popup
+    final estimatedPopupHeight = 200; // Approximate height of popup
     if (y + estimatedPopupHeight > screenHeight) {
       y = screenHeight - estimatedPopupHeight;
     }
@@ -158,9 +154,18 @@ class BoardEditState extends BoardState {
     }
   }
 
-  void resetBoard() {}
+  void resetBoard() {
+    initializeBoard(fen: Xiangqi.DEFAULT_POSITION);
+    calculatorRemovePieces();
+    notifyListeners();
+  }
 
-  void clearBoard() {}
+  void clearBoard() {
+    initializeBoard(fen: '4k4/9/9/9/9/9/9/9/9/4K4 w', editmode: true);
+    calculatorRemovePieces();
+    notifyListeners();
+    
+  }
 
 
 }
