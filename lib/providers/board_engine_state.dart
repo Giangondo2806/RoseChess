@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rose_chess/models/engine_info.dart';
 import 'package:rose_chess/providers/arrow_state.dart';
@@ -175,7 +176,7 @@ class BoardEngineState extends BoardState {
   // }
 
   void gotoBoard({int index = 0}) {
-    pauseGame();
+    pauseEngine();
     _searchModeEnabled = false;
     engineAnalysisState.clearAnalysis();
     Future.delayed(Duration(milliseconds: 10), () {
@@ -200,13 +201,13 @@ class BoardEngineState extends BoardState {
         _autoBlack();
         break;
       case 'enable_engine':
-        _enableEngine();
+        _toggleEngine();
         break;
       case 'quick_move':
         _handleQuickMove();
         break;
       case 'copy':
-        // Handle Copy
+        Clipboard.setData(ClipboardData(text: _currentFen));
         break;
       case 'flip_board':
         isFlipped = !isFlipped;
@@ -218,17 +219,17 @@ class BoardEngineState extends BoardState {
   
 
   void newGame({String? fen}) {
+    _searchModeEnabled=false;
     if (roseEngine?.state.value == RoseState.ready) {
-      pauseGame();
+      pauseEngine();
     }
-
 
     _boardHistory.clear();
     engineAnalysisState.clearAnalysis();
     Future.delayed(Duration(milliseconds: 10), () {
       arrowState.clearArrows();
     });
-
+    
     navigationState.clearNavigation();
     selectedPosition = null;
     initializeBoard(lang: lang, fen: fen);
@@ -308,12 +309,18 @@ class BoardEngineState extends BoardState {
     notifyListeners();
   }
 
-  void _enableEngine() {
+  void _toggleEngine() {
     _searchModeEnabled = !_searchModeEnabled;
     if (_searchModeEnabled) {
       _automoveRed = false;
       _automoveBlack = false;
+      print('current fen $_currentFen');
       _engineSearch(_currentFen);
+    } else {
+      pauseEngine();
+      Future.delayed(Duration(milliseconds: 10), () {
+        arrowState.clearArrows();
+      });
     }
 
     notifyListeners();
@@ -355,7 +362,7 @@ class BoardEngineState extends BoardState {
     notifyListeners();
   }
 
-  void pauseGame() {
+  void pauseEngine() {
     _roseEngine?.stdin = 'stop\n';
   }
 

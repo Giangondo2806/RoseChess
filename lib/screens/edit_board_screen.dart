@@ -12,6 +12,8 @@ import '../providers/board_edit_state.dart';
 import '../utils/board.dart';
 import 'package:toastification/toastification.dart';
 
+import '../utils/toast.dart';
+
 class BoardEditScreen extends StatelessWidget {
   final String fen;
   const BoardEditScreen({Key? key, required this.fen}) : super(key: key);
@@ -41,30 +43,12 @@ class BoardEditScreen extends StatelessWidget {
                 final fen =
                     generateFen(boardState.board, boardState.selectedColor);
                 if (!Xiangqi.validateFen(fen).valid) {
-                  toastification.show(
-                    context: context,
-                    title: Text('Sai định dạng!'),
-                    description: Text('Bàn cờ đã chỉnh sửa có vị trí quân không hợp lệ!'),
+                   toast(
+                    title: 'Vị trí quân cờ không hợp lệ!',
+                    description: 'Vui lòng kiểm tra lại vị trí quân cờ',
                     type: ToastificationType.warning,
-                    style: ToastificationStyle.flatColored,
-                    alignment: Alignment.centerRight,
-                    autoCloseDuration: const Duration(seconds: 2),
-                    animationDuration: const Duration(milliseconds: 300),
-                    animationBuilder: (context, animation, alignment, child) {
-                      return SlideTransition(
-                        position: animation.drive(
-                          Tween<Offset>(
-                            begin:
-                                const Offset(1.0, 0.0), // Bắt đầu từ bên phải
-                            end: Offset.zero,
-                          ).chain(CurveTween(curve: Curves.easeInOut)),
-                        ),
-                        child: child,
-                      );
-                
-                    },
-                    showProgressBar: false
-                  );
+                    context: context
+                   );
                 } else if (fen == boardState.initFen) {
                   Navigator.pop(context);
                 } else {

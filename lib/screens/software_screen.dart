@@ -130,7 +130,7 @@ class _EngineWrapperState extends State<EngineWrapper>
     if (state == AppLifecycleState.resumed) {
       _initEngineIfNeeded();
     } else if (state == AppLifecycleState.paused) {
-      _boardState.pauseGame();
+      _boardState.pauseEngine();
     }
   }
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rose_chess/utils/toast.dart';
+import 'package:toastification/toastification.dart';
 import '../screens/settings_screen.dart';
 
 class MenuBarWidget extends StatelessWidget {
@@ -126,6 +128,12 @@ class MenuBarWidget extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
+                toast(
+                  context: context,
+                  title: 'Sao chép bàn cờ thành công!',
+                  description: 'Nội dung FEN đã được sao chép',
+                  type: ToastificationType.success,
+                );
                 onMenuAction('copy');
               },
               child: Padding(
