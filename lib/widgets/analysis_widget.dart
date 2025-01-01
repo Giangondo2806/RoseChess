@@ -33,7 +33,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
   }
 
   hiddenNavigation() {
-    if(_showNavigation) {
+    if (_showNavigation) {
       setState(() {
         _showNavigation = false;
       });
@@ -75,18 +75,18 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                       controller: _tabController,
                       // physics: const NeverScrollableScrollPhysics(),
                       children: [
-                            GestureDetector(
-                  onTap: hiddenNavigation,
-                  child: const EngineAnalysisContent(),
-                ),
-                GestureDetector(
-                  onTap: hiddenNavigation,
-                  child: const BookContent(),
-                ),
-                GestureDetector(
-                  onTap:hiddenNavigation,
-                  child: const GraphContent(),
-                ),
+                        GestureDetector(
+                          onTap: hiddenNavigation,
+                          child: const EngineAnalysisContent(),
+                        ),
+                        GestureDetector(
+                          onTap: hiddenNavigation,
+                          child: const BookContent(),
+                        ),
+                        GestureDetector(
+                          onTap: hiddenNavigation,
+                          child: const GraphContent(),
+                        ),
                       ],
                     ),
                   ),
@@ -100,33 +100,82 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                 bottom: 0,
                 width: navigationWidth,
                 curve: Curves.easeInOut,
-                child: const NavigationContent(),
+                child: Container(
+                  decoration: _showNavigation
+                      ? BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  Colors.black.withAlpha(128), // Màu của shadow
+                              spreadRadius:
+                                  -5, // Độ lan rộng của shadow (âm để lan về bên trái)
+                              blurRadius: 7, // Độ mờ của shadow
+                              offset: Offset(-5,
+                                  0), // Vị trí của shadow (âm theo trục x để dịch sang trái)
+                            ),
+                          ],
+                        )
+                      : null,
+                  child: const NavigationContent(),
+                ),
               ),
+              // Nút toggle
               // Nút toggle
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
                 bottom: 10,
-                right: _showNavigation ? navigationWidth + 10 : 10,
+                right: _showNavigation ? navigationWidth : 10,
                 width: 40,
                 curve: Curves.easeInOut,
                 child: SizedBox(
                   height: 40,
-                  child: Material(
-                    color: _showNavigation ? Colors.red : Colors.grey,
-                    borderRadius: BorderRadius.circular(8),
-                    child: InkWell(
+                  child: Container(
+                    // Thay thế Material bằng Container
+                    decoration: BoxDecoration(
+                      color: _showNavigation ? Colors.red : Colors.grey,
                       borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        setState(() {
-                          _showNavigation = !_showNavigation;
-                        });
-                      },
-                      child: Icon(
-                        _showNavigation
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        size: 20,
-                        color: Colors.white,
+                      boxShadow: [
+                        // Top shadow
+                        BoxShadow(
+                          color: Colors.black.withAlpha(128),
+                          spreadRadius: -2,
+                          blurRadius: 5,
+                          offset: Offset(0, -3),
+                        ),
+                        // Left shadow
+                        BoxShadow(
+                          color: Colors.black.withAlpha(128),
+                          spreadRadius: -2,
+                          blurRadius: 5,
+                          offset: Offset(-3, 0),
+                        ),
+                        // Bottom shadow
+                        BoxShadow(
+                          color: Colors.black.withAlpha(128),
+                          spreadRadius: -2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      // Giữ nguyên Material để có hiệu ứng InkWell
+                      color: Colors.transparent, // Màu nền trong suốt
+                      borderRadius: BorderRadius.circular(8),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () {
+                          setState(() {
+                            _showNavigation = !_showNavigation;
+                          });
+                        },
+                        child: Icon(
+                          _showNavigation
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          size: 20,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
