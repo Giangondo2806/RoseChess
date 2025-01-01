@@ -12,6 +12,7 @@ class NavigationContent extends StatelessWidget {
     final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
 
     return Material(
+      borderOnForeground: true,
       color: userSettingsProvider.currentTheme.scaffoldBackgroundColor,
       child: Column(
         children: [
@@ -71,61 +72,54 @@ class NavigationContent extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.only(top: 8.0),
-              itemCount: navigationState.moves.length,
+              itemCount: (navigationState.moves.length + 1) ~/ 2,
               itemBuilder: (context, index) {
-                final move = navigationState.moves[index];
+                final moveIndex1 = index * 2;
+                final moveIndex2 = moveIndex1 + 1;
+                final move1 = moveIndex1 < navigationState.moves.length 
+                    ? navigationState.moves[moveIndex1] 
+                    : null;
+                final move2 = moveIndex2 < navigationState.moves.length 
+                    ? navigationState.moves[moveIndex2] 
+                    : null;
                 final hightLightMove = navigationState.hightLightMove;
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 2.0, horizontal: 4.0),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Move number
                       SizedBox(
                         width: 20,
-                        child: Text((index + 1).toString(),
-                            style: userSettingsProvider
-                                .currentTheme.textTheme.bodyMedium),
+                        child: Text(
+                          (index + 1).toString(),
+                          style: userSettingsProvider
+                              .currentTheme.textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       const SizedBox(width: 8.0),
-                      Flexible(
-                        flex: 1,
-                        child: move['move1'] != null
-                            ? ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 0, vertical: 4.0),
-                                  backgroundColor:
-                                      move['move1'] == hightLightMove
-                                          ? Color.fromARGB(255, 157, 72, 112)
-                                          : null,
-                                ),
-                                onPressed: () {
-                                  navigationState.gotoMove(move['move1']!);
-                                },
-                                child: Text(move['move1']!.san!),
-                              )
-                            : const SizedBox.shrink(),
+                      
+                      // First move of the pair
+                      Expanded(
+                        child: _buildMoveButton(
+                          move1, 
+                          hightLightMove, 
+                          navigationState,
+                          userSettingsProvider,
+                        ),
                       ),
                       const SizedBox(width: 8.0),
-                      Flexible(
-                        flex: 1,
-                        child: move['move2'] != null
-                            ? ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 0, vertical: 4.0),
-                                  backgroundColor:
-                                      move['move2'] == hightLightMove
-                                          ? Color.fromARGB(255, 157, 72, 112)
-                                          : null,
-                                ),
-                                onPressed: () {
-                                  navigationState.gotoMove(move['move2']!);
-                                },
-                                child: Text(move['move2']!.san!),
-                              )
-                            : const SizedBox.shrink(),
+                      
+                      // Second move of the pair
+                      Expanded(
+                        child: _buildMoveButton(
+                          move2, 
+                          hightLightMove, 
+                          navigationState,
+                          userSettingsProvider,
+                        ),
                       ),
                     ],
                   ),
@@ -134,6 +128,42 @@ class NavigationContent extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMoveButton(
+    dynamic move,
+    dynamic hightLightMove,
+    NavigationState navigationState,
+    UserSettingsProvider userSettingsProvider,
+  ) {
+    if (move == null) return const SizedBox.shrink();
+
+    return InkWell(
+      onTap: () {
+        navigationState.gotoMove(move);
+      },
+      child: Container(
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.0),
+          border: Border.all(
+            color: move == hightLightMove
+                ? const Color.fromARGB(255, 157, 72, 112)
+                : Colors.grey,
+          ),
+        ),
+        child: Text(
+          move.san,
+          style: TextStyle(
+            color: move == hightLightMove
+                ? const Color.fromARGB(255, 157, 72, 112)
+                : userSettingsProvider.currentTheme.textTheme.bodyMedium?.color,
+          ),
+        ),
       ),
     );
   }

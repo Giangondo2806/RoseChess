@@ -1642,6 +1642,11 @@ String getSanMovesFromfenAndNotations(
 }
 
 List<Map<String, Move?>> groupMoves(List<dynamic> moves) {
+
+  for(int i = 0; i < moves.length; i++) {
+    print('[rose] $i: ${moves[i].moveNumber}');
+  }
+
   final groupedMoves = <Map<String, Move?>>[];
   // Thay đổi kiểu dữ liệu của movesByNumber
   Map<int, List<Move?>> movesByNumber = {};

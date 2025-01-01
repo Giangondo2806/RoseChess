@@ -12,7 +12,7 @@ import 'package:rose_chess/utils/xiangqi.dart';
 
 class NavigationState with ChangeNotifier {
   List<dynamic> _moves = [];
-  List<Map<String, Move?>> get moves => groupMoves(_moves);
+  List<dynamic> get moves => _moves;
   late BoardEngineState _boardState;
   int _currentMove =0;
   get currentMove => _currentMove;
@@ -25,6 +25,7 @@ class NavigationState with ChangeNotifier {
   }
 
   void setNavigation(List<dynamic> data) {
+    print('setNavigation');
     _moves =  data;
     _currentMove = _moves.length;
     notifyListeners();

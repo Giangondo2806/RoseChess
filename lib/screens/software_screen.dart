@@ -27,7 +27,6 @@ class SoftwareScreen extends StatefulWidget {
 class _SoftwareScreenState extends State<SoftwareScreen> {
   @override
   Widget build(BuildContext context) {
-    final lang = AppLocalizations.of(context);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
