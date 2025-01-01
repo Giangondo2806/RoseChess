@@ -23,11 +23,11 @@
 #include <cstring>
 #include <unistd.h>
 
-#include "pikafish/bitboard.h"
-#include "pikafish/misc.h"
-#include "pikafish/position.h"
-#include "pikafish/uci.h"
-#include "pikafish/tune.h"
+#include "rose/bitboard.h"
+#include "rose/misc.h"
+#include "rose/position.h"
+#include "rose/uci.h"
+#include "rose/tune.h"
 
 
 // https://jineshkj.wordpress.com/2006/12/22/how-to-capture-stdin-stdout-and-stderr-of-child-program/
