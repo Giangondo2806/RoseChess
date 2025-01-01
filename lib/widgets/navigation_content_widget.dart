@@ -3,13 +3,40 @@ import 'package:provider/provider.dart';
 import '../providers/navigation_state.dart';
 import '../providers/user_settings_provider.dart';
 
-class NavigationContent extends StatelessWidget {
+class NavigationContent extends StatefulWidget {
   const NavigationContent({Key? key}) : super(key: key);
+
+  @override
+  State<NavigationContent> createState() => NavigationContentState();
+}
+
+class NavigationContentState extends State<NavigationContent> {
+  final ScrollController _scrollController = ScrollController();
+
+  // Map để lưu trữ các GlobalKey cho mỗi item
+  final Map<int, GlobalKey> itemKeys = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Truyền tham chiếu của NavigationContentState vào NavigationState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<NavigationState>(context, listen: false)
+          .setNavigationContentState(this);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final navigationState = Provider.of<NavigationState>(context);
     final userSettingsProvider = Provider.of<UserSettingsProvider>(context);
+    navigationState.scrollController = _scrollController;
 
     return Material(
       borderOnForeground: true,
@@ -71,25 +98,29 @@ class NavigationContent extends StatelessWidget {
           const Divider(height: 1, thickness: 1),
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.only(top: 8.0),
+              controller: _scrollController,
+              padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
               itemCount: (navigationState.moves.length + 1) ~/ 2,
               itemBuilder: (context, index) {
                 final moveIndex1 = index * 2;
                 final moveIndex2 = moveIndex1 + 1;
-                final move1 = moveIndex1 < navigationState.moves.length 
-                    ? navigationState.moves[moveIndex1] 
+                final move1 = moveIndex1 < navigationState.moves.length
+                    ? navigationState.moves[moveIndex1]
                     : null;
-                final move2 = moveIndex2 < navigationState.moves.length 
-                    ? navigationState.moves[moveIndex2] 
+                final move2 = moveIndex2 < navigationState.moves.length
+                    ? navigationState.moves[moveIndex2]
                     : null;
                 final hightLightMove = navigationState.hightLightMove;
 
+                // Tạo GlobalKey cho item này nếu chưa tồn tại
+                itemKeys[index] ??= GlobalKey();
+
                 return Padding(
+                  key: itemKeys[index], // Gán GlobalKey vào Row widget
                   padding: const EdgeInsets.symmetric(
                       vertical: 2.0, horizontal: 4.0),
                   child: Row(
                     children: [
-                      // Move number
                       SizedBox(
                         width: 20,
                         child: Text(
@@ -100,23 +131,19 @@ class NavigationContent extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8.0),
-                      
-                      // First move of the pair
                       Expanded(
                         child: _buildMoveButton(
-                          move1, 
-                          hightLightMove, 
+                          move1,
+                          hightLightMove,
                           navigationState,
                           userSettingsProvider,
                         ),
                       ),
                       const SizedBox(width: 8.0),
-                      
-                      // Second move of the pair
                       Expanded(
                         child: _buildMoveButton(
-                          move2, 
-                          hightLightMove, 
+                          move2,
+                          hightLightMove,
                           navigationState,
                           userSettingsProvider,
                         ),
