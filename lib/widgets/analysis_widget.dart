@@ -33,7 +33,7 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
   }
 
   hiddenNavigation() {
-    if(_showNavigation) {
+    if (_showNavigation) {
       setState(() {
         _showNavigation = false;
       });
@@ -75,18 +75,18 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                       controller: _tabController,
                       // physics: const NeverScrollableScrollPhysics(),
                       children: [
-                            GestureDetector(
-                  onTap: hiddenNavigation,
-                  child: const EngineAnalysisContent(),
-                ),
-                GestureDetector(
-                  onTap: hiddenNavigation,
-                  child: const BookContent(),
-                ),
-                GestureDetector(
-                  onTap:hiddenNavigation,
-                  child: const GraphContent(),
-                ),
+                        GestureDetector(
+                          onTap: hiddenNavigation,
+                          child: const EngineAnalysisContent(),
+                        ),
+                        GestureDetector(
+                          onTap: hiddenNavigation,
+                          child: const BookContent(),
+                        ),
+                        GestureDetector(
+                          onTap: hiddenNavigation,
+                          child: const GraphContent(),
+                        ),
                       ],
                     ),
                   ),
@@ -100,13 +100,30 @@ class _AnalysisWidgetState extends State<AnalysisWidget>
                 bottom: 0,
                 width: navigationWidth,
                 curve: Curves.easeInOut,
-                child: const NavigationContent(),
+                child: Container(
+                  decoration: _showNavigation
+                      ? BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  Colors.black.withAlpha(128), // Màu của shadow
+                              spreadRadius:
+                                  -5, // Độ lan rộng của shadow (âm để lan về bên trái)
+                              blurRadius: 7, // Độ mờ của shadow
+                              offset: Offset(-5,
+                                  0), // Vị trí của shadow (âm theo trục x để dịch sang trái)
+                            ),
+                          ],
+                        )
+                      : null,
+                  child: const NavigationContent(),
+                ),
               ),
               // Nút toggle
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
                 bottom: 10,
-                right: _showNavigation ? navigationWidth + 10 : 10,
+                right: _showNavigation ? navigationWidth : 10,
                 width: 40,
                 curve: Curves.easeInOut,
                 child: SizedBox(
