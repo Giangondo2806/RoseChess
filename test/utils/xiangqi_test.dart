@@ -182,5 +182,14 @@ void main() {
         expect(moves[i].san, contains(expected[i]['san']));
       }
     });
+
+    test('from fen and validate move', () {
+      xiangqi.load(
+          'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKABR1 b');
+       expect(xiangqi.generateFen(),'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKABR1 b');
+      final move =xiangqi.simpleMove({'from': 'h9', 'to': 'g7'});
+      expect(move, 'M8.7');
+    
+    });
   });
 }

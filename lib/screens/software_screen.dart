@@ -195,13 +195,15 @@ class _EngineWrapperState extends State<EngineWrapper>
                 }
               });
 
-              void onEditBoard() {
-                Navigator.push(
+              Future<void> onEditBoard() async {
+                String fen = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => BoardEditScreen(fen: boardState.xiangqi.generateFen()),
                   ),
                 );
+
+                boardState.newGame(fen: fen);
               }
 
               return Column(

@@ -151,11 +151,11 @@ class Xiangqi {
     if(lang!=null){
       this.lang = lang;
     }
-    if (fen == null) {
-      load(initFen);
-    } else {
-      load(fen);
+    if (fen !=null){
+      initFen = fen;
     }
+
+    load(initFen);
   }
 
   String getCurrentTurn() {

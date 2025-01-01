@@ -32,7 +32,7 @@ class BoardEngineState extends BoardState {
   bool get engineReady => _readyOkReceived;
   bool get isBoardInitialized => _isBoardInitialized;
   late EngineAnalysisState engineAnalysisState;
-  late BookState _bookState;
+  late final BookState _bookState;
   late ArrowState arrowState;
   late NavigationState navigationState;
   late AppLocalizations lang;
@@ -75,10 +75,6 @@ class BoardEngineState extends BoardState {
 
 // Xử lý khi chưa có quân cờ nào được chọn
   void _handleNewPieceSelection(BoardPosition position) {
-    /**
-     * 
-     */
-    print('[rose] handle new piece selection');
     if (board[position] != null) {
       _selectPiece(position);
       if (canMoves.isEmpty) {
@@ -109,6 +105,8 @@ class BoardEngineState extends BoardState {
 // Chọn một quân cờ
   void _selectPiece(BoardPosition position) {
     selectedPosition = position;
+
+    // print('[currentFen] $_currentFen');
     final xiangqiCanmove = Xiangqi(fen: _currentFen);
     canMoves = xiangqiCanmove
         .generatePrettyMoves(square: selectedPosition!.notation)
@@ -179,6 +177,7 @@ class BoardEngineState extends BoardState {
 
   void gotoBoard({int index = 0}) {
     pauseGame();
+    _searchModeEnabled = false;
     engineAnalysisState.clearAnalysis();
     Future.delayed(Duration(milliseconds: 10), () {
       arrowState.clearArrows();
@@ -191,7 +190,6 @@ class BoardEngineState extends BoardState {
   }
 
   void handleMenuAction(String action) {
-    print('Menu action received: $action');
     switch (action) {
       case 'new_game':
         newGame();
@@ -208,9 +206,6 @@ class BoardEngineState extends BoardState {
       case 'quick_move':
         _handleQuickMove();
         break;
-      case 'edit':
-        // Handle Edit
-        break;
       case 'copy':
         // Handle Copy
         break;
@@ -218,18 +213,16 @@ class BoardEngineState extends BoardState {
         isFlipped = !isFlipped;
         notifyListeners();
         break;
-      case 'settings':
-        // Xử lý Settings
-        break;
     }
   }
 
   
 
-  void newGame() {
+  void newGame({String? fen}) {
     if (roseEngine?.state.value == RoseState.ready) {
       pauseGame();
     }
+
 
     _boardHistory.clear();
     engineAnalysisState.clearAnalysis();
@@ -239,7 +232,7 @@ class BoardEngineState extends BoardState {
 
     navigationState.clearNavigation();
     selectedPosition = null;
-    initializeBoard(lang: lang);
+    initializeBoard(lang: lang, fen: fen);
     _isBoardInitialized = true;
     _bookState.getbook(initFen, lang);
     _boardHistory.add(Map.from(board));

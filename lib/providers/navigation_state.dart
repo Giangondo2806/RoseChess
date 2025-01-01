@@ -25,7 +25,6 @@ class NavigationState with ChangeNotifier {
   }
 
   void setNavigation(List<dynamic> data) {
-    print('setNavigation');
     _moves =  data;
     _currentMove = _moves.length;
     notifyListeners();

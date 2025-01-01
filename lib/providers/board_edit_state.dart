@@ -2,16 +2,18 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:rose_chess/utils/xiangqi.dart';
 
 import '../constants.dart';
 import '../generated/l10n.dart';
 import '../models/board_position.dart';
 import '../models/piece.dart';
+import '../utils/board.dart';
 import 'board_state.dart';
 
 class BoardEditState extends BoardState {
   final AppLocalizations _lang;
-  final String _fen;
+  final String _initFen;
 
   List<Piece> _removedPieces = [];
   List<Piece> get removedPiecesRed {
@@ -43,8 +45,8 @@ class BoardEditState extends BoardState {
   BoardPosition? selectedEmptyPosition;
   late double squareSize;
 
-  BoardEditState(this._lang, this._fen) {
-    initializeBoard(lang: _lang, fen: _fen);
+  BoardEditState(this._lang, this._initFen) {
+    initializeBoard(lang: _lang, fen: _initFen);
     calculatorRemovePieces();
   }
 
@@ -160,5 +162,5 @@ class BoardEditState extends BoardState {
 
   void clearBoard() {}
 
-  void saveBoard() {}
+
 }

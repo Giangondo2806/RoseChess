@@ -1,4 +1,3 @@
-// BoardEditScreen.dart
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import '../constants.dart';
 import '../generated/l10n.dart';
 import '../models/piece.dart';
 import '../providers/board_edit_state.dart';
+import '../utils/board.dart';
 
 class BoardEditScreen extends StatelessWidget {
   final String fen;
@@ -29,20 +29,24 @@ class BoardEditScreen extends StatelessWidget {
         create: (context) => BoardEditState(lang, fen),
         child: Consumer<BoardEditState>(
           builder: (context, boardState, child) => LayoutBuilder(
-            // Added LayoutBuilder here
             builder: (context, constraints) {
               const double paddingValue = 10.0;
               final boardWidth = constraints.maxWidth - (2 * paddingValue);
               final squareSize = boardWidth / MAX_COLS;
-              boardState.squareSize = squareSize; // Set squareSize here
+              boardState.squareSize = squareSize;
+
+              saveBoard() {
+                final fen =
+                    generateFen(boardState.board, boardState.selectedColor);
+                    print('FEN before pop: $fen');
+                    Navigator.pop(context, fen);
+              }
+
               return Column(
-               
                 children: [
-                  
                   Stack(
                     children: [
                       ChessBoardWidget(boardState: boardState),
-                      // Popup for removed pieces
                       if (boardState.showPopup)
                         Positioned(
                           left: boardState.popupPosition.dx,
@@ -53,7 +57,7 @@ class BoardEditScreen extends StatelessWidget {
                             onPieceSelected: (piece) => boardState.restorePiece(
                                 piece, boardState.selectedEmptyPosition!),
                             onDismiss: () => boardState.hidePopup(),
-                            squareSize: squareSize, // Pass squareSize here
+                            squareSize: squareSize,
                           ),
                         ),
                     ],
@@ -67,48 +71,56 @@ class BoardEditScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // Nút "Khởi tạo"
                         ElevatedButton(
                           onPressed: () {
-                            // Xử lý sự kiện cho nút "Khởi tạo"
                             boardState.resetBoard();
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 4, // Độ nổi
-                            textStyle: const TextStyle(fontSize: 16),
-                          ),
-                          child: const Text("Khởi tạo"),
-                        ),
-
-                        // Nút "Xóa sạch"
-                        ElevatedButton(
-                          onPressed: () {
-                            // Xử lý sự kiện cho nút "Xóa sạch"
-                            boardState.clearBoard();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                             elevation: 4,
                             textStyle: const TextStyle(fontSize: 16),
                           ),
-                          child: const Text("Xóa sạch"),
+                          child: const Text("Khởi tạo"),
                         ),
-
-                        // Nút "Lưu"
                         ElevatedButton(
                           onPressed: () {
-                            // Xử lý sự kiện cho nút "Lưu"
-                            boardState.saveBoard(); // Bạn cần triển khai hàm saveBoard() trong BoardEditState
+                            boardState.clearBoard();
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 4,
+                            textStyle: const TextStyle(fontSize: 16),
+                          ),
+                          child: const Text("Xóa"),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 4,
+                            textStyle: const TextStyle(fontSize: 16),
+                          ),
+                          child: const Text("Đổi bên"),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            saveBoard();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -117,25 +129,9 @@ class BoardEditScreen extends StatelessWidget {
                           ),
                           child: const Text("Lưu"),
                         ),
-                            ElevatedButton(
-                          onPressed: () {
-                            boardState.saveBoard();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            elevation: 4,
-                            textStyle: const TextStyle(fontSize: 16),
-                          ),
-                          child: const Text("Doi ben"),
-                        ),
                       ],
                     ),
                   ),
-
-                  // Radio buttons cho "Quân đỏ" và "Quân đen"
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -147,9 +143,8 @@ class BoardEditScreen extends StatelessWidget {
                           groupValue: boardState.selectedColor,
                           onChanged: (value) {
                             boardState.selectedColor = PieceColor.red.name;
-                          
                           },
-                          activeColor: Colors.red, // Màu khi được chọn
+                          activeColor: Colors.red,
                         ),
                         const SizedBox(width: 18),
                         const Text("Quân đen"),
@@ -164,7 +159,6 @@ class BoardEditScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // guileline
                   Container(
                       padding: const EdgeInsets.all(4.0),
                       margin: const EdgeInsets.all(8.0),
@@ -173,26 +167,25 @@ class BoardEditScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            // **Instruction text with line break**
                             "Hướng dẫn:",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, ),
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                           Text(
-                            // **Instruction text with line break**
+                          Text(
                             "1.Nhấn đúp vào quân cờ để xóa.",
                             style: TextStyle(fontSize: 16),
                           ),
-                           Text(
-                            // **Instruction text with line break**
+                          Text(
                             "2.Nhấn vào ô trống, sau đó chọn quân cờ từ bảng chọn để thêm vào.",
                             style: TextStyle(fontSize: 16),
                           ),
                         ],
                       )),
-
                 ],
               );
             },
@@ -223,14 +216,13 @@ class RemovedPiecesPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     final maxWidth =
         (squareSize + 4) * max(blackpieces.length, redpieces.length) + 16;
-    return // Trong RemovedPiecesPopup
-        Card(
+    return Card(
       child: Container(
         padding: const EdgeInsets.all(4),
         constraints: BoxConstraints(maxWidth: maxWidth),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start, // Thêm dòng này
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -242,8 +234,7 @@ class RemovedPiecesPopup extends StatelessWidget {
               ],
             ),
             Container(
-              // Thêm Container bao bọc Wrap
-              alignment: Alignment.centerLeft, // Thêm dòng này
+              alignment: Alignment.centerLeft,
               width: double.infinity,
               child: Wrap(
                 spacing: 4,
@@ -251,9 +242,8 @@ class RemovedPiecesPopup extends StatelessWidget {
                 alignment: WrapAlignment.start,
                 children: redpieces
                     .map((piece) => Container(
-                          // Thêm Container bao bọc
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey), // Thêm viền
+                            border: Border.all(color: Colors.grey),
                           ),
                           child: SizedBox(
                             width: squareSize,
@@ -270,8 +260,7 @@ class RemovedPiecesPopup extends StatelessWidget {
               ),
             ),
             Container(
-              // Thêm Container bao bọc Wrap
-              alignment: Alignment.centerLeft, // Thêm dòng này
+              alignment: Alignment.centerLeft,
               width: double.infinity,
               child: Wrap(
                 spacing: 4,
@@ -279,9 +268,8 @@ class RemovedPiecesPopup extends StatelessWidget {
                 alignment: WrapAlignment.start,
                 children: blackpieces
                     .map((piece) => Container(
-                          // Thêm Container bao bọc
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey), // Thêm viền
+                            border: Border.all(color: Colors.grey),
                           ),
                           child: SizedBox(
                             width: squareSize,

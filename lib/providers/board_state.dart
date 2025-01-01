@@ -16,6 +16,8 @@ abstract class BoardState with ChangeNotifier {
   void initializeBoard({AppLocalizations? lang, String? fen}) {
     piecePositions = {};
     board = {};
+
+    print('[new fen] $fen');
     xiangqi = Xiangqi(lang: lang, fen: fen);
     initFen = xiangqi.generateFen();
     var initialBoard = xiangqi.getBoard();

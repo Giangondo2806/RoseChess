@@ -2,7 +2,24 @@
 import '../constants.dart';
 import '../utils/xiangqi.dart';
 
-enum PieceType { rook, knight, bishop, advisor, king, cannon, pawn, none }
+enum PieceType { 
+  rook('r'), 
+  knight('n'), 
+  bishop('b'), 
+  advisor('a'), 
+  king('k'), 
+  cannon('c'), 
+  pawn('p'), 
+  none('none');
+
+  final String name;
+  const PieceType(this.name);
+  @override
+  String toString() => name;
+
+
+
+  }
 
 // Enum for piece colors
 enum PieceColor {
