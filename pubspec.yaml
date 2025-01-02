@@ -22,6 +22,7 @@ dependencies:
   drift_flutter: ^0.1.0
   get_it: ^8.0.3
   toastification: ^2.3.0
+  syncfusion_flutter_charts: ^28.1.37
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:rose_chess/models/engine_info.dart';
@@ -190,7 +191,6 @@ class BoardEngineState extends BoardState {
         break;
       case 'flip_board':
         isFlipped = !isFlipped;
-        notifyListeners();
         break;
     }
   }
@@ -226,26 +226,7 @@ class BoardEngineState extends BoardState {
       _roseEngine = GetIt.instance.get<Rose>();
       if (_roseEngine != null) {
         _engineOutputSubscription?.cancel();
-        _engineOutputSubscription = _roseEngine?.stdout.listen((line) {
-          if (line == 'readyok') {
-            if (true) {
-              _readyOkReceived = true;
-              notifyListeners();
-            }
-          } else if (line.startsWith('info depth')) {
-            final info = parseEngineInfo(
-                fen: xiangqi.generateFen(), input: line, lang: lang);
-
-            if (info != null) {
-              engineAnalysisState.addAnalysis(info);
-              _extractMoves(line);
-              _lastBestMove = info.bestmove;
-            }
-          } else if (line.startsWith('bestmove') &&
-              (_automoveBlack || _automoveRed)) {
-            _handleEngineBestMove(line);
-          }
-        });
+        _engineOutputSubscription = _roseEngine?.stdout.listen(_handleEngineOutput);
         if (_roseEngine!.state.value == RoseState.ready) {
           _connectedEngine = true;
         } else {
@@ -253,11 +234,39 @@ class BoardEngineState extends BoardState {
         }
       }
     } catch (error) {
-      print('Error init engine: $error');
+      debugPrint('[rose] Error init engine: $error');
     } finally {
       _isEngineInitializing = false;
     }
   }
+
+
+  void _handleEngineOutput(String line) {
+    if (line == 'readyok') {
+      _processingReadyOk();
+    } else if (line.startsWith('info depth')) {
+      _processingInfoDepth(line);
+    } else if (line.startsWith('bestmove') &&
+        (_automoveBlack || _automoveRed)) {
+      _handleEngineBestMove(line);
+    }
+  }
+
+  void _processingReadyOk() {
+    _readyOkReceived = true;
+    notifyListeners();
+  }
+
+  void _processingInfoDepth(String line) {
+    final info =
+        parseEngineInfo(fen: xiangqi.generateFen(), input: line, lang: lang);
+    if (info != null) {
+      engineAnalysisState.addAnalysis(info);
+      _extractMoves(line);
+      _lastBestMove = info.bestmove;
+    }
+  }
+
 
   void _autoRed() {
     _automoveRed = !_automoveRed;
