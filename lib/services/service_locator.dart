@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get_it/get_it.dart';
+import 'package:rose_chess/database/repositories/move_repository.dart';
 
 import '../database/database.dart';
 import '../database/repositories/config_repository.dart';
@@ -13,14 +14,10 @@ void setupLocator() {
   if (!getIt.isRegistered<Rose>()) {
     getIt.registerLazySingleton<Rose>(() => Rose());
   }
-
-  // getIt.registerLazySingletonAsync<Rose>(() async {
-  //   final completer = Completer<Rose>();
-  //   Rose(completer: completer);
-  //   return await completer.future;
-  // });
   getIt.registerLazySingleton<ConfigRepository>(
-      () => ConfigRepository(getIt())); // Thêm dòng này
+      () => ConfigRepository(getIt())); 
+  getIt.registerLazySingleton<ChessRepository>(
+      () => ChessRepository(getIt()));
 }
 
 Future<void> resetLocator() async {

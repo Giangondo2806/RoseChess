@@ -7,6 +7,7 @@ import 'package:rose_chess/providers/arrow_state.dart';
 import 'package:rose_chess/providers/board_state.dart';
 import 'package:rose_chess/providers/book_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
+import '../database/database.dart';
 import '../engine/rose.dart';
 import '../engine/rose_state.dart';
 import '../generated/l10n.dart';
@@ -41,6 +42,8 @@ class BoardEngineState extends BoardState {
   bool get automoveBlack => _automoveBlack;
   bool get searchModeEnabled => _searchModeEnabled;
   late String _lastBestMove;
+  List<BaseMovesCompanion> databaseMoves = [];
+
   String get _currentFen {
     final current = navigationState.currentMove - 1;
     return current >= 0
@@ -64,7 +67,6 @@ class BoardEngineState extends BoardState {
     } else {
       _handleExistingPieceSelection(position);
     }
-
     notifyListeners();
   }
 
@@ -126,6 +128,10 @@ class BoardEngineState extends BoardState {
       _handleSyncXiangqiMove();
     }
 
+    // if (_searchModeEnabled || _automoveRed || _automoveBlack) {
+    //   return;
+    // }
+
     engineAnalysisState.clearAnalysis();
     xiangqi.simpleMove({'from': from.notation, 'to': to.notation});
     _bookState.getbook(xiangqi.generateFen(), lang);
@@ -133,9 +139,9 @@ class BoardEngineState extends BoardState {
     navigationState.setNavigation(xiangqi.getHistory(verbose: true));
     movePiece(from, to, piece);
     _boardHistory.add(Map.from(board));
-    if (_searchModeEnabled) {
-      _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
-    }
+    // if (_searchModeEnabled) {
+    _engineSearch('$initFen - - moves ${xiangqi.getHistory().join(' ')}');
+    // }
 
     final turn = xiangqi.turn;
     if (_automoveBlack && turn == XiangqiColor.BLACK) {
@@ -156,17 +162,19 @@ class BoardEngineState extends BoardState {
   }
 
   void gotoBoard({int index = 0}) {
-    _searchModeEnabled = false;
-    pauseEngine();
-    Future.delayed(Duration(milliseconds: 10), () {
-      engineAnalysisState.clearAnalysis();
-      arrowState.clearArrows();
-    });
+    // _searchModeEnabled = false;
+    // pauseEngine();
+
     if (index < _boardHistory.length) {
       board = Map.from(_boardHistory[index]);
       selectedPosition = null;
-      notifyListeners();
     }
+    _engineSearch(_currentFen);
+    Future.delayed(Duration(milliseconds: 10), () {
+      engineAnalysisState.clearAnalysis();
+      arrowState.clearArrows();
+      notifyListeners();
+    });
   }
 
   void handleMenuAction(String action) {
@@ -197,9 +205,9 @@ class BoardEngineState extends BoardState {
 
   void newGame({String? fen}) {
     _searchModeEnabled = false;
-    if (roseEngine?.state.value == RoseState.ready) {
-      pauseEngine();
-    }
+    // if (roseEngine?.state.value == RoseState.ready) {
+    //   pauseEngine();
+    // }
 
     _boardHistory.clear();
     engineAnalysisState.clearAnalysis();
@@ -213,6 +221,7 @@ class BoardEngineState extends BoardState {
     _isBoardInitialized = true;
     _bookState.getbook(initFen, lang);
     _boardHistory.add(Map.from(board));
+    _engineSearch(initFen);
     notifyListeners();
   }
 
@@ -226,7 +235,8 @@ class BoardEngineState extends BoardState {
       _roseEngine = GetIt.instance.get<Rose>();
       if (_roseEngine != null) {
         _engineOutputSubscription?.cancel();
-        _engineOutputSubscription = _roseEngine?.stdout.listen(_handleEngineOutput);
+        _engineOutputSubscription =
+            _roseEngine?.stdout.listen(_handleEngineOutput);
         if (_roseEngine!.state.value == RoseState.ready) {
           _connectedEngine = true;
         } else {
@@ -240,14 +250,14 @@ class BoardEngineState extends BoardState {
     }
   }
 
-
   void _handleEngineOutput(String line) {
     if (line == 'readyok') {
       _processingReadyOk();
     } else if (line.startsWith('info depth')) {
       _processingInfoDepth(line);
-    } else if (line.startsWith('bestmove') &&
-        (_automoveBlack || _automoveRed)) {
+    } else if (line.startsWith('bestmove')
+        // &&(_automoveBlack || _automoveRed)
+        ) {
       _handleEngineBestMove(line);
     }
   }
@@ -258,15 +268,15 @@ class BoardEngineState extends BoardState {
   }
 
   void _processingInfoDepth(String line) {
-    final info =
-        parseEngineInfo(fen: xiangqi.generateFen(), input: line, lang: lang);
+    final info = parseEngineInfo(fen: _currentFen, input: line, lang: lang);
     if (info != null) {
-      engineAnalysisState.addAnalysis(info);
-      _extractMoves(line);
+      if (searchModeEnabled) {
+        engineAnalysisState.addAnalysis(info);
+        _extractMoves(line);
+      }
       _lastBestMove = info.bestmove;
     }
   }
-
 
   void _autoRed() {
     _automoveRed = !_automoveRed;
@@ -296,12 +306,13 @@ class BoardEngineState extends BoardState {
       _automoveRed = false;
       _automoveBlack = false;
       _engineSearch(_currentFen);
-    } else {
-      pauseEngine();
-      Future.delayed(Duration(milliseconds: 10), () {
-        arrowState.clearArrows();
-      });
     }
+    // pauseEngine();
+    Future.delayed(Duration(milliseconds: 10), () {
+      engineAnalysisState.clearAnalysis();
+      arrowState.clearArrows();
+    });
+
     notifyListeners();
   }
 
@@ -352,7 +363,6 @@ class BoardEngineState extends BoardState {
 
   void _engineSearch(String fen) {
     if (!_connectedEngine || !_readyOkReceived) return;
-
     _roseEngine?.stdin = 'stop\n';
     _roseEngine?.stdin = 'position fen $fen\n';
     _roseEngine?.stdin = 'go\n';
@@ -380,39 +390,45 @@ class BoardEngineState extends BoardState {
 
   void _handleEngineSearchBlack() {
     if (xiangqi.turn == XiangqiColor.BLACK) {
-      final fen = '$initFen - - moves ${xiangqi.getHistory().join(' ')}';
-      _engineSearchMoveTime(fen, 1000);
+      Future.delayed(Duration(milliseconds: 1000), () {
+        _moveWithNotation(null);
+      });
+      // final fen = '$initFen - - moves ${xiangqi.getHistory().join(' ')}';
+      // _engineSearchMoveTime(fen, 1000);
     }
   }
 
   void _handleEngineSearchRed() {
     if (xiangqi.turn == XiangqiColor.RED) {
-      final fen = '$initFen - - moves ${xiangqi.getHistory().join(' ')}';
-      _engineSearchMoveTime(fen, 1000);
+      Future.delayed(Duration(milliseconds: 1000), () {
+        _moveWithNotation(null);
+      });
+      // final fen = '$initFen - - moves ${xiangqi.getHistory().join(' ')}';
+      // _engineSearchMoveTime(fen, 1000);
     }
   }
 
   void _handleEngineBestMove(String line) {
-    final bestMove = line.split(' ')[1];
-    _moveWithNotation(bestMove);
+    _lastBestMove = line.split(' ')[1];
+    // _moveWithNotation(bestMove);
 
-    notifyListeners();
+    // notifyListeners();
   }
 
-  void _moveWithNotation(String notation) {
+  void _moveWithNotation(String? notation) {
+    notation ??= _lastBestMove;
     final from = BoardPosition(notation.substring(0, 2));
     final to = BoardPosition(notation.substring(2, 4));
     final piece = board[from];
     if (piece != null && piece.color.name == xiangqi.turn) {
       _handleMovePiece(from, to, piece);
     }
+    notifyListeners();
   }
 
   void _handleQuickMove() {
-    if (_searchModeEnabled && _lastBestMove.isNotEmpty) {
+    if (_lastBestMove.isNotEmpty) {
       _moveWithNotation(_lastBestMove);
     }
-
-    notifyListeners();
   }
 }

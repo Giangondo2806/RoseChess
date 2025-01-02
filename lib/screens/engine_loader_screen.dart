@@ -83,9 +83,9 @@ class _EngineLoaderScreenState extends State<EngineLoaderScreen> {
       _navigateToSoftwareScreen();
     } catch (e) {
       setState(() {
-        _message = 'Lỗi khi tải engine: $e';
+        _message = 'Lỗi khi tải engine';
       });
-      print('Download error: $e');
+      print('Download error');
     } finally {
       setState(() {
         _isDownloading = false;

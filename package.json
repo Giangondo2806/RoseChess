@@ -9,6 +9,7 @@
   },
   "scripts": {
     "gendb": "dart run build_runner build",
+    "upversionDB":"dart run build_runner build --delete-conflicting-outputs",
     "i18n": "flutter pub run intl_utils:generate"
    
   },

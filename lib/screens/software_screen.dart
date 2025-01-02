@@ -94,13 +94,13 @@ class _EngineWrapperState extends State<EngineWrapper>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _boardState = Provider.of<BoardEngineState>(context, listen: false);
-      //  _initEngineIfNeeded();
+       _initEngineIfNeeded();
       // Start a timer to check for engine loading status
-      _loadingTimer = Timer(const Duration(seconds: 5), () {
+      _loadingTimer = Timer(const Duration(seconds: 6), () {
         if (mounted && !_boardState.engineReady) {
           setState(() {
             _isLoading = false;
-            _loadFailed = false;
+            _loadFailed = true;
           });
         }
       });
