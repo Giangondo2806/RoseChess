@@ -313,9 +313,10 @@ class BoardEngineState extends BoardState {
         final fen = history.last.fen;
         final notation = history.last.iccs;
 
-        graphState.setMoves(history);
+       
 
         if (_inserdb) {
+           graphState.setMoves(history);
           final datamove = BaseMovesCompanion(
               fen: Value(fen),
               notation: Value(notation),

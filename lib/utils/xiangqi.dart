@@ -1718,10 +1718,11 @@ class Xiangqi {
   }
 
   void setCurrentMove({required int currentMove}) {
-    final histories = getHistory();
+    final histories = getHistory(verbose: true);
     reset();
     for (int i = 0; i < currentMove; i++) {
-      simpleMove(histories[i]);
+      simpleMove(histories[i].iccs);
+      history[i]['move'].evaluation = histories[i].evaluation;
     }
     // setMove(history.removeLast());
   }

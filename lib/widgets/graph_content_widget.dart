@@ -11,6 +11,8 @@ class GraphContent extends StatelessWidget {
     final GraphState graphState = Provider.of<GraphState>(context);
 
     final List<MoveData> chartData = graphState.chartData
+        .where((test)=>test.evaluation!=null)
+        .toList()
         .asMap()
         .entries
         .map((entry) =>
@@ -65,7 +67,7 @@ class GraphContent extends StatelessWidget {
                   );
                 },
                 labelRotation: 45,
-                interval: chartData.length/10,
+                interval: 1,
                 edgeLabelPlacement: EdgeLabelPlacement.shift,
                 labelIntersectAction: AxisLabelIntersectAction
                     .none, // Không xử lý chồng chéo label
