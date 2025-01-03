@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rose_chess/database/repositories/move_repository.dart';
 import 'package:rose_chess/models/engine_info.dart';
 import 'package:rose_chess/providers/arrow_state.dart';
 import 'package:rose_chess/providers/board_state.dart';
 import 'package:rose_chess/providers/book_state.dart';
+import 'package:rose_chess/providers/graph_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
+import 'package:rose_chess/services/service_locator.dart';
 import '../database/database.dart';
 import '../engine/rose.dart';
 import '../engine/rose_state.dart';
@@ -32,27 +36,36 @@ class BoardEngineState extends BoardState {
   late final BookState _bookState;
   late ArrowState arrowState;
   late NavigationState navigationState;
+  late GraphState graphState;
   late AppLocalizations lang;
   StreamSubscription<String>? _engineOutputSubscription;
   final List<Map<BoardPosition, Piece?>> _boardHistory = [];
+
+  //flag for auto move red and black and searchmode
   bool _automoveRed = false;
   bool _automoveBlack = false;
   bool _searchModeEnabled = false;
   bool get automoveRed => _automoveRed;
   bool get automoveBlack => _automoveBlack;
   bool get searchModeEnabled => _searchModeEnabled;
+
+  //flag for inserdb
+  bool _inserdb = false;
+
   late String _lastBestMove;
-  List<BaseMovesCompanion> databaseMoves = [];
+  final chessRepo = getIt.get<ChessRepository>();
 
   String get _currentFen {
-    final current = navigationState.currentMove - 1;
-    return current >= 0
+    final current = navigationState.currentMove;
+    final histories = xiangqi.getHistory(verbose: true);
+
+    return current <= histories.length - 1 && current > 0
         ? xiangqi.getHistory(verbose: true)[current].fen
-        : xiangqi.initFen;
+        : xiangqi.generateFen();
   }
 
   BoardEngineState(this.engineFileName, this.engineAnalysisState,
-      this.arrowState, this._bookState, this.navigationState) {
+      this.arrowState, this._bookState, this.navigationState, this.graphState) {
     board = {};
   }
 
@@ -123,14 +136,25 @@ class BoardEngineState extends BoardState {
     return targetPiece != null && targetPiece.color == selectedPiece?.color;
   }
 
-  void _handleMovePiece(BoardPosition from, BoardPosition to, Piece piece) {
+  Future<void> _handleMovePiece(
+      BoardPosition from, BoardPosition to, Piece piece) async {
     if (_boardHistory.length - 1 != navigationState.currentMove) {
       _handleSyncXiangqiMove();
     }
-
+    _inserdb = true;
     // if (_searchModeEnabled || _automoveRed || _automoveBlack) {
     //   return;
     // }
+
+    // datamove = BaseMovesCompanion(
+    //   fen: Value(xiangqi.generateFen()),
+    //   notation: Value(from.notation+to.notation),
+    // );
+
+    // final chessRepo = getIt.get<ChessRepository>();
+    // await chessRepo.insertOrUpdateBaseMove(datamove);
+
+    // chessRepo.insertBaseMove(datamove);
 
     engineAnalysisState.clearAnalysis();
     xiangqi.simpleMove({'from': from.notation, 'to': to.notation});
@@ -164,11 +188,14 @@ class BoardEngineState extends BoardState {
   void gotoBoard({int index = 0}) {
     // _searchModeEnabled = false;
     // pauseEngine();
+    _inserdb = false;
 
     if (index < _boardHistory.length) {
       board = Map.from(_boardHistory[index]);
       selectedPosition = null;
     }
+
+    print('[current] $_currentFen');
     _engineSearch(_currentFen);
     Future.delayed(Duration(milliseconds: 10), () {
       engineAnalysisState.clearAnalysis();
@@ -205,6 +232,7 @@ class BoardEngineState extends BoardState {
 
   void newGame({String? fen}) {
     _searchModeEnabled = false;
+    _inserdb = false;
     // if (roseEngine?.state.value == RoseState.ready) {
     //   pauseEngine();
     // }
@@ -275,6 +303,28 @@ class BoardEngineState extends BoardState {
         _extractMoves(line);
       }
       _lastBestMove = info.bestmove;
+   
+      if (xiangqi.history.isNotEmpty) {
+        xiangqi.history.last['move'].evaluation =
+            xiangqi.history.last['move'].color == 'r'
+                ? -info.evaluation
+                : info.evaluation;
+        final history = xiangqi.getHistory(verbose: true);
+        final fen = history.last.fen;
+        final notation = history.last.iccs;
+
+        graphState.setMoves(history);
+
+        if (_inserdb) {
+          final datamove = BaseMovesCompanion(
+              fen: Value(fen),
+              notation: Value(notation),
+              depth: Value(info.depth),
+              evaluation: Value(info.evaluation));
+
+          // chessRepo.insertOrUpdateBaseMove(datamove);
+        }
+      }
     }
   }
 

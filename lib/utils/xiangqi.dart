@@ -52,6 +52,7 @@ class Move {
   String? iccs;
   String? flagsDisplay;
   String? san;
+  int? evaluation;
 
   Move({
     this.moveNumber,
@@ -814,7 +815,7 @@ class Xiangqi {
     }
 
     turn = swapXiangqiColor(turn);
-    move.fen = generateFen();
+    
   }
 
   Move? setMove(dynamic old, {bool undo = true}) {
@@ -1076,6 +1077,7 @@ class Xiangqi {
     move.fen = uglyMove.fen ?? generateFen();
     move.moveNumber = uglyMove.moveNumber;
     move.san = uglyMove.san;
+    move.evaluation = uglyMove.evaluation;
 
     String flags = '';
 
@@ -1707,6 +1709,7 @@ class Xiangqi {
       moveNumber++;
     }
     move.san = san;
+    move.fen = generateFen();
     makeMove(move);
     if (history.isNotEmpty) {
       (history.last as dynamic)['move'].moveNumber = moveNumber;

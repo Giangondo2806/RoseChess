@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rose_chess/providers/book_state.dart';
+import 'package:rose_chess/providers/graph_state.dart';
 import 'package:rose_chess/providers/navigation_state.dart';
 import 'package:rose_chess/screens/edit_board_screen.dart';
 import '../engine/rose_state.dart';
@@ -41,23 +42,32 @@ class _SoftwareScreenState extends State<SoftwareScreen> {
         ChangeNotifierProvider(
           create: (context) => NavigationState(),
         ),
-        ChangeNotifierProxyProvider4<EngineAnalysisState, ArrowState, BookState,
-            NavigationState, BoardEngineState>(
-          create: (context) => BoardEngineState(
+        ChangeNotifierProvider(
+          create: (context) => GraphState(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
+            final navigation = Provider.of<NavigationState>(context, listen: false);
+            final boardEngineState= BoardEngineState(
             widget.engineFileName,
             Provider.of<EngineAnalysisState>(context, listen: false),
             Provider.of<ArrowState>(context, listen: false),
             Provider.of<BookState>(context, listen: false),
-            Provider.of<NavigationState>(context, listen: false),
-          ),
-          update: (context, engineAnalysisState, arrowState, bookState,
-              navigationState, previous) {
-            final boardState = previous ??
-                BoardEngineState(widget.engineFileName, engineAnalysisState,
-                    arrowState, bookState, navigationState);
-            navigationState.setBoardState(boardState: boardState);
-            return boardState;
+            navigation,
+            Provider.of<GraphState>(context, listen: false),
+          );
+          navigation.setBoardState(boardState: boardEngineState);
+          return boardEngineState;
+          
           },
+          // update: (context, engineAnalysisState, arrowState, bookState,
+          //     navigationState, previous) {
+          //   final boardState = previous ??
+          //       BoardEngineState(widget.engineFileName, engineAnalysisState,
+          //           arrowState, bookState, navigationState);
+          //   navigationState.setBoardState(boardState: boardState);
+          //   return boardState;
+          // },
         ),
       ],
       child: const EngineWrapper(

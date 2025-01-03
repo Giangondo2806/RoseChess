@@ -8,8 +8,15 @@ class EngineInfo {
   final String title;
   final String moves;
   final String bestmove;
+  final int evaluation;
+  final int depth;
 
-  EngineInfo({required this.title, required this.moves, required this.bestmove});
+  EngineInfo(
+      {required this.title,
+      required this.moves,
+      required this.bestmove,
+      required this.evaluation,
+      required this.depth});
 
   @override
   String toString() {
@@ -46,7 +53,7 @@ EngineInfo? parseEngineInfo(
     sans = getSanMovesFromfenAndNotations(
         fen: fen, chainNotation: moves, lang: lang);
   } catch (e) {
-     return null;
+    return null;
   }
 
   // Nhân nps với 2 và lấy đơn vị là k
@@ -57,10 +64,16 @@ EngineInfo? parseEngineInfo(
       score > 0 ? calcEval(score).round() : (-calcEval(score.abs()).round());
 
   // Tạo title
-  final title = '${lang!.depth} ${depth+2}, ${lang.score} $calculatedScore, ${lang.nps} ${npsK}k';
+  final title =
+      '${lang!.depth} ${depth + 2}, ${lang.score} $calculatedScore, ${lang.nps} ${npsK}k';
 
   // bestmove
   final bestmove = moves.split(' ')[0];
 
-  return EngineInfo(title: title, moves: sans, bestmove: bestmove);
+  return EngineInfo(
+      title: title,
+      moves: sans,
+      bestmove: bestmove,
+      depth: depth,
+      evaluation: calculatedScore);
 }

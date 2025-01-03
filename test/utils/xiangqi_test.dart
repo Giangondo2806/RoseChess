@@ -124,7 +124,7 @@ void main() {
       expect(
           moves[0].fen,
           equals(
-              "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C4/9/RNBAKABNR b"));
+              "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w"));
     });
 
     test('sanmove notation', () {
@@ -189,6 +189,14 @@ void main() {
        expect(xiangqi.generateFen(),'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C2C1N2/9/RNBAKABR1 b');
       final move =xiangqi.simpleMove({'from': 'h9', 'to': 'g7'});
       expect(move, 'M8.7');
+    
+    });
+
+        test('history color move', () {
+     xiangqi.simpleMove({'from': 'h2', 'to': 'e2'});
+      print(xiangqi.turn);
+
+      print(xiangqi.history.last['move'].color);
     
     });
 

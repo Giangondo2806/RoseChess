@@ -8,6 +8,10 @@ class BaseMoves extends Table {
   TextColumn get fen => text()();
   IntColumn get depth => integer()();
   DateTimeColumn get sync => dateTime().nullable()();
+  @override
+  List<Set<Column>> get uniqueKeys => [
+        {notation, fen}, // Define the unique key combination
+      ];
 }
 
 // Tương ứng với bảng Games
@@ -37,5 +41,6 @@ class GameMoves extends Table {
   IntColumn get gameId => integer().references(Games, #id)();
   IntColumn get moveNumber => integer()();
   IntColumn get baseMoveId => integer().references(BaseMoves, #id)();
-  IntColumn get parentMoveId => integer().nullable().references(GameMoves, #id)();
+  IntColumn get parentMoveId =>
+      integer().nullable().references(GameMoves, #id)();
 }

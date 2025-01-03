@@ -8,7 +8,24 @@ class ChessRepository {
 
   // --- BaseMoves ---
 
-  Future<int> insertBaseMove(BaseMovesCompanion baseMove) => db.into(db.baseMoves).insert(baseMove);
+// ... (Phần còn lại của code như database, table definition) ...
+
+Future<void> insertOrUpdateBaseMove(BaseMovesCompanion move) async {
+  // Lấy depth từ move mới
+  final newDepth = move.depth.value;
+  final newNotation = move.notation.value;
+  final newFen = move.fen.value;
+
+  // Tìm bản ghi hiện tại với cùng notation và fen
+  final existingMove = await (db.select(db.baseMoves)
+    ..where((t) => t.notation.equals(newNotation) & t.fen.equals(newFen)))
+    .getSingleOrNull();
+
+  if (existingMove == null || existingMove.depth  < (newDepth)) {
+    // Nếu không tồn tại hoặc depth mới lớn hơn thì mới update
+    await db.into(db.baseMoves).insertOnConflictUpdate(move);
+  }
+}
 
   Future<BaseMove?> getBaseMoveByFen(String fen) {
     final query = db.select(db.baseMoves)..where((t) => t.fen.equals(fen));
@@ -32,12 +49,14 @@ class ChessRepository {
 
   // --- GameMoves ---
 
-  Future<int> insertGameMove(GameMovesCompanion gameMove) => db.into(db.gameMoves).insert(gameMove);
+  Future<int> insertGameMove(GameMovesCompanion gameMove) =>
+      db.into(db.gameMoves).insert(gameMove);
 
   // Lấy tất cả nước đi của một ván cờ, bao gồm thông tin từ BaseMoves
   Future<List<GameMoveWithBaseMove>> getMovesForGame(int gameId) async {
     final query = db.select(db.gameMoves).join([
-      innerJoin(db.baseMoves, db.baseMoves.id.equalsExp(db.gameMoves.baseMoveId))
+      innerJoin(
+          db.baseMoves, db.baseMoves.id.equalsExp(db.gameMoves.baseMoveId))
     ])
       ..where(db.gameMoves.gameId.equals(gameId))
       ..orderBy([OrderingTerm(expression: db.gameMoves.moveNumber)]);
@@ -52,26 +71,34 @@ class ChessRepository {
 
   // Lấy các nước đi con (các nhánh)
   Future<List<GameMove>> getChildMoves(int parentMoveId) {
-    final query = db.select(db.gameMoves)..where((t) => t.parentMoveId.equals(parentMoveId));
+    final query = db.select(db.gameMoves)
+      ..where((t) => t.parentMoveId.equals(parentMoveId));
     return query.get();
   }
 
   // Lấy nước đi cha của nước đi hiện tại
   Future<GameMove?> getParentMove(int currentMoveId) {
-    final query = db.select(db.gameMoves)..where((t) => t.id.equals(currentMoveId));
+    final query = db.select(db.gameMoves)
+      ..where((t) => t.id.equals(currentMoveId));
     return query.getSingleOrNull();
   }
 
   // Lấy đường đi từ nước đi đầu tiên đến một nước đi cụ thể
   Future<List<GameMoveWithBaseMove>> getMovePath(int gameMoveId) async {
     final List<GameMoveWithBaseMove> path = [];
-    GameMove? currentMove = await (db.select(db.gameMoves)..where((t) => t.id.equals(gameMoveId))).getSingleOrNull();
+    GameMove? currentMove = await (db.select(db.gameMoves)
+          ..where((t) => t.id.equals(gameMoveId)))
+        .getSingleOrNull();
 
     while (currentMove != null) {
-      final baseMove = await (db.select(db.baseMoves)..where((t) => t.id.equals(currentMove!.baseMoveId))).getSingle();
-      path.insert(0, GameMoveWithBaseMove(gameMove: currentMove, baseMove: baseMove));
+      final baseMove = await (db.select(db.baseMoves)
+            ..where((t) => t.id.equals(currentMove!.baseMoveId)))
+          .getSingle();
+      path.insert(
+          0, GameMoveWithBaseMove(gameMove: currentMove, baseMove: baseMove));
 
-      currentMove = await getParentMove(currentMove.parentMoveId ?? -1); // Handle potential null
+      currentMove = await getParentMove(
+          currentMove.parentMoveId ?? -1); // Handle potential null
     }
 
     return path;
@@ -85,7 +112,8 @@ class ChessRepository {
 
     final query = db.select(db.games).join([
       innerJoin(db.gameMoves, db.gameMoves.gameId.equalsExp(db.games.id)),
-      innerJoin(db.baseMoves, db.baseMoves.id.equalsExp(db.gameMoves.baseMoveId)),
+      innerJoin(
+          db.baseMoves, db.baseMoves.id.equalsExp(db.gameMoves.baseMoveId)),
     ])
       ..where(db.baseMoves.id.equals(baseMove.id));
 
@@ -94,12 +122,19 @@ class ChessRepository {
 
   // Lấy các nước đi phổ biến nhất
   Future<List<BaseMoveWithCount>> getMostCommonMoves(int limit) {
-    final moveCount = db.gameMoves.baseMoveId.count(filter: db.baseMoves.id.isNotNull());
+    final moveCount =
+        db.gameMoves.baseMoveId.count(filter: db.baseMoves.id.isNotNull());
 
     final query = db.selectOnly(db.baseMoves)
-      ..addColumns([db.baseMoves.notation, db.baseMoves.evaluation, db.baseMoves.fen, moveCount])
+      ..addColumns([
+        db.baseMoves.notation,
+        db.baseMoves.evaluation,
+        db.baseMoves.fen,
+        moveCount
+      ])
       ..join([
-        innerJoin(db.gameMoves, db.gameMoves.baseMoveId.equalsExp(db.baseMoves.id))
+        innerJoin(
+            db.gameMoves, db.gameMoves.baseMoveId.equalsExp(db.baseMoves.id))
       ])
       ..groupBy([db.baseMoves.id])
       ..orderBy([OrderingTerm(expression: moveCount, mode: OrderingMode.desc)])
