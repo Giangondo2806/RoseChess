@@ -34,7 +34,7 @@ double calcEval(num x) {
 }
 
 EngineInfo? parseEngineInfo(
-    {required String input, required String fen, AppLocalizations? lang}) {
+    {required String input, required String fen, required int lastDepth, AppLocalizations? lang}) {
   // Tách chuỗi thành các phần dựa trên các từ khóa
   final depthMatch = RegExp(r'depth (\d+)').firstMatch(input);
   final scoreMatch = RegExp(r'score cp ([-]?\d+)').firstMatch(input);
@@ -44,6 +44,9 @@ EngineInfo? parseEngineInfo(
 
   // Trích xuất thông tin từ các phần đã tách
   final depth = int.tryParse(depthMatch?.group(1) ?? '') ?? 0;
+  if(lastDepth==0&& depth>10){
+    return null;
+  }
   final score = double.tryParse(scoreMatch?.group(1) ?? '') ?? 0;
   final nps = int.tryParse(npsMatch?.group(1) ?? '') ?? 0;
   final String moves = pvMatch?.group(1) ?? '';

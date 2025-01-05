@@ -22,6 +22,7 @@ import 'engine_analysis_state.dart';
 
 class BoardEngineState extends BoardState {
   List<String> canMoves = [];
+  // flag for engine setup
   Rose? _roseEngine;
   bool _connectedEngine = false;
   bool _readyOkReceived = false;
@@ -32,13 +33,14 @@ class BoardEngineState extends BoardState {
   bool get isEngineInitializing => _isEngineInitializing;
   bool get engineReady => _readyOkReceived;
   bool get isBoardInitialized => _isBoardInitialized;
+  StreamSubscription<String>? _engineOutputSubscription;
+  // arrow, book state, and lang
   late EngineAnalysisState engineAnalysisState;
   late final BookState _bookState;
   late ArrowState arrowState;
   late NavigationState navigationState;
   late GraphState graphState;
   late AppLocalizations lang;
-  StreamSubscription<String>? _engineOutputSubscription;
   final List<Map<BoardPosition, Piece?>> _boardHistory = [];
 
   //flag for auto move red and black and searchmode
@@ -51,10 +53,11 @@ class BoardEngineState extends BoardState {
 
   //flag for inserdb
   bool _inserdb = false;
-
-  late String _lastBestMove;
   final chessRepo = getIt.get<ChessRepository>();
 
+
+late String _lastBestMove;
+int _lastDepth =0;
   String get _currentFen {
     final current = navigationState.currentMove;
     final histories = xiangqi.getHistory(verbose: true);
@@ -142,20 +145,7 @@ class BoardEngineState extends BoardState {
       _handleSyncXiangqiMove();
     }
     _inserdb = true;
-    // if (_searchModeEnabled || _automoveRed || _automoveBlack) {
-    //   return;
-    // }
-
-    // datamove = BaseMovesCompanion(
-    //   fen: Value(xiangqi.generateFen()),
-    //   notation: Value(from.notation+to.notation),
-    // );
-
-    // final chessRepo = getIt.get<ChessRepository>();
-    // await chessRepo.insertOrUpdateBaseMove(datamove);
-
-    // chessRepo.insertBaseMove(datamove);
-
+    _lastDepth = 0;
     engineAnalysisState.clearAnalysis();
     xiangqi.simpleMove({'from': from.notation, 'to': to.notation});
     _bookState.getbook(xiangqi.generateFen(), lang);
@@ -194,8 +184,6 @@ class BoardEngineState extends BoardState {
       board = Map.from(_boardHistory[index]);
       selectedPosition = null;
     }
-
-    print('[current] $_currentFen');
     _engineSearch(_currentFen);
     Future.delayed(Duration(milliseconds: 10), () {
       engineAnalysisState.clearAnalysis();
@@ -296,13 +284,14 @@ class BoardEngineState extends BoardState {
   }
 
   void _processingInfoDepth(String line) {
-    final info = parseEngineInfo(fen: _currentFen, input: line, lang: lang);
+    final info = parseEngineInfo(fen: _currentFen, input: line, lang: lang, lastDepth: _lastDepth);
     if (info != null) {
       if (searchModeEnabled) {
         engineAnalysisState.addAnalysis(info);
         _extractMoves(line);
       }
       _lastBestMove = info.bestmove;
+      _lastDepth = info.depth;
    
       if (xiangqi.history.isNotEmpty) {
         xiangqi.history.last['move'].evaluation =

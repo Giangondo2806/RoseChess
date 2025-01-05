@@ -26,7 +26,7 @@ class GraphContent extends StatelessWidget {
     }
 
     final scores = chartData.map((data) => data.score).toList();
-    print('rebuild $scores');
+   
     final minScore =
         scores.reduce((min, current) => min < current ? min : current);
     final maxScore =
