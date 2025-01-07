@@ -22,7 +22,13 @@ dependencies:
   drift_flutter: ^0.1.0
   get_it: ^8.0.3
   toastification: ^2.3.0
+  path: ^1.9.0
   syncfusion_flutter_charts: ^28.1.37
+  image: ^4.3.0
+  tflite_flutter: ^0.11.0
+  camera: ^0.11.0+2
+  image_picker: ^1.1.2
+   
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -32,13 +38,14 @@ dev_dependencies:
   drift_dev: ^2.22.0
   build_runner: ^2.4.13
 
-  
 flutter:
   uses-material-design: true
   generate: true
   assets:
     - assets/images/xiangqiboards/
     - assets/images/xiangqipieces/wikipedia/
+    - assets/models/best_train2_float32.tflite
+    - assets/models/data.yaml
 flutter_intl:
   enabled: true  
   class_name: AppLocalizations                

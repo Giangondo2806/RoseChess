@@ -133,14 +133,14 @@ final lightTheme = ThemeData(
   ),
   // Switch
   switchTheme: SwitchThemeData(
-    thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
+    thumbColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
         return const Color(0xFFCD853F); // Peru - Nâu đất
       }
       return Colors.grey;
     }),
-    trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
+    trackColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
         return const Color(0xFFCD853F).withOpacity(0.5); // Peru - Nâu đất
       }
       return Colors.grey[400];
@@ -175,13 +175,11 @@ final lightTheme = ThemeData(
     brightness: Brightness.light,
     primary: const Color(0xFFCD853F), // Peru - Nâu đất
     secondary: const Color(0xFFF4A460), // Sandy Brown - Nâu cát
-    error: Colors.red,
-    background: const Color(0xFFF7F3E8), // Màu be nhạt
+    error: Colors.red, // Màu be nhạt
     surface: Colors.white,
     onPrimary: Colors.white, // Màu chữ trên primary color
     onSecondary: Colors.black, // Màu chữ trên secondary color
-    onError: Colors.white, // Màu chữ trên error color
-    onBackground: Colors.black, // Màu chữ trên background color
+    onError: Colors.white, // Màu chữ trên background color
     onSurface: Colors.black, // Màu chữ trên surface color
   ),
 );

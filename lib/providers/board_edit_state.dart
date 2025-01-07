@@ -42,7 +42,7 @@ class BoardEditState extends BoardState {
   late double squareSize;
 
   BoardEditState(this._lang, this._initFen) {
-    initializeBoard(lang: _lang, fen: _initFen);
+    initializeBoard(lang: _lang, fen: _initFen, editmode: true);
     calculatorRemovePieces();
   }
 

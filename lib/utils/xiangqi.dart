@@ -181,7 +181,8 @@ class Xiangqi {
   }
 
   bool load(String fen, {bool keepHeaders = false, bool editmode=false}) {
-    if (!validateFen(fen, editmode:editmode).valid) {
+
+    if ( !editmode&&!validateFen(fen, editmode:editmode).valid) {
       return false;
     }
 
@@ -376,7 +377,7 @@ class Xiangqi {
       }
     }
 
-   if (!editmode&&pieces['k']!.squares[0] % 0x10 == pieces['K']!.squares[0] % 0x10) {
+   if (pieces['k']!.squares[0] % 0x10 == pieces['K']!.squares[0] % 0x10) {
     final minRank = min(pieces['k']!.squares[0] >> 4, pieces['K']!.squares[0] >> 4);
     final maxRank = max(pieces['k']!.squares[0] >> 4, pieces['K']!.squares[0] >> 4);
     final file = pieces['k']!.squares[0] % 0x10;

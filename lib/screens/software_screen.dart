@@ -205,12 +205,13 @@ class _EngineWrapperState extends State<EngineWrapper>
                 }
               });
 
-              Future<void> onEditBoard() async {
+              Future<void> onEditBoard(String? detectFen) async {
+                print('detectfen $detectFen');
                 final fen = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        BoardEditScreen(fen: boardState.xiangqi.generateFen()),
+                        BoardEditScreen(fen: detectFen ?? boardState.xiangqi.generateFen()),
                   ),
                 );
 

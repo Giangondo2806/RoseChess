@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:rose_chess/utils/toast.dart';
 import 'package:toastification/toastification.dart';
 import '../screens/settings_screen.dart';
+import '../services/chess_detect_service.dart';
 
 class MenuBarWidget extends StatelessWidget {
   final Function(String) onMenuAction;
-  final Function() onEditBoard;
+  final Function(String?) onEditBoard;
   final double iconPadding = 2.0;
   final double iconSize = 24.0;
   final double enabledIconSize = 20.0; // Kích thước icon khi enable
@@ -13,15 +14,17 @@ class MenuBarWidget extends StatelessWidget {
   final bool automoveRed;
   final bool automoveBlack;
   final bool searchModeEnabled;
+  final ChessDetectorService _detector;
 
-  const MenuBarWidget({
+  MenuBarWidget({
     Key? key,
     required this.onMenuAction,
     required this.onEditBoard,
     required this.automoveRed,
     required this.automoveBlack,
     required this.searchModeEnabled,
-  }) : super(key: key);
+  })  : _detector = ChessDetectorService()..initialize(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +123,7 @@ class MenuBarWidget extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: onEditBoard,
+              onTap: () => onEditBoard(null),
               child: Padding(
                 padding: EdgeInsets.all(iconPadding),
                 child: Icon(Icons.edit_document, size: iconSize),
@@ -142,8 +145,14 @@ class MenuBarWidget extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () {
-                onMenuAction('detect_image');
+              onTap: () async {
+                final fen = await _detector.detectAndConvertToFen(context);
+                if (fen.isNotEmpty) {
+                  // Cập nhật bàn cờ với FEN mới
+                  onEditBoard('$fen w');
+                }
+                // detect img to fen
+                // onMenuAction('detect_image');
               },
               child: Padding(
                 padding: EdgeInsets.all(iconPadding),
